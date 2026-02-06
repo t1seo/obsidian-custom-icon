@@ -1,18 +1,32 @@
 import { Plugin } from "obsidian";
 import { DEFAULT_SETTINGS } from "./constants";
+import { ContextMenu } from "./features/ContextMenu";
+import { ExplorerIcons } from "./features/ExplorerIcons";
 import { IconicaSettingTab } from "./settings";
-import type { IconMapping, IconicaData, IconicaSettings } from "./types";
+import type { IconData, IconMapping, IconicaData, IconicaSettings } from "./types";
 
 export default class IconicaPlugin extends Plugin {
 	settings!: IconicaSettings;
 	iconMap!: IconMapping;
+	explorerIcons!: ExplorerIcons;
 
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new IconicaSettingTab(this.app, this));
+
+		this.explorerIcons = new ExplorerIcons(this);
+		if (this.settings.showInExplorer) {
+			this.app.workspace.onLayoutReady(() => {
+				this.explorerIcons.enable();
+			});
+		}
+
+		new ContextMenu(this).enable();
 	}
 
-	onunload() {}
+	onunload() {
+		this.explorerIcons?.disable();
+	}
 
 	async loadSettings() {
 		const data: Partial<IconicaData> = (await this.loadData()) ?? {};
@@ -29,18 +43,17 @@ export default class IconicaPlugin extends Plugin {
 	}
 
 	/** Update icon mapping for a file/folder path */
-	async setIcon(
-		path: string,
-		icon: { type: "emoji" | "icon" | "custom"; value: string; color?: string },
-	) {
+	async setIcon(path: string, icon: IconData) {
 		this.iconMap[path] = icon;
 		await this.saveSettings();
+		this.explorerIcons?.applyIcon(path, icon);
 	}
 
 	/** Remove icon mapping for a file/folder path */
 	async removeIcon(path: string) {
 		delete this.iconMap[path];
 		await this.saveSettings();
+		this.explorerIcons?.refresh();
 	}
 
 	/** Add an emoji or icon ID to recent list */

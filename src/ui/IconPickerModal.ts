@@ -2,6 +2,7 @@ import { type App, Modal } from "obsidian";
 import { CSS_PREFIX } from "../constants";
 import type IconicaPlugin from "../main";
 import type { IconData, IconSelectCallback, PickerTab } from "../types";
+import { EmojiTab } from "./EmojiTab";
 
 /**
  * Main icon picker modal with 3 tabs: Emoji | Icons | Upload
@@ -32,6 +33,9 @@ export class IconPickerModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass(`${CSS_PREFIX}-picker`);
+
+		// Register built-in tabs
+		this.registerTab("emoji", new EmojiTab(this.plugin, this));
 
 		this.buildHeader(contentEl);
 		this.buildSearchBar(contentEl);
