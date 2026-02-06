@@ -5,11 +5,13 @@
 /* ─── Icon Picker Modal ─── */
 
 .iconica-picker {
-	width: 420px;
-	max-height: 520px;
+	width: 460px;
+	max-height: 560px;
 	display: flex;
 	flex-direction: column;
 	padding: 0;
+	border-radius: 12px;
+	overflow: hidden;
 }
 
 .iconica-picker .modal-content {
@@ -17,78 +19,70 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	flex: 1;
 }
 
-/* Header: tab bar + remove */
+/* ─── Header: tab bar ─── */
+
 .iconica-picker-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 12px 16px 0;
-	border-bottom: 1px solid var(--background-modifier-border);
+	padding: 8px 12px 0;
+	gap: 4px;
 }
 
 .iconica-picker-tabs {
 	display: flex;
-	gap: 4px;
+	gap: 6px;
 }
 
 .iconica-tab-btn {
 	background: none;
 	border: none;
-	padding: 8px 14px;
-	font-size: 14px;
+	padding: 6px 12px;
+	font-size: 13px;
+	font-weight: 500;
 	color: var(--text-muted);
 	cursor: pointer;
-	border-bottom: 2px solid transparent;
-	border-radius: 0;
-	transition: color 0.15s, border-color 0.15s;
+	border-radius: 6px;
+	transition: color 0.12s, background 0.12s;
 }
 
 .iconica-tab-btn:hover {
 	color: var(--text-normal);
+	background: var(--background-modifier-hover);
 }
 
 .iconica-tab-btn.is-active {
 	color: var(--text-normal);
 	font-weight: 600;
-	border-bottom-color: var(--interactive-accent);
+	background: var(--background-modifier-hover);
 }
 
-.iconica-remove-btn {
-	background: none;
-	border: none;
-	padding: 8px 12px;
-	font-size: 13px;
-	color: var(--text-muted);
-	cursor: pointer;
-}
+/* ─── Search Bar ─── */
 
-.iconica-remove-btn:hover {
-	color: var(--text-error);
-}
-
-/* Search bar */
 .iconica-picker-search {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 10px 16px;
+	gap: 6px;
+	padding: 8px 12px;
 }
 
 .iconica-search-input {
 	flex: 1;
-	padding: 6px 10px;
+	padding: 7px 10px;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--background-secondary);
+	border-radius: 8px;
+	background: var(--background-primary);
 	color: var(--text-normal);
-	font-size: 14px;
+	font-size: 13px;
+	outline: none;
+	transition: border-color 0.15s;
 }
 
 .iconica-search-input:focus {
 	border-color: var(--interactive-accent);
-	outline: none;
 }
 
 .iconica-search-input::placeholder {
@@ -98,60 +92,80 @@
 .iconica-random-btn {
 	background: none;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	padding: 5px 8px;
+	border-radius: 8px;
+	padding: 6px 8px;
 	cursor: pointer;
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 1;
+	transition: background 0.1s;
 }
 
 .iconica-random-btn:hover {
 	background: var(--background-modifier-hover);
 }
 
-/* Tab content area */
+/* ─── Color Picker (search bar area) ─── */
+
+.iconica-color-picker {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	padding: 2px 0;
+}
+
+.iconica-color-swatch {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	cursor: pointer;
+	border: 2px solid transparent;
+	transition: border-color 0.12s, transform 0.1s;
+	flex-shrink: 0;
+}
+
+.iconica-color-swatch:hover {
+	transform: scale(1.15);
+}
+
+.iconica-color-swatch.is-active {
+	border-color: var(--text-normal);
+}
+
+/* ─── Tab Content Area ─── */
+
 .iconica-picker-content {
 	flex: 1;
 	overflow-y: auto;
-	padding: 0 16px 8px;
-	min-height: 300px;
+	padding: 4px 12px 12px;
+	height: 360px;
+	min-height: 360px;
+	max-height: 360px;
 }
 
-/* Footer */
-.iconica-picker-footer {
-	display: flex;
-	justify-content: flex-end;
-	padding: 8px 16px 12px;
-	border-top: 1px solid var(--background-modifier-border);
+/* ─── Section Labels ─── */
+
+.iconica-section-label,
+.iconica-emoji-category-label {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text-faint);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin: 12px 0 6px;
+	padding: 0 2px;
 }
 
-.iconica-cancel-btn {
-	background: none;
-	border: none;
-	padding: 6px 16px;
-	color: var(--text-muted);
-	cursor: pointer;
-	font-size: 14px;
-}
-
-.iconica-cancel-btn:hover {
-	color: var(--text-normal);
+.iconica-section-label:first-child,
+.iconica-emoji-category-label:first-child {
+	margin-top: 4px;
 }
 
 /* ─── Emoji Grid ─── */
 
-.iconica-emoji-category-label {
-	font-size: 12px;
-	font-weight: 600;
-	color: var(--text-muted);
-	text-transform: capitalize;
-	margin: 12px 0 6px;
-}
-
 .iconica-emoji-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, 36px);
-	gap: 2px;
+	grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+	gap: 1px;
 }
 
 .iconica-emoji-item {
@@ -162,10 +176,11 @@
 	justify-content: center;
 	font-size: 22px;
 	cursor: pointer;
-	border-radius: 6px;
+	border-radius: 8px;
 	border: none;
 	background: none;
 	transition: background 0.1s;
+	padding: 0;
 }
 
 .iconica-emoji-item:hover,
@@ -178,28 +193,28 @@
 	outline-offset: -2px;
 }
 
-/* ─── Category Bar (bottom) ─── */
+/* ─── Category Bar (bottom of emoji tab) ─── */
 
 .iconica-category-bar {
 	display: flex;
 	justify-content: center;
-	gap: 2px;
-	padding: 6px 16px;
+	gap: 1px;
+	padding: 6px 12px;
 	border-top: 1px solid var(--background-modifier-border);
 }
 
 .iconica-category-btn {
-	width: 32px;
-	height: 32px;
+	width: 30px;
+	height: 30px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 16px;
+	font-size: 15px;
 	cursor: pointer;
 	border-radius: 6px;
 	border: none;
 	background: none;
-	opacity: 0.6;
+	opacity: 0.5;
 	transition: opacity 0.1s, background 0.1s;
 }
 
@@ -217,8 +232,8 @@
 
 .iconica-icon-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, 40px);
-	gap: 2px;
+	grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+	gap: 1px;
 }
 
 .iconica-icon-item {
@@ -228,10 +243,11 @@
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	border-radius: 6px;
+	border-radius: 8px;
 	border: none;
 	background: none;
 	transition: background 0.1s;
+	padding: 0;
 }
 
 .iconica-icon-item:hover,
@@ -245,16 +261,93 @@
 }
 
 .iconica-icon-item svg {
-	width: 24px;
-	height: 24px;
+	width: 22px;
+	height: 22px;
+}
+
+/* ─── Custom Icon Grid ─── */
+
+.iconica-custom-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+	gap: 8px;
+}
+
+.iconica-custom-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	position: relative;
+}
+
+.iconica-custom-item-btn {
+	width: 56px;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	border-radius: 10px;
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-secondary);
+	transition: background 0.1s, border-color 0.15s;
+	padding: 4px;
+}
+
+.iconica-custom-item-btn:hover {
+	border-color: var(--interactive-accent);
+	background: var(--background-modifier-hover);
+}
+
+.iconica-custom-item-btn img {
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+	border-radius: 4px;
+	background-color: var(--background-secondary);
+}
+
+.iconica-custom-item-label {
+	font-size: 10px;
+	color: var(--text-muted);
+	text-align: center;
+	max-width: 72px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.iconica-custom-item-remove {
+	position: absolute;
+	top: -4px;
+	right: 2px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	border: none;
+	background: var(--background-modifier-error, #e03e3e);
+	color: white;
+	font-size: 12px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.12s;
+}
+
+.iconica-custom-item:hover .iconica-custom-item-remove {
+	opacity: 1;
 }
 
 /* ─── Upload Tab ─── */
 
 .iconica-upload-zone {
 	border: 2px dashed var(--background-modifier-border);
-	border-radius: 8px;
-	padding: 32px 16px;
+	border-radius: 12px;
+	padding: 40px 20px;
 	text-align: center;
 	cursor: pointer;
 	color: var(--text-muted);
@@ -269,112 +362,198 @@
 }
 
 .iconica-upload-zone-icon {
-	font-size: 28px;
+	font-size: 32px;
 	margin-bottom: 8px;
 }
 
 .iconica-upload-zone-text {
 	font-size: 14px;
+	font-weight: 500;
+	color: var(--text-normal);
 }
 
 .iconica-upload-zone-hint {
 	font-size: 12px;
 	color: var(--text-faint);
-	margin-top: 4px;
+	margin-top: 6px;
 }
 
-/* Preview section */
+/* ─── Preview ─── */
+
 .iconica-preview-section {
-	text-align: center;
-	margin: 16px 0;
-}
-
-.iconica-preview-label {
-	font-size: 12px;
-	color: var(--text-muted);
-	margin-bottom: 12px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20px 0 16px;
 }
 
 .iconica-preview-row {
 	display: flex;
 	justify-content: center;
-	gap: 16px;
+	gap: 24px;
+}
+
+.iconica-preview-col {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
 }
 
 .iconica-preview-card {
-	width: 80px;
-	height: 80px;
+	width: 72px;
+	height: 72px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 8px;
-	border: 2px solid transparent;
-	cursor: pointer;
-	transition: border-color 0.15s;
+	border-radius: 12px;
+	border: 1px solid var(--background-modifier-border);
 }
 
-.iconica-preview-card.is-light {
-	background: #ffffff;
+.iconica-preview-card.is-sidebar {
+	background: var(--background-secondary);
 }
 
-.iconica-preview-card.is-dark {
-	background: #1e1e1e;
-}
-
-.iconica-preview-card.is-selected {
-	border-color: var(--interactive-accent);
+.iconica-preview-card.is-editor {
+	background: var(--background-primary);
 }
 
 .iconica-preview-card img {
-	max-width: 48px;
-	max-height: 48px;
+	width: 44px;
+	height: 44px;
 	object-fit: contain;
 }
 
-.iconica-library-checkbox {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin: 12px 0;
-	font-size: 14px;
-	color: var(--text-muted);
+.iconica-preview-card-label {
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--text-faint);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 }
 
-/* ─── Color Picker ─── */
+/* ─── Upload Bottom Bar ─── */
 
-.iconica-color-picker {
+.iconica-upload-bottom {
 	display: flex;
-	align-items: center;
-	gap: 4px;
-	padding: 4px 0;
+	align-items: flex-start;
+	justify-content: space-between;
+	padding: 12px 0 0;
+	border-top: 1px solid var(--background-modifier-border);
 }
 
-.iconica-color-swatch {
-	width: 22px;
-	height: 22px;
-	border-radius: 50%;
+.iconica-upload-bottom-left {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.iconica-upload-checkbox-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.iconica-upload-checkbox {
+	width: 15px;
+	height: 15px;
 	cursor: pointer;
-	border: 2px solid transparent;
-	transition: border-color 0.15s, transform 0.1s;
+	accent-color: var(--interactive-accent);
+	margin: 0;
 }
 
-.iconica-color-swatch:hover {
-	transform: scale(1.15);
+.iconica-upload-checkbox-label {
+	font-size: 13px;
+	color: var(--text-normal);
+	cursor: pointer;
+	user-select: none;
 }
 
-.iconica-color-swatch.is-active {
-	border-color: var(--text-normal);
+/* Name input */
+.iconica-upload-name-group {
+	padding-left: 21px;
+}
+
+.iconica-upload-name-input {
+	width: 160px;
+	padding: 5px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 12px;
+	outline: none;
+	transition: border-color 0.15s;
+}
+
+.iconica-upload-name-input:focus {
+	border-color: var(--interactive-accent);
+}
+
+/* Upload actions */
+.iconica-upload-actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+/* ─── Buttons ─── */
+
+.iconica-save-btn {
+	padding: 6px 16px;
+	border-radius: 6px;
+	border: none;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: opacity 0.1s;
+	white-space: nowrap;
+}
+
+.iconica-save-btn:hover {
+	opacity: 0.9;
+}
+
+.iconica-cancel-btn {
+	background: none;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	padding: 6px 12px;
+	color: var(--text-muted);
+	cursor: pointer;
+	font-size: 13px;
+	transition: color 0.1s, background 0.1s;
+	white-space: nowrap;
+}
+
+.iconica-cancel-btn:hover {
+	color: var(--text-normal);
+	background: var(--background-modifier-hover);
+}
+
+/* ─── Placeholder ─── */
+
+.iconica-placeholder {
+	text-align: center;
+	color: var(--text-faint);
+	padding: 40px 0;
+	font-size: 13px;
 }
 
 /* ─── File Explorer Icon ─── */
 
 .iconica-explorer-icon {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	justify-content: center;
+	align-self: center;
 	margin-right: 4px;
 	flex-shrink: 0;
-	line-height: 1;
+	width: 17px;
+	height: 17px;
 }
 
 .iconica-explorer-icon.is-emoji {
@@ -390,6 +569,8 @@
 	width: 17px;
 	height: 17px;
 	object-fit: contain;
+	background-color: var(--background-secondary);
+	border-radius: 3px;
 }
 
 /* ─── Tab Header Icon ─── */
@@ -398,6 +579,11 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.iconica-tab-icon img {
+	background-color: var(--background-secondary);
+	border-radius: 3px;
 }
 
 /* ─── Title Icon ─── */
@@ -410,35 +596,16 @@
 	line-height: 1;
 	margin-bottom: 8px;
 	cursor: pointer;
+	transition: opacity 0.12s;
+}
+
+.iconica-title-icon img {
+	background-color: var(--background-primary);
+	border-radius: 6px;
 }
 
 .iconica-title-icon:hover {
-	opacity: 0.8;
-}
-
-/* ─── Placeholder ─── */
-
-.iconica-placeholder {
-	text-align: center;
-	color: var(--text-faint);
-	padding: 40px 0;
-}
-
-/* ─── Utility ─── */
-
-.iconica-save-btn {
-	padding: 6px 20px;
-	border-radius: 6px;
-	border: none;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	font-size: 14px;
-	font-weight: 500;
-	cursor: pointer;
-}
-
-.iconica-save-btn:hover {
-	opacity: 0.9;
+	opacity: 0.75;
 }
 
 /* ─── Inline Icons ─── */
@@ -448,4 +615,19 @@
 	font-size: 1em;
 	line-height: 1;
 	vertical-align: baseline;
+}
+
+.iconica-inline-icon.is-img {
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
+}
+
+.iconica-inline-icon.is-img img {
+	width: 18px;
+	height: 18px;
+	object-fit: contain;
+	background-color: var(--background-primary);
+	border-radius: 3px;
+	vertical-align: middle;
 }

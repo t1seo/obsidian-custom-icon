@@ -3,7 +3,6 @@ import type IconicaPlugin from "../main";
 import { createSvgElement, getIcon } from "../services/IconifyService";
 import type { IconData } from "../types";
 import { IconPickerModal } from "../ui/IconPickerModal";
-import { isDarkMode } from "../utils/theme";
 
 /**
  * Displays a large icon above the note title (like Notion's page icon).
@@ -86,10 +85,9 @@ export class TitleIcons {
 				const img = document.createElement("img");
 				img.width = TITLE_ICON_SIZE;
 				img.height = TITLE_ICON_SIZE;
-				const variant = isDarkMode() ? "dark" : "light";
 				const adapter = this.plugin.app.vault.adapter;
 				img.src = adapter.getResourcePath(
-					`${this.plugin.manifest.dir}/icons/${icon.value}-${variant}.png`,
+					`${this.plugin.manifest.dir}/icons/${icon.value}.png`,
 				);
 				img.alt = "";
 				wrapper.appendChild(img);

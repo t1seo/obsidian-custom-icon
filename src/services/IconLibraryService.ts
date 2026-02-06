@@ -65,15 +65,10 @@ export class IconLibraryService {
 		const icon = this.getById(id);
 		if (!icon) return;
 
-		// Delete image files
+		// Delete image file
 		const iconsDir = `${this.pluginDir}/${ICONS_DIR}`;
 		try {
-			await this.adapter.remove(`${iconsDir}/${id}-light.png`);
-		} catch {
-			// File may not exist
-		}
-		try {
-			await this.adapter.remove(`${iconsDir}/${id}-dark.png`);
+			await this.adapter.remove(`${iconsDir}/${id}.png`);
 		} catch {
 			// File may not exist
 		}
@@ -91,15 +86,14 @@ export class IconLibraryService {
 		await this.save();
 	}
 
-	/** Get the file path for a custom icon variant */
-	getIconPath(id: string, isDark: boolean): string {
-		const variant = isDark ? "dark" : "light";
-		return `${this.pluginDir}/${ICONS_DIR}/${id}-${variant}.png`;
+	/** Get the file path for a custom icon */
+	getIconPath(id: string): string {
+		return `${this.pluginDir}/${ICONS_DIR}/${id}.png`;
 	}
 
 	/** Get resource URL for a custom icon (for <img> src) */
-	getIconUrl(id: string, isDark: boolean): string {
-		const path = this.getIconPath(id, isDark);
+	getIconUrl(id: string): string {
+		const path = this.getIconPath(id);
 		return this.adapter.getResourcePath(path);
 	}
 }

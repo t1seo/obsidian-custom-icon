@@ -17,10 +17,8 @@ export type IconMapping = Record<string, IconData>;
 export interface CustomIcon {
 	id: string;
 	name: string;
-	/** Relative path to light-mode image inside plugin icons/ dir */
-	lightPath: string;
-	/** Relative path to dark-mode image inside plugin icons/ dir */
-	darkPath: string;
+	/** Relative path to icon image inside plugin icons/ dir */
+	path: string;
 	createdAt: number;
 	tags?: string[];
 }
@@ -59,7 +57,7 @@ export interface IconicaData {
 }
 
 /** Active tab in the Icon Picker Modal */
-export type PickerTab = "emoji" | "icons" | "upload";
+export type PickerTab = "emoji" | "custom" | "upload";
 
 /** Emoji category used for grouping and the bottom category bar */
 export interface EmojiCategory {

@@ -1,4 +1,4 @@
-import type { TAbstractFile } from "obsidian";
+import type { Editor, TAbstractFile } from "obsidian";
 import type IconicaPlugin from "../main";
 import type { IconData } from "../types";
 import { IconPickerModal } from "../ui/IconPickerModal";
@@ -58,6 +58,25 @@ export class ContextMenu {
 					this.plugin.removeIcon(file.path);
 				}
 				return true;
+			},
+		});
+
+		// Command palette: insert inline icon at cursor
+		this.plugin.addCommand({
+			id: "insert-inline-icon",
+			name: "Insert inline icon at cursor",
+			editorCallback: (editor: Editor) => {
+				const file = this.plugin.app.workspace.getActiveFile();
+				const path = file?.path ?? "";
+				const modal = new IconPickerModal(this.plugin.app, this.plugin, path, (icon) => {
+					if (!icon) return;
+					if (icon.type === "emoji") {
+						editor.replaceSelection(icon.value);
+					} else if (icon.type === "custom") {
+						editor.replaceSelection(`:iconica-${icon.value}:`);
+					}
+				});
+				modal.open();
 			},
 		});
 	}

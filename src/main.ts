@@ -79,21 +79,22 @@ export default class IconicaPlugin extends Plugin {
 	}
 
 	/** Update icon mapping for a file/folder path */
-	async setIcon(path: string, icon: IconData) {
+	setIcon(path: string, icon: IconData) {
 		this.iconMap[path] = icon;
-		await this.saveSettings();
+		// Apply immediately, save in background
 		this.explorerIcons?.applyIcon(path, icon);
 		this.tabIcons?.refresh();
 		this.titleIcons?.refresh();
+		this.saveSettings();
 	}
 
 	/** Remove icon mapping for a file/folder path */
-	async removeIcon(path: string) {
+	removeIcon(path: string) {
 		delete this.iconMap[path];
-		await this.saveSettings();
 		this.explorerIcons?.refresh();
 		this.tabIcons?.refresh();
 		this.titleIcons?.refresh();
+		this.saveSettings();
 	}
 
 	/** Add an emoji or icon ID to recent list */

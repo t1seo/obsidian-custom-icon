@@ -73,11 +73,9 @@ export class TabIcons {
 				const img = document.createElement("img");
 				img.width = TAB_ICON_SIZE;
 				img.height = TAB_ICON_SIZE;
-				const isDark = document.body.classList.contains("theme-dark");
-				const variant = isDark ? "dark" : "light";
 				const adapter = this.plugin.app.vault.adapter;
 				img.src = adapter.getResourcePath(
-					`${this.plugin.manifest.dir}/icons/${icon.value}-${variant}.png`,
+					`${this.plugin.manifest.dir}/icons/${icon.value}.png`,
 				);
 				img.alt = "";
 				wrapper.appendChild(img);

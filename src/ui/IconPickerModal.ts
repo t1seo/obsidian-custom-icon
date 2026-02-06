@@ -2,24 +2,33 @@ import { type App, Modal } from "obsidian";
 import { CSS_PREFIX } from "../constants";
 import type IconicaPlugin from "../main";
 import type { IconData, IconSelectCallback, PickerTab } from "../types";
-import { ColorPicker } from "./ColorPicker";
+import { CustomTab } from "./CustomTab";
 import { EmojiTab } from "./EmojiTab";
-import { IconTab } from "./IconTab";
 import { UploadTab } from "./UploadTab";
 
+/** Tab definition for the picker */
+interface TabDef {
+	key: PickerTab;
+	label: string;
+}
+
+const TABS: TabDef[] = [
+	{ key: "emoji", label: "Emoji" },
+	{ key: "custom", label: "Custom" },
+	{ key: "upload", label: "Upload" },
+];
+
 /**
- * Main icon picker modal with 3 tabs: Emoji | Icons | Upload
- * Mirrors Notion's icon picker layout.
+ * Main icon picker modal with 3 tabs: Emoji | Custom | Upload
+ * Notion-style layout.
  */
 export class IconPickerModal extends Modal {
 	private activeTab: PickerTab = "emoji";
 	private tabContentEl!: HTMLElement;
 	private searchEl!: HTMLInputElement;
 	private searchBarEl!: HTMLElement;
-	private colorPickerEl: HTMLElement | null = null;
 	private onSelect: IconSelectCallback;
 	private currentPath: string;
-	private iconTab!: IconTab;
 
 	/** Tab renderers registered by each tab module */
 	private tabRenderers = new Map<PickerTab, TabRenderer>();
@@ -40,20 +49,18 @@ export class IconPickerModal extends Modal {
 		contentEl.empty();
 		contentEl.addClass(`${CSS_PREFIX}-picker`);
 
-		// Register built-in tabs
+		// Register tabs
 		this.registerTab("emoji", new EmojiTab(this.plugin, this));
-		this.iconTab = new IconTab(this.plugin, this);
-		this.registerTab("icons", this.iconTab);
+		this.registerTab("custom", new CustomTab(this.plugin, this));
 		this.registerTab("upload", new UploadTab(this.plugin, this));
 
 		this.buildHeader(contentEl);
 		this.buildSearchBar(contentEl);
 		this.buildTabContent(contentEl);
-		this.buildFooter(contentEl);
 
 		this.switchTab(this.activeTab);
 
-		// Keyboard navigation for grid items
+		// Keyboard navigation
 		this.scope.register([], "ArrowDown", (e) => this.navigateGrid(e, "down"));
 		this.scope.register([], "ArrowUp", (e) => this.navigateGrid(e, "up"));
 		this.scope.register([], "ArrowLeft", (e) => this.navigateGrid(e, "left"));
@@ -69,28 +76,23 @@ export class IconPickerModal extends Modal {
 		this.contentEl.empty();
 	}
 
-	/** Register a tab renderer (called by tab modules) */
 	registerTab(tab: PickerTab, renderer: TabRenderer) {
 		this.tabRenderers.set(tab, renderer);
 	}
 
-	/** Get the current search query */
 	getSearchQuery(): string {
 		return this.searchEl?.value ?? "";
 	}
 
-	/** Get the file/folder path this picker was opened for */
 	getTargetPath(): string {
 		return this.currentPath;
 	}
 
-	/** Notify the modal that an icon was picked */
 	selectIcon(icon: IconData) {
 		this.onSelect(icon);
 		this.close();
 	}
 
-	/** Notify the modal to remove the current icon */
 	removeIcon() {
 		this.onSelect(null);
 		this.close();
@@ -102,12 +104,7 @@ export class IconPickerModal extends Modal {
 		const header = parent.createDiv({ cls: `${CSS_PREFIX}-picker-header` });
 
 		const tabs = header.createDiv({ cls: `${CSS_PREFIX}-picker-tabs` });
-		const tabNames: { key: PickerTab; label: string }[] = [
-			{ key: "emoji", label: "Emoji" },
-			{ key: "icons", label: "Icons" },
-			{ key: "upload", label: "Upload" },
-		];
-		for (const { key, label } of tabNames) {
+		for (const { key, label } of TABS) {
 			const btn = tabs.createEl("button", {
 				text: label,
 				cls: `${CSS_PREFIX}-tab-btn`,
@@ -115,12 +112,6 @@ export class IconPickerModal extends Modal {
 			if (key === this.activeTab) btn.addClass("is-active");
 			btn.addEventListener("click", () => this.switchTab(key));
 		}
-
-		const removeBtn = header.createEl("button", {
-			text: "Remove",
-			cls: `${CSS_PREFIX}-remove-btn`,
-		});
-		removeBtn.addEventListener("click", () => this.removeIcon());
 	}
 
 	private buildSearchBar(parent: HTMLElement) {
@@ -139,8 +130,9 @@ export class IconPickerModal extends Modal {
 
 		const randomBtn = bar.createEl("button", {
 			cls: `${CSS_PREFIX}-random-btn`,
-			text: "🔀",
+			attr: { "aria-label": "Random", title: "Random" },
 		});
+		randomBtn.textContent = "\uD83C\uDFB2";
 		randomBtn.addEventListener("click", () => {
 			const renderer = this.tabRenderers.get(this.activeTab);
 			renderer?.onRandom?.();
@@ -151,23 +143,10 @@ export class IconPickerModal extends Modal {
 		this.tabContentEl = parent.createDiv({ cls: `${CSS_PREFIX}-picker-content` });
 	}
 
-	private buildFooter(parent: HTMLElement) {
-		const footer = parent.createDiv({ cls: `${CSS_PREFIX}-picker-footer` });
-
-		footer
-			.createEl("button", {
-				text: "Cancel",
-				cls: `${CSS_PREFIX}-cancel-btn`,
-			})
-			.addEventListener("click", () => this.close());
-	}
-
-	/** Navigate grid items with arrow keys */
 	private navigateGrid(e: KeyboardEvent, direction: "up" | "down" | "left" | "right") {
-		// Only navigate if search input is NOT focused
 		if (document.activeElement === this.searchEl) return;
 
-		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-icon-item`;
+		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-custom-item-btn`;
 		const items = Array.from(this.tabContentEl.querySelectorAll<HTMLElement>(gridSelector));
 		if (items.length === 0) return;
 
@@ -177,12 +156,10 @@ export class IconPickerModal extends Modal {
 		const currentIndex = items.indexOf(focused);
 
 		if (currentIndex === -1) {
-			// Nothing focused yet — focus first item
 			items[0].focus();
 			return;
 		}
 
-		// Calculate columns from grid layout
 		const grid = items[0].parentElement;
 		if (!grid) return;
 		const cols = Math.floor(grid.clientWidth / items[0].offsetWidth) || 1;
@@ -209,11 +186,10 @@ export class IconPickerModal extends Modal {
 		}
 	}
 
-	/** Activate (click) the currently focused grid item */
 	private activateFocused(e: KeyboardEvent) {
 		if (document.activeElement === this.searchEl) return;
 
-		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-icon-item`;
+		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-custom-item-btn`;
 		const items = Array.from(this.tabContentEl.querySelectorAll<HTMLElement>(gridSelector));
 		const focused = document.activeElement as HTMLElement;
 
@@ -228,20 +204,14 @@ export class IconPickerModal extends Modal {
 
 		// Update tab button active states
 		const buttons = this.contentEl.querySelectorAll(`.${CSS_PREFIX}-tab-btn`);
-		const tabKeys: PickerTab[] = ["emoji", "icons", "upload"];
 		buttons.forEach((btn, i) => {
-			btn.toggleClass("is-active", tabKeys[i] === tab);
+			btn.toggleClass("is-active", TABS[i].key === tab);
 		});
 
-		// Show/hide color picker based on tab
-		this.colorPickerEl?.remove();
-		this.colorPickerEl = null;
-		if (tab === "icons") {
-			const picker = new ColorPicker((color) => this.iconTab.setColor(color));
-			this.colorPickerEl = picker.render(this.searchBarEl);
-		}
+		// Show/hide search bar (hide for Upload tab)
+		this.searchBarEl.style.display = tab === "upload" ? "none" : "";
 
-		// Destroy previous tab renderer (cleanup timers etc.)
+		// Destroy previous tab renderers (cleanup timers)
 		for (const [key, r] of this.tabRenderers) {
 			if (key !== tab) r.destroy?.();
 		}
@@ -253,11 +223,6 @@ export class IconPickerModal extends Modal {
 		const renderer = this.tabRenderers.get(tab);
 		if (renderer) {
 			renderer.render(this.tabContentEl);
-		} else {
-			this.tabContentEl.createEl("p", {
-				text: `${tab} tab — coming soon`,
-				cls: `${CSS_PREFIX}-placeholder`,
-			});
 		}
 	}
 }

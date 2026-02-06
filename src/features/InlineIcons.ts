@@ -10,8 +10,11 @@ import type { MarkdownPostProcessorContext } from "obsidian";
 import type IconicaPlugin from "../main";
 import { getAllEmojis } from "../services/EmojiService";
 
-/** Regex to match :shortcode: patterns */
+/** Regex to match :shortcode: patterns (emoji + custom icon) */
 const SHORTCODE_REGEX = /:([\w+-]+):/g;
+
+/** Regex to match :iconica-ICONID: patterns specifically */
+const CUSTOM_ICON_REGEX = /^iconica-(.+)$/;
 
 /** Map of shortcode -> emoji character (built from emojibase) */
 const shortcodeMap = new Map<string, string>();
@@ -41,8 +44,30 @@ function resolveShortcode(code: string): string | null {
 	return null;
 }
 
-/** CM6 Widget that renders an inline icon */
-class InlineIconWidget extends WidgetType {
+/** Resolved inline icon info */
+interface ResolvedIcon {
+	type: "emoji" | "custom";
+	value: string; // emoji char or custom icon ID
+}
+
+/** Resolve a shortcode to either emoji or custom icon */
+function resolveInlineIcon(code: string, plugin: IconicaPlugin): ResolvedIcon | null {
+	// Check for custom icon pattern :iconica-ICONID:
+	const customMatch = code.match(CUSTOM_ICON_REGEX);
+	if (customMatch) {
+		const iconId = customMatch[1];
+		return { type: "custom", value: iconId };
+	}
+
+	// Check emoji shortcodes
+	const emoji = resolveShortcode(code);
+	if (emoji) return { type: "emoji", value: emoji };
+
+	return null;
+}
+
+/** CM6 Widget that renders an inline emoji */
+class InlineEmojiWidget extends WidgetType {
 	constructor(private display: string) {
 		super();
 	}
@@ -54,13 +79,43 @@ class InlineIconWidget extends WidgetType {
 		return span;
 	}
 
-	eq(other: InlineIconWidget): boolean {
+	eq(other: InlineEmojiWidget): boolean {
 		return this.display === other.display;
 	}
 }
 
+/** CM6 Widget that renders an inline custom icon image */
+class InlineCustomIconWidget extends WidgetType {
+	constructor(
+		private iconId: string,
+		private plugin: IconicaPlugin,
+	) {
+		super();
+	}
+
+	toDOM(): HTMLElement {
+		const span = document.createElement("span");
+		span.className = "iconica-inline-icon is-img";
+
+		const img = document.createElement("img");
+		const adapter = this.plugin.app.vault.adapter;
+		img.src = adapter.getResourcePath(
+			`${this.plugin.manifest.dir}/icons/${this.iconId}.png`,
+		);
+		img.alt = "";
+		img.width = 18;
+		img.height = 18;
+		span.appendChild(img);
+		return span;
+	}
+
+	eq(other: InlineCustomIconWidget): boolean {
+		return this.iconId === other.iconId;
+	}
+}
+
 /** Create the CM6 ViewPlugin for inline icon decoration */
-function createInlineIconPlugin() {
+function createInlineIconPlugin(plugin: IconicaPlugin) {
 	return ViewPlugin.fromClass(
 		class implements PluginValue {
 			decorations: DecorationSet;
@@ -82,13 +137,18 @@ function createInlineIconPlugin() {
 					const text = view.state.doc.sliceString(from, to);
 
 					for (const match of text.matchAll(SHORTCODE_REGEX)) {
-						const display = resolveShortcode(match[1]);
-						if (!display) continue;
+						const resolved = resolveInlineIcon(match[1], plugin);
+						if (!resolved) continue;
+
+						const widget =
+							resolved.type === "emoji"
+								? new InlineEmojiWidget(resolved.value)
+								: new InlineCustomIconWidget(resolved.value, plugin);
 
 						widgets.push({
 							from: from + match.index!,
 							to: from + match.index! + match[0].length,
-							deco: Decoration.replace({ widget: new InlineIconWidget(display) }),
+							deco: Decoration.replace({ widget }),
 						});
 					}
 				}
@@ -105,13 +165,14 @@ function createInlineIconPlugin() {
 
 /**
  * Registers inline icon support for both editor and reading mode.
+ * Supports emoji shortcodes (:smile:) and custom icons (:iconica-ICONID:).
  */
 export class InlineIcons {
 	constructor(private plugin: IconicaPlugin) {}
 
 	enable() {
 		// Editor mode: CM6 extension
-		this.plugin.registerEditorExtension([createInlineIconPlugin()]);
+		this.plugin.registerEditorExtension([createInlineIconPlugin(this.plugin)]);
 
 		// Reading mode: Markdown post processor
 		this.plugin.registerMarkdownPostProcessor(
@@ -126,18 +187,18 @@ export class InlineIcons {
 
 		const replacements: {
 			node: Text;
-			matches: { index: number; length: number; display: string }[];
+			matches: { index: number; length: number; resolved: ResolvedIcon }[];
 		}[] = [];
 
 		let textNode = walker.nextNode() as Text | null;
 		while (textNode) {
 			const text = textNode.textContent ?? "";
-			const matches: { index: number; length: number; display: string }[] = [];
+			const matches: { index: number; length: number; resolved: ResolvedIcon }[] = [];
 
 			for (const match of text.matchAll(SHORTCODE_REGEX)) {
-				const display = resolveShortcode(match[1]);
-				if (display) {
-					matches.push({ index: match.index!, length: match[0].length, display });
+				const resolved = resolveInlineIcon(match[1], this.plugin);
+				if (resolved) {
+					matches.push({ index: match.index!, length: match[0].length, resolved });
 				}
 			}
 
@@ -159,10 +220,27 @@ export class InlineIcons {
 				if (m.index > lastIndex) {
 					fragment.appendChild(document.createTextNode(text.slice(lastIndex, m.index)));
 				}
-				const span = document.createElement("span");
-				span.className = "iconica-inline-icon";
-				span.textContent = m.display;
-				fragment.appendChild(span);
+
+				if (m.resolved.type === "emoji") {
+					const span = document.createElement("span");
+					span.className = "iconica-inline-icon";
+					span.textContent = m.resolved.value;
+					fragment.appendChild(span);
+				} else {
+					const span = document.createElement("span");
+					span.className = "iconica-inline-icon is-img";
+					const img = document.createElement("img");
+					const adapter = this.plugin.app.vault.adapter;
+					img.src = adapter.getResourcePath(
+						`${this.plugin.manifest.dir}/icons/${m.resolved.value}.png`,
+					);
+					img.alt = "";
+					img.width = 18;
+					img.height = 18;
+					span.appendChild(img);
+					fragment.appendChild(span);
+				}
+
 				lastIndex = m.index + m.length;
 			}
 

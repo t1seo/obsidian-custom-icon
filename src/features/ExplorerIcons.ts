@@ -2,7 +2,6 @@ import { CSS_PREFIX, EXPLORER_ICON_SIZE } from "../constants";
 import type IconicaPlugin from "../main";
 import { createSvgElement, getIcon } from "../services/IconifyService";
 import type { IconData } from "../types";
-import { onThemeChange } from "../utils/theme";
 
 /**
  * Injects custom icons into the file explorer.
@@ -10,7 +9,6 @@ import { onThemeChange } from "../utils/theme";
  */
 export class ExplorerIcons {
 	private observer: MutationObserver | null = null;
-	private themeObserver: MutationObserver | null = null;
 	private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(private plugin: IconicaPlugin) {}
@@ -19,11 +17,6 @@ export class ExplorerIcons {
 	enable() {
 		this.applyAllIcons();
 		this.startObserver();
-
-		// Re-apply custom icons when theme changes (light/dark image swap)
-		this.themeObserver = onThemeChange(() => {
-			this.refresh();
-		});
 
 		// Re-apply when layout changes (e.g. file explorer opens)
 		this.plugin.registerEvent(
@@ -58,8 +51,6 @@ export class ExplorerIcons {
 	/** Stop observing and remove all injected icons */
 	disable() {
 		this.stopObserver();
-		this.themeObserver?.disconnect();
-		this.themeObserver = null;
 		if (this.debounceTimer) clearTimeout(this.debounceTimer);
 		this.removeAllIcons();
 	}
@@ -75,10 +66,33 @@ export class ExplorerIcons {
 		const el = this.findExplorerItem(path);
 		if (!el) return;
 
-		this.removeIconFromEl(el);
+		const isFolder = el.classList.contains("nav-folder-title");
+
+		// Remove existing custom icon if present (allows icon changes)
+		const existing = el.querySelector(`.${CSS_PREFIX}-explorer-icon`);
+		if (existing) existing.remove();
+
 		const iconEl = this.createIconElement(icon);
-		if (iconEl) {
+		if (!iconEl) return;
+
+		if (isFolder) {
+			// For folders: .tree-item-icon IS the collapse chevron — never hide it.
+			// Insert our icon after the collapse indicator.
+			const collapseEl =
+				el.querySelector(":scope > .nav-folder-collapse-indicator") ??
+				el.querySelector(":scope > .tree-item-icon");
+			if (collapseEl) {
+				collapseEl.after(iconEl);
+			} else {
+				el.insertBefore(iconEl, el.firstChild);
+			}
+		} else {
+			// For files: insert before everything and hide default icon
 			el.insertBefore(iconEl, el.firstChild);
+			const defaultIcon = el.querySelector(":scope > .tree-item-icon");
+			if (defaultIcon instanceof HTMLElement) {
+				defaultIcon.style.display = "none";
+			}
 		}
 	}
 
@@ -92,7 +106,17 @@ export class ExplorerIcons {
 
 	private removeAllIcons() {
 		const icons = document.querySelectorAll(`.${CSS_PREFIX}-explorer-icon`);
-		icons.forEach((el) => el.remove());
+		icons.forEach((el) => {
+			const parent = el.parentElement;
+			if (parent) {
+				// Restore hidden default icon (for both files and folders)
+				const treeIcon = parent.querySelector(":scope > .tree-item-icon");
+				if (treeIcon instanceof HTMLElement) {
+					treeIcon.style.display = "";
+				}
+			}
+			el.remove();
+		});
 	}
 
 	private startObserver() {
@@ -102,10 +126,19 @@ export class ExplorerIcons {
 		this.observer = new MutationObserver((mutations) => {
 			let needsUpdate = false;
 			for (const mutation of mutations) {
-				if (mutation.addedNodes.length > 0) {
+				for (let i = 0; i < mutation.addedNodes.length; i++) {
+					const node = mutation.addedNodes[i];
+					// Skip our own icon insertions to avoid infinite loop
+					if (node instanceof Element && node.closest(`.${CSS_PREFIX}-explorer-icon`)) {
+						continue;
+					}
+					if (node.parentElement?.closest(`.${CSS_PREFIX}-explorer-icon`)) {
+						continue;
+					}
 					needsUpdate = true;
 					break;
 				}
+				if (needsUpdate) break;
 			}
 			if (needsUpdate) {
 				// Debounce rapid DOM changes (e.g. expanding folders)
@@ -163,8 +196,7 @@ export class ExplorerIcons {
 				const img = document.createElement("img");
 				img.width = EXPLORER_ICON_SIZE;
 				img.height = EXPLORER_ICON_SIZE;
-				const isDark = document.body.classList.contains("theme-dark");
-				img.src = this.getCustomIconPath(icon.value, isDark);
+				img.src = this.getCustomIconPath(icon.value);
 				img.alt = "";
 				wrapper.appendChild(img);
 				wrapper.dataset.iconicaActive = "true";
@@ -210,10 +242,9 @@ export class ExplorerIcons {
 		return svg;
 	}
 
-	private getCustomIconPath(iconId: string, isDark: boolean): string {
-		const variant = isDark ? "dark" : "light";
+	private getCustomIconPath(iconId: string): string {
 		const adapter = this.plugin.app.vault.adapter;
-		const basePath = `${this.plugin.manifest.dir}/icons/${iconId}-${variant}.png`;
+		const basePath = `${this.plugin.manifest.dir}/icons/${iconId}.png`;
 		return adapter.getResourcePath(basePath);
 	}
 }

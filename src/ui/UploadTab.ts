@@ -1,12 +1,16 @@
-import { CSS_PREFIX } from "../constants";
+import { CSS_PREFIX, ICONS_DIR } from "../constants";
 import type IconicaPlugin from "../main";
 import { type ProcessedImage, processImage } from "../services/ImageProcessor";
 import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
 
+/**
+ * Upload tab: drag-and-drop or file picker to upload a custom icon image.
+ * Processes the image for light/dark mode variants, saves to library.
+ */
 export class UploadTab implements TabRenderer {
 	private container!: HTMLElement;
 	private processedImage: ProcessedImage | null = null;
-	private addToLibrary = false;
+	private pasteHandler: ((e: ClipboardEvent) => void) | null = null;
 
 	constructor(
 		private plugin: IconicaPlugin,
@@ -19,19 +23,31 @@ export class UploadTab implements TabRenderer {
 		this.renderUploadZone();
 	}
 
+	destroy(): void {
+		if (this.pasteHandler) {
+			document.removeEventListener("paste", this.pasteHandler);
+			this.pasteHandler = null;
+		}
+	}
+
 	// ─── Private ────────────────────────────────────
 
 	private renderUploadZone() {
 		const zone = this.container.createDiv({ cls: `${CSS_PREFIX}-upload-zone` });
 
-		zone.createDiv({ text: "\uD83D\uDDBC\uFE0F", cls: `${CSS_PREFIX}-upload-zone-icon` });
-		zone.createDiv({ text: "Upload an image", cls: `${CSS_PREFIX}-upload-zone-text` });
+		const iconDiv = zone.createDiv({ cls: `${CSS_PREFIX}-upload-zone-icon` });
+		iconDiv.textContent = "\uD83D\uDCC1";
+
 		zone.createDiv({
-			text: "or \u2318+V to paste an image or link",
+			text: "Click to upload or drag an image",
+			cls: `${CSS_PREFIX}-upload-zone-text`,
+		});
+		zone.createDiv({
+			text: "PNG, JPG, SVG \u00B7 Cmd+V to paste",
 			cls: `${CSS_PREFIX}-upload-zone-hint`,
 		});
 
-		// Click to open file picker
+		// Click
 		zone.addEventListener("click", () => this.openFilePicker());
 
 		// Drag & drop
@@ -52,10 +68,9 @@ export class UploadTab implements TabRenderer {
 		});
 
 		// Paste handler
-		const pasteHandler = (e: ClipboardEvent) => {
+		this.pasteHandler = (e: ClipboardEvent) => {
 			const items = e.clipboardData?.items;
 			if (!items) return;
-
 			for (const item of Array.from(items)) {
 				if (item.type.startsWith("image/")) {
 					const file = item.getAsFile();
@@ -67,14 +82,7 @@ export class UploadTab implements TabRenderer {
 				}
 			}
 		};
-		document.addEventListener("paste", pasteHandler);
-
-		// Cleanup paste handler when modal closes
-		const originalClose = this.modal.onClose.bind(this.modal);
-		this.modal.onClose = () => {
-			document.removeEventListener("paste", pasteHandler);
-			originalClose();
-		};
+		document.addEventListener("paste", this.pasteHandler);
 	}
 
 	private openFilePicker() {
@@ -91,14 +99,14 @@ export class UploadTab implements TabRenderer {
 	private async handleFile(file: File) {
 		this.container.empty();
 		this.container.createEl("p", {
-			text: "Processing...",
+			text: "Processing image...",
 			cls: `${CSS_PREFIX}-placeholder`,
 		});
 
 		try {
 			this.processedImage = await processImage(file);
 			this.container.empty();
-			this.renderPreview();
+			this.renderPreview(file.name.replace(/\.[^.]+$/, ""));
 		} catch {
 			this.container.empty();
 			this.container.createEl("p", {
@@ -108,115 +116,116 @@ export class UploadTab implements TabRenderer {
 		}
 	}
 
-	private renderPreview() {
+	private renderPreview(defaultName: string) {
 		if (!this.processedImage) return;
 
+		// Preview section
 		const section = this.container.createDiv({ cls: `${CSS_PREFIX}-preview-section` });
-		section.createDiv({ text: "Preview", cls: `${CSS_PREFIX}-preview-label` });
 
 		const row = section.createDiv({ cls: `${CSS_PREFIX}-preview-row` });
 
-		// Light preview
-		const lightCard = row.createDiv({
-			cls: `${CSS_PREFIX}-preview-card is-light`,
-		});
-		const lightImg = lightCard.createEl("img");
-		lightImg.src = this.processedImage.lightDataUrl;
-		lightImg.alt = "Light mode";
+		// Sidebar preview
+		const sidebarCol = row.createDiv({ cls: `${CSS_PREFIX}-preview-col` });
+		const sidebarCard = sidebarCol.createDiv({ cls: `${CSS_PREFIX}-preview-card is-sidebar` });
+		const sidebarImg = sidebarCard.createEl("img");
+		sidebarImg.src = this.processedImage.dataUrl;
+		sidebarImg.alt = "Sidebar";
+		sidebarCol.createDiv({ text: "Sidebar", cls: `${CSS_PREFIX}-preview-card-label` });
 
-		// Dark preview
-		const darkCard = row.createDiv({
-			cls: `${CSS_PREFIX}-preview-card is-dark`,
-		});
-		const darkImg = darkCard.createEl("img");
-		darkImg.src = this.processedImage.darkDataUrl;
-		darkImg.alt = "Dark mode";
+		// Editor preview
+		const editorCol = row.createDiv({ cls: `${CSS_PREFIX}-preview-col` });
+		const editorCard = editorCol.createDiv({ cls: `${CSS_PREFIX}-preview-card is-editor` });
+		const editorImg = editorCard.createEl("img");
+		editorImg.src = this.processedImage.dataUrl;
+		editorImg.alt = "Editor";
+		editorCol.createDiv({ text: "Editor", cls: `${CSS_PREFIX}-preview-card-label` });
 
-		// Add to library checkbox
-		const checkboxLabel = this.container.createDiv({ cls: `${CSS_PREFIX}-library-checkbox` });
-		const checkbox = checkboxLabel.createEl("input", { type: "checkbox" });
-		checkbox.checked = this.addToLibrary;
+		// Bottom bar: checkbox left, buttons right
+		const bottomBar = this.container.createDiv({ cls: `${CSS_PREFIX}-upload-bottom` });
+
+		// Left: checkbox + name input
+		const leftGroup = bottomBar.createDiv({ cls: `${CSS_PREFIX}-upload-bottom-left` });
+
+		const checkboxRow = leftGroup.createDiv({ cls: `${CSS_PREFIX}-upload-checkbox-row` });
+		const checkbox = checkboxRow.createEl("input", {
+			type: "checkbox",
+			cls: `${CSS_PREFIX}-upload-checkbox`,
+		});
+		checkbox.id = "iconica-save-to-library";
+		checkboxRow.createEl("label", {
+			text: "Save to library",
+			cls: `${CSS_PREFIX}-upload-checkbox-label`,
+			attr: { for: "iconica-save-to-library" },
+		});
+
+		const nameGroup = leftGroup.createDiv({ cls: `${CSS_PREFIX}-upload-name-group` });
+		nameGroup.style.display = "none";
+		const nameInput = nameGroup.createEl("input", {
+			type: "text",
+			placeholder: "Icon name",
+			cls: `${CSS_PREFIX}-upload-name-input`,
+			value: defaultName,
+		});
+		nameInput.value = defaultName;
+
 		checkbox.addEventListener("change", () => {
-			this.addToLibrary = checkbox.checked;
+			nameGroup.style.display = checkbox.checked ? "" : "none";
 		});
-		checkboxLabel.createSpan({ text: "Add to workspace icon library" });
 
-		// Save button
-		const footer = this.container.createDiv({
-			cls: `${CSS_PREFIX}-picker-footer`,
-			attr: { style: "border-top: none; padding-top: 8px;" },
-		});
-		footer
+		// Right: buttons
+		const actions = bottomBar.createDiv({ cls: `${CSS_PREFIX}-upload-actions` });
+
+		actions
 			.createEl("button", {
-				text: "Cancel",
+				text: "Back",
 				cls: `${CSS_PREFIX}-cancel-btn`,
 			})
-			.addEventListener("click", () => this.modal.close());
+			.addEventListener("click", () => {
+				this.container.empty();
+				this.processedImage = null;
+				this.renderUploadZone();
+			});
 
-		const saveBtn = footer.createEl("button", {
-			text: "Save",
-			cls: `${CSS_PREFIX}-save-btn`,
-		});
-		saveBtn.addEventListener("click", () => this.save());
+		actions
+			.createEl("button", {
+				text: "Apply",
+				cls: `${CSS_PREFIX}-save-btn`,
+			})
+			.addEventListener("click", () => {
+				const saveToLibrary = checkbox.checked;
+				const name = nameInput.value.trim() || defaultName;
+				this.applyIcon(name, saveToLibrary);
+			});
 	}
 
-	private async save() {
+	private async applyIcon(name: string, saveToLibrary: boolean) {
 		if (!this.processedImage) return;
 
 		const id = `custom-${Date.now()}`;
 		const adapter = this.plugin.app.vault.adapter;
 		const pluginDir = this.plugin.manifest.dir!;
-		const iconsDir = `${pluginDir}/icons`;
+		const iconsDir = `${pluginDir}/${ICONS_DIR}`;
 
 		// Ensure icons directory exists
 		if (!(await adapter.exists(iconsDir))) {
 			await adapter.mkdir(iconsDir);
 		}
 
-		// Write light and dark images
-		await adapter.writeBinary(`${iconsDir}/${id}-light.png`, this.processedImage.lightData);
-		await adapter.writeBinary(`${iconsDir}/${id}-dark.png`, this.processedImage.darkData);
-
-		// Set the icon on the target file/folder
-		this.modal.selectIcon({ type: "custom", value: id });
+		// Write single transparent image
+		await adapter.writeBinary(`${iconsDir}/${id}.png`, this.processedImage.data);
 
 		// Optionally add to library
-		if (this.addToLibrary) {
-			await this.addToIconLibrary(id);
-		}
-	}
-
-	private async addToIconLibrary(id: string) {
-		const adapter = this.plugin.app.vault.adapter;
-		const pluginDir = this.plugin.manifest.dir!;
-		const libraryPath = `${pluginDir}/icon-library.json`;
-
-		let library: {
-			icons: {
-				id: string;
-				name: string;
-				lightPath: string;
-				darkPath: string;
-				createdAt: number;
-				tags: string[];
-			}[];
-		} = { icons: [] };
-		try {
-			const raw = await adapter.read(libraryPath);
-			library = JSON.parse(raw);
-		} catch {
-			// File doesn't exist yet
+		if (saveToLibrary) {
+			await this.plugin.iconLibrary.add({
+				id,
+				name,
+				path: `${ICONS_DIR}/${id}.png`,
+				createdAt: Date.now(),
+				tags: [],
+			});
 		}
 
-		library.icons.push({
-			id,
-			name: id,
-			lightPath: `icons/${id}-light.png`,
-			darkPath: `icons/${id}-dark.png`,
-			createdAt: Date.now(),
-			tags: [],
-		});
-
-		await adapter.write(libraryPath, JSON.stringify(library, null, "\t"));
+		// Apply icon immediately
+		this.modal.selectIcon({ type: "custom", value: id });
 	}
 }
