@@ -1,5 +1,6 @@
 import { CSS_PREFIX, EXPLORER_ICON_SIZE } from "../constants";
 import type IconicaPlugin from "../main";
+import { createSvgElement, getIcon } from "../services/IconifyService";
 import type { IconData } from "../types";
 
 /**
@@ -138,6 +139,8 @@ export class ExplorerIcons {
 				wrapper.classList.add("is-svg");
 				wrapper.appendChild(this.createPlaceholderSvg(icon));
 				wrapper.dataset.iconicaActive = "true";
+				// Async: load actual SVG and replace placeholder
+				this.loadIconifySvg(wrapper, icon);
 				break;
 			}
 			case "custom": {
@@ -159,10 +162,17 @@ export class ExplorerIcons {
 		return wrapper;
 	}
 
-	/**
-	 * Create a placeholder SVG element for Iconify icons.
-	 * Will be replaced with actual SVG by IconifyService (Task #7).
-	 */
+	/** Load actual Iconify SVG and replace the placeholder */
+	private async loadIconifySvg(wrapper: HTMLElement, icon: IconData) {
+		const iconData = await getIcon(icon.value);
+		if (!iconData) return;
+
+		const svg = createSvgElement(iconData, EXPLORER_ICON_SIZE, icon.color);
+		wrapper.empty();
+		wrapper.appendChild(svg);
+	}
+
+	/** Create a placeholder SVG while Iconify data loads */
 	private createPlaceholderSvg(icon: IconData): SVGElement {
 		const size = EXPLORER_ICON_SIZE;
 		const color = icon.color ?? "currentColor";

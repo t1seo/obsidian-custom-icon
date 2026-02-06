@@ -2,7 +2,9 @@ import { type App, Modal } from "obsidian";
 import { CSS_PREFIX } from "../constants";
 import type IconicaPlugin from "../main";
 import type { IconData, IconSelectCallback, PickerTab } from "../types";
+import { ColorPicker } from "./ColorPicker";
 import { EmojiTab } from "./EmojiTab";
+import { IconTab } from "./IconTab";
 
 /**
  * Main icon picker modal with 3 tabs: Emoji | Icons | Upload
@@ -12,8 +14,11 @@ export class IconPickerModal extends Modal {
 	private activeTab: PickerTab = "emoji";
 	private tabContentEl!: HTMLElement;
 	private searchEl!: HTMLInputElement;
+	private searchBarEl!: HTMLElement;
+	private colorPickerEl: HTMLElement | null = null;
 	private onSelect: IconSelectCallback;
 	private currentPath: string;
+	private iconTab!: IconTab;
 
 	/** Tab renderers registered by each tab module */
 	private tabRenderers = new Map<PickerTab, TabRenderer>();
@@ -36,6 +41,8 @@ export class IconPickerModal extends Modal {
 
 		// Register built-in tabs
 		this.registerTab("emoji", new EmojiTab(this.plugin, this));
+		this.iconTab = new IconTab(this.plugin, this);
+		this.registerTab("icons", this.iconTab);
 
 		this.buildHeader(contentEl);
 		this.buildSearchBar(contentEl);
@@ -105,6 +112,7 @@ export class IconPickerModal extends Modal {
 
 	private buildSearchBar(parent: HTMLElement) {
 		const bar = parent.createDiv({ cls: `${CSS_PREFIX}-picker-search` });
+		this.searchBarEl = bar;
 
 		this.searchEl = bar.createEl("input", {
 			type: "text",
@@ -150,6 +158,14 @@ export class IconPickerModal extends Modal {
 		buttons.forEach((btn, i) => {
 			btn.toggleClass("is-active", tabKeys[i] === tab);
 		});
+
+		// Show/hide color picker based on tab
+		this.colorPickerEl?.remove();
+		this.colorPickerEl = null;
+		if (tab === "icons") {
+			const picker = new ColorPicker((color) => this.iconTab.setColor(color));
+			this.colorPickerEl = picker.render(this.searchBarEl);
+		}
 
 		// Clear and re-render tab content
 		this.tabContentEl.empty();
