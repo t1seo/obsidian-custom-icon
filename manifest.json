@@ -1,0 +1,10 @@
+{
+	"id": "iconica",
+	"name": "Iconica",
+	"version": "0.1.0",
+	"minAppVersion": "1.4.0",
+	"description": "Notion-style custom icon system. Add emojis, icons, and custom images to files and folders.",
+	"author": "t1seo",
+	"authorUrl": "https://github.com/t1seo",
+	"isDesktopOnly": false
+}

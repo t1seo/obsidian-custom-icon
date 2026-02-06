@@ -1,0 +1,31 @@
+{
+	"name": "iconica",
+	"version": "0.1.0",
+	"description": "Notion-style custom icon system for Obsidian. Add emojis, icons, and custom images to files and folders.",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"lint": "biome check src/",
+		"lint:fix": "biome check --write src/",
+		"format": "biome format --write src/"
+	},
+	"keywords": [
+		"obsidian",
+		"plugin",
+		"icon",
+		"emoji",
+		"custom-icon"
+	],
+	"author": "t1seo",
+	"license": "MIT",
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.0",
+		"@types/node": "^22.0.0",
+		"builtin-modules": "^4.0.0",
+		"esbuild": "^0.24.0",
+		"obsidian": "latest",
+		"tslib": "^2.7.0",
+		"typescript": "^5.6.0"
+	}
+}

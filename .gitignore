@@ -1,0 +1,30 @@
+# Build output
+main.js
+*.js.map
+
+# Node
+node_modules/
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Planning & Internal docs
+docs/planning/
+
+# Obsidian
+data.json
+icon-library.json
+icons/
+
+# Environment
+.env
+.env.*
+
+# OS
+Thumbs.db
