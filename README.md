@@ -78,7 +78,7 @@ If you encounter any issues or have feature requests, please [open an issue](htt
 
 If you find this plugin useful, consider buying me a coffee!
 
-<a href="https://buymeacoffee.com/taewonseo"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=taewonseo&button_colour=483699&font_colour=ffffff&font_family=Inter&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
+<a href="https://buymeacoffee.com/taewonseo"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" height="40" /></a>
 
 ## License
 
