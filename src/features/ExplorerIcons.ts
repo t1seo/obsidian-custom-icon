@@ -2,13 +2,15 @@ import { CSS_PREFIX, EXPLORER_ICON_SIZE } from "../constants";
 import type IconicaPlugin from "../main";
 import { createSvgElement, getIcon } from "../services/IconifyService";
 import type { IconData } from "../types";
+import { onThemeChange } from "../utils/theme";
 
 /**
  * Injects custom icons into the file explorer.
- * Watches for DOM changes to re-apply icons when the explorer updates.
+ * Watches for DOM changes and theme switches to keep icons in sync.
  */
 export class ExplorerIcons {
 	private observer: MutationObserver | null = null;
+	private themeObserver: MutationObserver | null = null;
 
 	constructor(private plugin: IconicaPlugin) {}
 
@@ -16,6 +18,11 @@ export class ExplorerIcons {
 	enable() {
 		this.applyAllIcons();
 		this.startObserver();
+
+		// Re-apply custom icons when theme changes (light/dark image swap)
+		this.themeObserver = onThemeChange(() => {
+			this.refresh();
+		});
 
 		// Re-apply when layout changes (e.g. file explorer opens)
 		this.plugin.registerEvent(
@@ -50,6 +57,8 @@ export class ExplorerIcons {
 	/** Stop observing and remove all injected icons */
 	disable() {
 		this.stopObserver();
+		this.themeObserver?.disconnect();
+		this.themeObserver = null;
 		this.removeAllIcons();
 	}
 
