@@ -9,13 +9,14 @@ npm-debug.log*
 # IDE
 .idea/
 .vscode/
+CLAUDE.md
 *.swp
 *.swo
 *~
 .DS_Store
 
-# Planning & Internal docs
-docs/planning/
+# Docs & Planning
+docs/
 
 # Obsidian
 data.json
@@ -24,6 +25,9 @@ icons/
 
 # Sample icons (for screenshots only)
 assets/sample_icons/
+
+# Test coverage
+coverage/
 
 # Environment
 .env

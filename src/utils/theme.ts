@@ -9,13 +9,8 @@ export function isDarkMode(): boolean {
 
 /** Listen for Obsidian theme changes */
 export function onThemeChange(callback: (isDark: boolean) => void): MutationObserver {
-	const observer = new MutationObserver((mutations) => {
-		for (const mutation of mutations) {
-			if (mutation.type === "attributes" && mutation.attributeName === "class") {
-				callback(isDarkMode());
-				break;
-			}
-		}
+	const observer = new MutationObserver(() => {
+		callback(isDarkMode());
 	});
 
 	observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
