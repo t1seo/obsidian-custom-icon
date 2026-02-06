@@ -62,7 +62,7 @@
 1. [Releases](https://github.com/t1seo/obsidian-custom-icon/releases)에서 최신 릴리스 다운로드
 2. `main.js`, `manifest.json`, `styles.css`를 다음 경로에 압축 해제:
    ```
-   <볼트>/.obsidian/plugins/obsidian-custom-icon/
+   <볼트>/.obsidian/plugins/custom-icon/
    ```
 3. **설정** > **커뮤니티 플러그인**에서 플러그인 활성화
 

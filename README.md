@@ -62,7 +62,7 @@ Use `:custom-icon-NAME:` shortcodes to embed icons directly in your notes.
 1. Download the latest release from [Releases](https://github.com/t1seo/obsidian-custom-icon/releases)
 2. Extract `main.js`, `manifest.json`, and `styles.css` into:
    ```
-   <vault>/.obsidian/plugins/obsidian-custom-icon/
+   <vault>/.obsidian/plugins/custom-icon/
    ```
 3. Enable the plugin in **Settings** > **Community plugins**
 
