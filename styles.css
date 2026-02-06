@@ -428,3 +428,12 @@
 .iconica-save-btn:hover {
 	opacity: 0.9;
 }
+
+/* ─── Inline Icons ─── */
+
+.iconica-inline-icon {
+	display: inline;
+	font-size: 1em;
+	line-height: 1;
+	vertical-align: baseline;
+}

@@ -2,6 +2,7 @@ import { Plugin } from "obsidian";
 import { DEFAULT_SETTINGS } from "./constants";
 import { ContextMenu } from "./features/ContextMenu";
 import { ExplorerIcons } from "./features/ExplorerIcons";
+import { InlineIcons } from "./features/InlineIcons";
 import { TabIcons } from "./features/TabIcons";
 import { TitleIcons } from "./features/TitleIcons";
 import { IconLibraryService } from "./services/IconLibraryService";
@@ -46,6 +47,11 @@ export default class IconicaPlugin extends Plugin {
 			this.app.workspace.onLayoutReady(() => {
 				this.titleIcons.enable();
 			});
+		}
+
+		// Inline icons
+		if (this.settings.enableInlineIcons) {
+			new InlineIcons(this).enable();
 		}
 
 		// Context menu & commands
