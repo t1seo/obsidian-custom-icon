@@ -1,9 +1,9 @@
 # Obsidian Custom Icon
 
 <p align="center">
-  <a href="https://github.com/t1seo/obsidian-plugin-iconica/releases"><img src="https://img.shields.io/github/downloads/t1seo/obsidian-plugin-iconica/total?style=flat-square&color=573E7A" alt="Downloads" /></a>
-  <a href="https://github.com/t1seo/obsidian-plugin-iconica/releases/latest"><img src="https://img.shields.io/github/v/release/t1seo/obsidian-plugin-iconica?style=flat-square&color=573E7A" alt="Release" /></a>
-  <a href="https://github.com/t1seo/obsidian-plugin-iconica/releases/latest"><img src="https://img.shields.io/github/release-date/t1seo/obsidian-plugin-iconica?style=flat-square&color=573E7A" alt="Release Date" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases"><img src="https://img.shields.io/github/downloads/t1seo/obsidian-custom-icon/total?style=flat-square&color=573E7A" alt="Downloads" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/v/release/t1seo/obsidian-custom-icon?style=flat-square&color=573E7A" alt="Release" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/release-date/t1seo/obsidian-custom-icon?style=flat-square&color=573E7A" alt="Release Date" /></a>
   <a href="./README.md"><img src="https://img.shields.io/badge/lang-English-blue?style=flat-square" alt="English" /></a>
 </p>
 
@@ -59,7 +59,7 @@
 
 ### 수동 설치
 
-1. [Releases](https://github.com/t1seo/obsidian-plugin-iconica/releases)에서 최신 릴리스 다운로드
+1. [Releases](https://github.com/t1seo/obsidian-custom-icon/releases)에서 최신 릴리스 다운로드
 2. `main.js`, `manifest.json`, `styles.css`를 다음 경로에 압축 해제:
    ```
    <볼트>/.obsidian/plugins/obsidian-custom-icon/
@@ -74,7 +74,7 @@
 
 ## 지원
 
-문제가 발생하거나 기능 요청이 있으면 [이슈를 등록](https://github.com/t1seo/obsidian-plugin-iconica/issues)해주세요.
+문제가 발생하거나 기능 요청이 있으면 [이슈를 등록](https://github.com/t1seo/obsidian-custom-icon/issues)해주세요.
 
 ## 라이선스
 

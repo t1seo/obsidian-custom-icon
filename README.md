@@ -1,9 +1,9 @@
 # Obsidian Custom Icon
 
 <p align="center">
-  <a href="https://github.com/t1seo/obsidian-plugin-iconica/releases"><img src="https://img.shields.io/github/downloads/t1seo/obsidian-plugin-iconica/total?style=flat-square&color=573E7A" alt="Downloads" /></a>
-  <a href="https://github.com/t1seo/obsidian-plugin-iconica/releases/latest"><img src="https://img.shields.io/github/v/release/t1seo/obsidian-plugin-iconica?style=flat-square&color=573E7A" alt="Release" /></a>
-  <a href="https://github.com/t1seo/obsidian-plugin-iconica/releases/latest"><img src="https://img.shields.io/github/release-date/t1seo/obsidian-plugin-iconica?style=flat-square&color=573E7A" alt="Release Date" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases"><img src="https://img.shields.io/github/downloads/t1seo/obsidian-custom-icon/total?style=flat-square&color=573E7A" alt="Downloads" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/v/release/t1seo/obsidian-custom-icon?style=flat-square&color=573E7A" alt="Release" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/release-date/t1seo/obsidian-custom-icon?style=flat-square&color=573E7A" alt="Release Date" /></a>
   <a href="./README.ko.md"><img src="https://img.shields.io/badge/lang-한국어-blue?style=flat-square" alt="한국어" /></a>
 </p>
 
@@ -59,7 +59,7 @@ Use `:custom-icon-NAME:` shortcodes to embed icons directly in your notes.
 
 ### Manual Installation
 
-1. Download the latest release from [Releases](https://github.com/t1seo/obsidian-plugin-iconica/releases)
+1. Download the latest release from [Releases](https://github.com/t1seo/obsidian-custom-icon/releases)
 2. Extract `main.js`, `manifest.json`, and `styles.css` into:
    ```
    <vault>/.obsidian/plugins/obsidian-custom-icon/
@@ -74,7 +74,7 @@ Use `:custom-icon-NAME:` shortcodes to embed icons directly in your notes.
 
 ## Support
 
-If you encounter any issues or have feature requests, please [open an issue](https://github.com/t1seo/obsidian-plugin-iconica/issues).
+If you encounter any issues or have feature requests, please [open an issue](https://github.com/t1seo/obsidian-custom-icon/issues).
 
 ## License
 
