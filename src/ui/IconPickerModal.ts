@@ -52,9 +52,20 @@ export class IconPickerModal extends Modal {
 		this.buildFooter(contentEl);
 
 		this.switchTab(this.activeTab);
+
+		// Keyboard navigation for grid items
+		this.scope.register([], "ArrowDown", (e) => this.navigateGrid(e, "down"));
+		this.scope.register([], "ArrowUp", (e) => this.navigateGrid(e, "up"));
+		this.scope.register([], "ArrowLeft", (e) => this.navigateGrid(e, "left"));
+		this.scope.register([], "ArrowRight", (e) => this.navigateGrid(e, "right"));
+		this.scope.register([], "Enter", (e) => this.activateFocused(e));
 	}
 
 	onClose() {
+		for (const renderer of this.tabRenderers.values()) {
+			renderer.destroy?.();
+		}
+		this.tabRenderers.clear();
 		this.contentEl.empty();
 	}
 
@@ -151,6 +162,67 @@ export class IconPickerModal extends Modal {
 			.addEventListener("click", () => this.close());
 	}
 
+	/** Navigate grid items with arrow keys */
+	private navigateGrid(e: KeyboardEvent, direction: "up" | "down" | "left" | "right") {
+		// Only navigate if search input is NOT focused
+		if (document.activeElement === this.searchEl) return;
+
+		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-icon-item`;
+		const items = Array.from(this.tabContentEl.querySelectorAll<HTMLElement>(gridSelector));
+		if (items.length === 0) return;
+
+		e.preventDefault();
+
+		const focused = document.activeElement as HTMLElement;
+		const currentIndex = items.indexOf(focused);
+
+		if (currentIndex === -1) {
+			// Nothing focused yet — focus first item
+			items[0].focus();
+			return;
+		}
+
+		// Calculate columns from grid layout
+		const grid = items[0].parentElement;
+		if (!grid) return;
+		const cols = Math.floor(grid.clientWidth / items[0].offsetWidth) || 1;
+
+		let nextIndex = currentIndex;
+		switch (direction) {
+			case "left":
+				nextIndex = Math.max(0, currentIndex - 1);
+				break;
+			case "right":
+				nextIndex = Math.min(items.length - 1, currentIndex + 1);
+				break;
+			case "up":
+				nextIndex = Math.max(0, currentIndex - cols);
+				break;
+			case "down":
+				nextIndex = Math.min(items.length - 1, currentIndex + cols);
+				break;
+		}
+
+		if (nextIndex !== currentIndex) {
+			items[nextIndex].focus();
+			items[nextIndex].scrollIntoView({ block: "nearest" });
+		}
+	}
+
+	/** Activate (click) the currently focused grid item */
+	private activateFocused(e: KeyboardEvent) {
+		if (document.activeElement === this.searchEl) return;
+
+		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-icon-item`;
+		const items = Array.from(this.tabContentEl.querySelectorAll<HTMLElement>(gridSelector));
+		const focused = document.activeElement as HTMLElement;
+
+		if (items.includes(focused)) {
+			e.preventDefault();
+			focused.click();
+		}
+	}
+
 	private switchTab(tab: PickerTab) {
 		this.activeTab = tab;
 
@@ -167,6 +239,11 @@ export class IconPickerModal extends Modal {
 		if (tab === "icons") {
 			const picker = new ColorPicker((color) => this.iconTab.setColor(color));
 			this.colorPickerEl = picker.render(this.searchBarEl);
+		}
+
+		// Destroy previous tab renderer (cleanup timers etc.)
+		for (const [key, r] of this.tabRenderers) {
+			if (key !== tab) r.destroy?.();
 		}
 
 		// Clear and re-render tab content

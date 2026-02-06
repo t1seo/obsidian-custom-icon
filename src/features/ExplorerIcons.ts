@@ -11,6 +11,7 @@ import { onThemeChange } from "../utils/theme";
 export class ExplorerIcons {
 	private observer: MutationObserver | null = null;
 	private themeObserver: MutationObserver | null = null;
+	private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(private plugin: IconicaPlugin) {}
 
@@ -59,6 +60,7 @@ export class ExplorerIcons {
 		this.stopObserver();
 		this.themeObserver?.disconnect();
 		this.themeObserver = null;
+		if (this.debounceTimer) clearTimeout(this.debounceTimer);
 		this.removeAllIcons();
 	}
 
@@ -106,7 +108,11 @@ export class ExplorerIcons {
 				}
 			}
 			if (needsUpdate) {
-				requestAnimationFrame(() => this.applyAllIcons());
+				// Debounce rapid DOM changes (e.g. expanding folders)
+				if (this.debounceTimer) clearTimeout(this.debounceTimer);
+				this.debounceTimer = setTimeout(() => {
+					requestAnimationFrame(() => this.applyAllIcons());
+				}, 50);
 			}
 		});
 

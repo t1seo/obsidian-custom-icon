@@ -26,8 +26,9 @@ interface IconifyDataResponse {
 	not_found?: string[];
 }
 
-/** In-memory SVG cache */
+/** In-memory SVG cache (LRU-like: oldest entries evicted when max reached) */
 const svgCache = new Map<string, IconifyIcon>();
+const MAX_CACHE_ENTRIES = 2000;
 
 /** Try each API host until one succeeds */
 async function fetchWithFallback(path: string): Promise<string> {
@@ -88,6 +89,11 @@ export async function fetchIconData(iconIds: string[]): Promise<IconifyIcon[]> {
 					width: iconData.width ?? data.width ?? 24,
 					height: iconData.height ?? data.height ?? 24,
 				};
+				// Evict oldest entries if cache is full
+				if (svgCache.size >= MAX_CACHE_ENTRIES) {
+					const firstKey = svgCache.keys().next().value;
+					if (firstKey) svgCache.delete(firstKey);
+				}
 				svgCache.set(icon.id, icon);
 				results.push(icon);
 			}
