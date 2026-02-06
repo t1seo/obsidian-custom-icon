@@ -1,10 +1,10 @@
 # Obsidian Custom Icon
 
 <p align="center">
-  <a href="https://github.com/t1seo/obsidian-custom-icon/releases"><img src="https://img.shields.io/github/downloads/t1seo/obsidian-custom-icon/total?style=flat-square&color=573E7A" alt="Downloads" /></a>
-  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/v/release/t1seo/obsidian-custom-icon?style=flat-square&color=573E7A" alt="Release" /></a>
-  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/release-date/t1seo/obsidian-custom-icon?style=flat-square&color=573E7A" alt="Release Date" /></a>
-  <a href="./README.md"><img src="https://img.shields.io/badge/lang-English-blue?style=flat-square" alt="English" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases"><img src="https://img.shields.io/github/downloads/t1seo/obsidian-custom-icon/total?style=for-the-badge&logo=obsidian&color=%23483699&label=downloads" alt="Downloads" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/v/release/t1seo/obsidian-custom-icon?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1naXQtbWVyZ2UiPjxjaXJjbGUgY3g9IjE4IiBjeT0iMTgiIHI9IjMiLz48Y2lyY2xlIGN4PSI2IiBjeT0iNiIgcj0iMyIvPjxwYXRoIGQ9Ik02IDIxVjlhOSA5IDAgMCAwIDkgOSIvPjwvc3ZnPg==&color=%23483699" alt="Release" /></a>
+  <a href="https://github.com/t1seo/obsidian-custom-icon/releases/latest"><img src="https://img.shields.io/github/release-date/t1seo/obsidian-custom-icon?style=for-the-badge&label=Latest%20Release&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jYWxlbmRhci1jaGVjay0yIj48cGF0aCBkPSJNMjEgMTRWNmEyIDIgMCAwIDAtMi0ySDVhMiAyIDAgMCAwLTIgMnYxNGEyIDIgMCAwIDAgMiAyaDgiLz48bGluZSB4MT0iMTYiIHgyPSIxNiIgeTE9IjIiIHkyPSI2Ii8+PGxpbmUgeDE9IjgiIHgyPSI4IiB5MT0iMiIgeTI9IjYiLz48bGluZSB4MT0iMyIgeDI9IjIxIiB5MT0iMTAiIHkyPSIxMCIvPjxwYXRoIGQ9Im0xNiAyMCAyIDIgNC00Ii8+PC9zdmc+&color=%23483699" alt="Latest Release" /></a>
+  <a href="./README.md"><img src="https://img.shields.io/badge/lang-English-%23483699?style=for-the-badge" alt="English" /></a>
 </p>
 
 [Obsidian](https://obsidian.md)의 파일과 폴더에 **나만의 커스텀 아이콘**을 추가하세요. PNG, JPG, SVG 이미지를 업로드하면 탐색기, 탭 헤더, 노트 제목, 인라인 텍스트에서 사용할 수 있습니다.
