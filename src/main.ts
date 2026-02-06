@@ -2,6 +2,7 @@ import { Plugin } from "obsidian";
 import { DEFAULT_SETTINGS } from "./constants";
 import { ContextMenu } from "./features/ContextMenu";
 import { ExplorerIcons } from "./features/ExplorerIcons";
+import { TabIcons } from "./features/TabIcons";
 import { IconicaSettingTab } from "./settings";
 import type { IconData, IconMapping, IconicaData, IconicaSettings } from "./types";
 
@@ -9,6 +10,7 @@ export default class IconicaPlugin extends Plugin {
 	settings!: IconicaSettings;
 	iconMap!: IconMapping;
 	explorerIcons!: ExplorerIcons;
+	tabIcons!: TabIcons;
 
 	async onload() {
 		await this.loadSettings();
@@ -21,11 +23,19 @@ export default class IconicaPlugin extends Plugin {
 			});
 		}
 
+		this.tabIcons = new TabIcons(this);
+		if (this.settings.showInTab) {
+			this.app.workspace.onLayoutReady(() => {
+				this.tabIcons.enable();
+			});
+		}
+
 		new ContextMenu(this).enable();
 	}
 
 	onunload() {
 		this.explorerIcons?.disable();
+		this.tabIcons?.disable();
 	}
 
 	async loadSettings() {
@@ -47,6 +57,7 @@ export default class IconicaPlugin extends Plugin {
 		this.iconMap[path] = icon;
 		await this.saveSettings();
 		this.explorerIcons?.applyIcon(path, icon);
+		this.tabIcons?.refresh();
 	}
 
 	/** Remove icon mapping for a file/folder path */
@@ -54,6 +65,7 @@ export default class IconicaPlugin extends Plugin {
 		delete this.iconMap[path];
 		await this.saveSettings();
 		this.explorerIcons?.refresh();
+		this.tabIcons?.refresh();
 	}
 
 	/** Add an emoji or icon ID to recent list */

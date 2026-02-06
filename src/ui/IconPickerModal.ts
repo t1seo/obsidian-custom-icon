@@ -5,6 +5,7 @@ import type { IconData, IconSelectCallback, PickerTab } from "../types";
 import { ColorPicker } from "./ColorPicker";
 import { EmojiTab } from "./EmojiTab";
 import { IconTab } from "./IconTab";
+import { UploadTab } from "./UploadTab";
 
 /**
  * Main icon picker modal with 3 tabs: Emoji | Icons | Upload
@@ -43,6 +44,7 @@ export class IconPickerModal extends Modal {
 		this.registerTab("emoji", new EmojiTab(this.plugin, this));
 		this.iconTab = new IconTab(this.plugin, this);
 		this.registerTab("icons", this.iconTab);
+		this.registerTab("upload", new UploadTab(this.plugin, this));
 
 		this.buildHeader(contentEl);
 		this.buildSearchBar(contentEl);
