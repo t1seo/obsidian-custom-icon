@@ -27,32 +27,24 @@ export default class IconicaPlugin extends Plugin {
 
 		// Explorer icons
 		this.explorerIcons = new ExplorerIcons(this);
-		if (this.settings.showInExplorer) {
-			this.app.workspace.onLayoutReady(() => {
-				this.explorerIcons.enable();
-			});
-		}
+		this.app.workspace.onLayoutReady(() => {
+			this.explorerIcons.enable();
+		});
 
 		// Tab icons
 		this.tabIcons = new TabIcons(this);
-		if (this.settings.showInTab) {
-			this.app.workspace.onLayoutReady(() => {
-				this.tabIcons.enable();
-			});
-		}
+		this.app.workspace.onLayoutReady(() => {
+			this.tabIcons.enable();
+		});
 
 		// Title icons
 		this.titleIcons = new TitleIcons(this);
-		if (this.settings.showInTitle) {
-			this.app.workspace.onLayoutReady(() => {
-				this.titleIcons.enable();
-			});
-		}
+		this.app.workspace.onLayoutReady(() => {
+			this.titleIcons.enable();
+		});
 
-		// Inline icons
-		if (this.settings.enableInlineIcons) {
-			new InlineIcons(this).enable();
-		}
+		// Inline icons (always register; checks setting dynamically)
+		new InlineIcons(this).enable();
 
 		// Context menu & commands
 		new ContextMenu(this).enable();
@@ -95,14 +87,5 @@ export default class IconicaPlugin extends Plugin {
 		this.tabIcons?.refresh();
 		this.titleIcons?.refresh();
 		this.saveSettings();
-	}
-
-	/** Add an emoji or icon ID to recent list */
-	addToRecent(type: "emoji" | "icon", value: string) {
-		const list = type === "emoji" ? this.settings.recentEmojis : this.settings.recentIcons;
-		const idx = list.indexOf(value);
-		if (idx !== -1) list.splice(idx, 1);
-		list.unshift(value);
-		if (list.length > 30) list.pop();
 	}
 }

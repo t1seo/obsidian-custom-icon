@@ -1,9 +1,9 @@
 {
-	"id": "iconica",
-	"name": "Iconica",
+	"id": "obsidian-custom-icon",
+	"name": "Obsidian Custom Icon",
 	"version": "0.1.0",
 	"minAppVersion": "1.4.0",
-	"description": "Notion-style custom icon system. Add emojis, icons, and custom images to files and folders.",
+	"description": "Add custom uploaded image icons to files and folders in the explorer, tabs, and note titles.",
 	"author": "t1seo",
 	"authorUrl": "https://github.com/t1seo",
 	"isDesktopOnly": false

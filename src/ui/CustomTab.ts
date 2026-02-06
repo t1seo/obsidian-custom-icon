@@ -1,4 +1,4 @@
-import { CSS_PREFIX, SEARCH_DEBOUNCE_MS } from "../constants";
+import { CSS_PREFIX } from "../constants";
 import type IconicaPlugin from "../main";
 import type { CustomIcon } from "../types";
 import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
@@ -29,7 +29,7 @@ export class CustomTab implements TabRenderer {
 		this.searchTimeout = setTimeout(() => {
 			const results = this.plugin.iconLibrary.search(query);
 			this.renderIcons(results);
-		}, SEARCH_DEBOUNCE_MS);
+		}, 150);
 	}
 
 	destroy(): void {
@@ -81,6 +81,12 @@ export class CustomTab implements TabRenderer {
 			removeBtn.addEventListener("click", async (e) => {
 				e.stopPropagation();
 				await this.plugin.iconLibrary.remove(icon.id);
+				// Remove all iconMap references to this deleted icon
+				for (const [path, data] of Object.entries(this.plugin.iconMap)) {
+					if (data.value === icon.id) {
+						this.plugin.removeIcon(path);
+					}
+				}
 				this.renderIcons(this.plugin.iconLibrary.getAll());
 			});
 		}

@@ -1,6 +1,5 @@
 import { CSS_PREFIX, EXPLORER_ICON_SIZE } from "../constants";
 import type IconicaPlugin from "../main";
-import { createSvgElement, getIcon } from "../services/IconifyService";
 import type { IconData } from "../types";
 
 /**
@@ -167,79 +166,19 @@ export class ExplorerIcons {
 		);
 	}
 
-	private removeIconFromEl(el: HTMLElement) {
-		const existing = el.querySelector(`.${CSS_PREFIX}-explorer-icon`);
-		existing?.remove();
-	}
-
 	private createIconElement(icon: IconData): HTMLElement | null {
 		const wrapper = document.createElement("span");
-		wrapper.className = `${CSS_PREFIX}-explorer-icon`;
+		wrapper.className = `${CSS_PREFIX}-explorer-icon is-img`;
 
-		switch (icon.type) {
-			case "emoji": {
-				wrapper.classList.add("is-emoji");
-				wrapper.textContent = icon.value;
-				wrapper.dataset.iconicaActive = "true";
-				break;
-			}
-			case "icon": {
-				wrapper.classList.add("is-svg");
-				wrapper.appendChild(this.createPlaceholderSvg(icon));
-				wrapper.dataset.iconicaActive = "true";
-				// Async: load actual SVG and replace placeholder
-				this.loadIconifySvg(wrapper, icon);
-				break;
-			}
-			case "custom": {
-				wrapper.classList.add("is-img");
-				const img = document.createElement("img");
-				img.width = EXPLORER_ICON_SIZE;
-				img.height = EXPLORER_ICON_SIZE;
-				img.src = this.getCustomIconPath(icon.value);
-				img.alt = "";
-				wrapper.appendChild(img);
-				wrapper.dataset.iconicaActive = "true";
-				break;
-			}
-			default:
-				return null;
-		}
+		const img = document.createElement("img");
+		img.width = EXPLORER_ICON_SIZE;
+		img.height = EXPLORER_ICON_SIZE;
+		img.src = this.getCustomIconPath(icon.value);
+		img.alt = "";
+		wrapper.appendChild(img);
+		wrapper.dataset.iconicaActive = "true";
 
 		return wrapper;
-	}
-
-	/** Load actual Iconify SVG and replace the placeholder */
-	private async loadIconifySvg(wrapper: HTMLElement, icon: IconData) {
-		const iconData = await getIcon(icon.value);
-		if (!iconData) return;
-
-		const svg = createSvgElement(iconData, EXPLORER_ICON_SIZE, icon.color);
-		wrapper.empty();
-		wrapper.appendChild(svg);
-	}
-
-	/** Create a placeholder SVG while Iconify data loads */
-	private createPlaceholderSvg(icon: IconData): SVGElement {
-		const size = EXPLORER_ICON_SIZE;
-		const color = icon.color ?? "currentColor";
-		const ns = "http://www.w3.org/2000/svg";
-
-		const svg = document.createElementNS(ns, "svg");
-		svg.setAttribute("width", String(size));
-		svg.setAttribute("height", String(size));
-		svg.setAttribute("viewBox", "0 0 24 24");
-		svg.setAttribute("fill", "none");
-		svg.setAttribute("stroke", color);
-		svg.setAttribute("stroke-width", "2");
-
-		const circle = document.createElementNS(ns, "circle");
-		circle.setAttribute("cx", "12");
-		circle.setAttribute("cy", "12");
-		circle.setAttribute("r", "3");
-		svg.appendChild(circle);
-
-		return svg;
 	}
 
 	private getCustomIconPath(iconId: string): string {

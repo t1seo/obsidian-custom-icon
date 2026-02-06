@@ -3,7 +3,6 @@ import { CSS_PREFIX } from "../constants";
 import type IconicaPlugin from "../main";
 import type { IconData, IconSelectCallback, PickerTab } from "../types";
 import { CustomTab } from "./CustomTab";
-import { EmojiTab } from "./EmojiTab";
 import { UploadTab } from "./UploadTab";
 
 /** Tab definition for the picker */
@@ -13,17 +12,15 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-	{ key: "emoji", label: "Emoji" },
-	{ key: "custom", label: "Custom" },
+	{ key: "custom", label: "Icons" },
 	{ key: "upload", label: "Upload" },
 ];
 
 /**
- * Main icon picker modal with 3 tabs: Emoji | Custom | Upload
- * Notion-style layout.
+ * Main icon picker modal with 2 tabs: Custom | Upload
  */
 export class IconPickerModal extends Modal {
-	private activeTab: PickerTab = "emoji";
+	private activeTab: PickerTab = "custom";
 	private tabContentEl!: HTMLElement;
 	private searchEl!: HTMLInputElement;
 	private searchBarEl!: HTMLElement;
@@ -48,9 +45,10 @@ export class IconPickerModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass(`${CSS_PREFIX}-picker`);
+		// Add class to parent .modal element to strip its padding
+		this.modalEl.addClass(`${CSS_PREFIX}-modal`);
 
 		// Register tabs
-		this.registerTab("emoji", new EmojiTab(this.plugin, this));
 		this.registerTab("custom", new CustomTab(this.plugin, this));
 		this.registerTab("upload", new UploadTab(this.plugin, this));
 
@@ -146,7 +144,7 @@ export class IconPickerModal extends Modal {
 	private navigateGrid(e: KeyboardEvent, direction: "up" | "down" | "left" | "right") {
 		if (document.activeElement === this.searchEl) return;
 
-		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-custom-item-btn`;
+		const gridSelector = `.${CSS_PREFIX}-custom-item-btn`;
 		const items = Array.from(this.tabContentEl.querySelectorAll<HTMLElement>(gridSelector));
 		if (items.length === 0) return;
 
@@ -189,7 +187,7 @@ export class IconPickerModal extends Modal {
 	private activateFocused(e: KeyboardEvent) {
 		if (document.activeElement === this.searchEl) return;
 
-		const gridSelector = `.${CSS_PREFIX}-emoji-item, .${CSS_PREFIX}-custom-item-btn`;
+		const gridSelector = `.${CSS_PREFIX}-custom-item-btn`;
 		const items = Array.from(this.tabContentEl.querySelectorAll<HTMLElement>(gridSelector));
 		const focused = document.activeElement as HTMLElement;
 

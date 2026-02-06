@@ -1,6 +1,5 @@
-import type { Editor, TAbstractFile } from "obsidian";
+import type { Editor } from "obsidian";
 import type IconicaPlugin from "../main";
-import type { IconData } from "../types";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
 /**
@@ -16,7 +15,7 @@ export class ContextMenu {
 			this.plugin.app.workspace.on("file-menu", (menu, file) => {
 				menu.addItem((item) => {
 					item
-						.setTitle("Change icon")
+						.setTitle("Change custom icon")
 						.setIcon("palette")
 						.onClick(() => this.openPicker(file.path));
 				});
@@ -24,7 +23,7 @@ export class ContextMenu {
 				if (this.plugin.iconMap[file.path]) {
 					menu.addItem((item) => {
 						item
-							.setTitle("Remove icon")
+							.setTitle("Remove custom icon")
 							.setIcon("trash-2")
 							.onClick(() => this.plugin.removeIcon(file.path));
 					});
@@ -70,11 +69,7 @@ export class ContextMenu {
 				const path = file?.path ?? "";
 				const modal = new IconPickerModal(this.plugin.app, this.plugin, path, (icon) => {
 					if (!icon) return;
-					if (icon.type === "emoji") {
-						editor.replaceSelection(icon.value);
-					} else if (icon.type === "custom") {
-						editor.replaceSelection(`:iconica-${icon.value}:`);
-					}
+					editor.replaceSelection(`:custom-icon-${icon.value}:`);
 				});
 				modal.open();
 			},

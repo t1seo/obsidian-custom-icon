@@ -1,7 +1,7 @@
 {
-	"name": "iconica",
+	"name": "obsidian-custom-icon",
 	"version": "0.1.0",
-	"description": "Notion-style custom icon system for Obsidian. Add emojis, icons, and custom images to files and folders.",
+	"description": "Add custom uploaded image icons to files and folders in Obsidian.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -14,7 +14,6 @@
 		"obsidian",
 		"plugin",
 		"icon",
-		"emoji",
 		"custom-icon"
 	],
 	"author": "t1seo",
@@ -27,8 +26,5 @@
 		"obsidian": "latest",
 		"tslib": "^2.7.0",
 		"typescript": "^5.6.0"
-	},
-	"dependencies": {
-		"emojibase-data": "^17.0.0"
 	}
 }

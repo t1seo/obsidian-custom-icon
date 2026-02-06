@@ -22,6 +22,9 @@ data.json
 icon-library.json
 icons/
 
+# Sample icons (for screenshots only)
+assets/sample_icons/
+
 # Environment
 .env
 .env.*

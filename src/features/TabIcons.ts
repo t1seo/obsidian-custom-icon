@@ -1,6 +1,5 @@
 import { CSS_PREFIX, TAB_ICON_SIZE } from "../constants";
 import type IconicaPlugin from "../main";
-import { createSvgElement, getIcon } from "../services/IconifyService";
 import type { IconData } from "../types";
 
 /**
@@ -59,43 +58,21 @@ export class TabIcons {
 		const wrapper = document.createElement("span");
 		wrapper.className = `${CSS_PREFIX}-tab-icon`;
 
-		switch (icon.type) {
-			case "emoji": {
-				wrapper.textContent = icon.value;
-				wrapper.style.fontSize = `${TAB_ICON_SIZE}px`;
-				break;
-			}
-			case "icon": {
-				this.loadTabSvg(wrapper, icon);
-				break;
-			}
-			case "custom": {
-				const img = document.createElement("img");
-				img.width = TAB_ICON_SIZE;
-				img.height = TAB_ICON_SIZE;
-				const adapter = this.plugin.app.vault.adapter;
-				img.src = adapter.getResourcePath(
-					`${this.plugin.manifest.dir}/icons/${icon.value}.png`,
-				);
-				img.alt = "";
-				wrapper.appendChild(img);
-				break;
-			}
-		}
+		const img = document.createElement("img");
+		img.width = TAB_ICON_SIZE;
+		img.height = TAB_ICON_SIZE;
+		const adapter = this.plugin.app.vault.adapter;
+		img.src = adapter.getResourcePath(
+			`${this.plugin.manifest.dir}/icons/${icon.value}.png`,
+		);
+		img.alt = "";
+		wrapper.appendChild(img);
 
 		// Hide the default icon and prepend ours
 		const defaultIcon = tabHeaderEl.querySelector("svg");
 		if (defaultIcon) defaultIcon.style.display = "none";
 
 		tabHeaderEl.prepend(wrapper);
-	}
-
-	private async loadTabSvg(wrapper: HTMLElement, icon: IconData) {
-		const iconData = await getIcon(icon.value);
-		if (!iconData) return;
-
-		const svg = createSvgElement(iconData, TAB_ICON_SIZE, icon.color);
-		wrapper.appendChild(svg);
 	}
 
 	private removeAllTabIcons() {

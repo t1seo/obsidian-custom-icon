@@ -1,6 +1,5 @@
 import { CSS_PREFIX, TITLE_ICON_SIZE } from "../constants";
 import type IconicaPlugin from "../main";
-import { createSvgElement, getIcon } from "../services/IconifyService";
 import type { IconData } from "../types";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
@@ -67,41 +66,17 @@ export class TitleIcons {
 			}).open();
 		});
 
-		this.renderTitleIcon(wrapper, icon);
+		const img = document.createElement("img");
+		img.width = TITLE_ICON_SIZE;
+		img.height = TITLE_ICON_SIZE;
+		const adapter = this.plugin.app.vault.adapter;
+		img.src = adapter.getResourcePath(
+			`${this.plugin.manifest.dir}/icons/${icon.value}.png`,
+		);
+		img.alt = "";
+		wrapper.appendChild(img);
+
 		titleEl.parentElement?.insertBefore(wrapper, titleEl);
-	}
-
-	private renderTitleIcon(wrapper: HTMLElement, icon: IconData) {
-		switch (icon.type) {
-			case "emoji": {
-				wrapper.textContent = icon.value;
-				break;
-			}
-			case "icon": {
-				this.loadTitleSvg(wrapper, icon);
-				break;
-			}
-			case "custom": {
-				const img = document.createElement("img");
-				img.width = TITLE_ICON_SIZE;
-				img.height = TITLE_ICON_SIZE;
-				const adapter = this.plugin.app.vault.adapter;
-				img.src = adapter.getResourcePath(
-					`${this.plugin.manifest.dir}/icons/${icon.value}.png`,
-				);
-				img.alt = "";
-				wrapper.appendChild(img);
-				break;
-			}
-		}
-	}
-
-	private async loadTitleSvg(wrapper: HTMLElement, icon: IconData) {
-		const iconData = await getIcon(icon.value);
-		if (!iconData) return;
-
-		const svg = createSvgElement(iconData, TITLE_ICON_SIZE, icon.color);
-		wrapper.appendChild(svg);
 	}
 
 	private removeAllTitleIcons() {
