@@ -76,6 +76,10 @@ Use `:custom-icon-NAME:` shortcodes to embed icons directly in your notes.
 
 If you encounter any issues or have feature requests, please [open an issue](https://github.com/t1seo/obsidian-custom-icon/issues).
 
+If you find this plugin useful, consider buying me a coffee!
+
+<a href="https://buymeacoffee.com/taewonseo"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=taewonseo&button_colour=483699&font_colour=ffffff&font_family=Inter&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
+
 ## License
 
 [MIT](LICENSE)

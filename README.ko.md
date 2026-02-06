@@ -76,6 +76,10 @@
 
 문제가 발생하거나 기능 요청이 있으면 [이슈를 등록](https://github.com/t1seo/obsidian-custom-icon/issues)해주세요.
 
+이 플러그인이 유용하다면 커피 한 잔 사주세요!
+
+<a href="https://buymeacoffee.com/taewonseo"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=taewonseo&button_colour=483699&font_colour=ffffff&font_family=Inter&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
+
 ## 라이선스
 
 [MIT](LICENSE)
