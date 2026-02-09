@@ -1,6 +1,5 @@
 import { CSS_PREFIX, TITLE_ICON_SIZE } from "../constants";
 import type IconicaPlugin from "../main";
-import type { IconData } from "../types";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
 /**
@@ -70,9 +69,7 @@ export class TitleIcons {
 		img.width = TITLE_ICON_SIZE;
 		img.height = TITLE_ICON_SIZE;
 		const adapter = this.plugin.app.vault.adapter;
-		img.src = adapter.getResourcePath(
-			`${this.plugin.manifest.dir}/icons/${icon.value}.png`,
-		);
+		img.src = adapter.getResourcePath(`${this.plugin.manifest.dir}/icons/${icon.value}.png`);
 		img.alt = "";
 		wrapper.appendChild(img);
 

@@ -416,6 +416,12 @@
 	font-size: 13px;
 }
 
+/* ─── Utility ─── */
+
+.iconica-hidden {
+	display: none !important;
+}
+
 /* ─── File Explorer Icon ─── */
 
 .iconica-explorer-icon {

@@ -13,11 +13,11 @@ export class IconicaSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Obsidian Custom Icon" });
+		new Setting(containerEl).setName("Inline icons").setHeading();
 
 		new Setting(containerEl)
 			.setName("Enable inline icons")
-			.setDesc("Allow :custom-icon-NAME: shortcodes in note content.")
+			.setDesc("Allow :custom-icon-name: shortcodes in note content.")
 			.addToggle((toggle) =>
 				toggle.setValue(this.plugin.settings.enableInlineIcons).onChange(async (value) => {
 					this.plugin.settings.enableInlineIcons = value;

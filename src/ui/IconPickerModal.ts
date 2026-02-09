@@ -207,7 +207,7 @@ export class IconPickerModal extends Modal {
 		});
 
 		// Show/hide search bar (hide for Upload tab)
-		this.searchBarEl.style.display = tab === "upload" ? "none" : "";
+		this.searchBarEl.classList.toggle("iconica-hidden", tab === "upload");
 
 		// Destroy previous tab renderers (cleanup timers)
 		for (const [key, r] of this.tabRenderers) {

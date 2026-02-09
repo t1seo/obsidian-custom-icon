@@ -21,7 +21,7 @@ export class IconLibraryService {
 		const path = `${this.pluginDir}/${LIBRARY_FILE}`;
 		try {
 			const raw = await this.adapter.read(path);
-			this.library = JSON.parse(raw);
+			this.library = JSON.parse(raw) as IconLibrary;
 		} catch {
 			this.library = { icons: [] };
 		}

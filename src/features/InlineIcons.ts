@@ -3,8 +3,8 @@ import {
 	type DecorationSet,
 	type EditorView,
 	type PluginValue,
-	type ViewUpdate,
 	ViewPlugin,
+	type ViewUpdate,
 	WidgetType,
 } from "@codemirror/view";
 import type { MarkdownPostProcessorContext } from "obsidian";
@@ -63,8 +63,8 @@ function buildDecorations(view: EditorView, plugin: IconicaPlugin): DecorationSe
 			const widget = new InlineCustomIconWidget(iconId, plugin);
 
 			widgets.push({
-				from: from + match.index!,
-				to: from + match.index! + match[0].length,
+				from: from + match.index,
+				to: from + match.index + match[0].length,
 				deco: Decoration.replace({ widget }),
 			});
 		}
@@ -131,7 +131,7 @@ export class InlineIcons {
 			for (const match of text.matchAll(CUSTOM_ICON_REGEX)) {
 				const resolved = resolveIconId(match[1], this.plugin);
 				if (!resolved) continue;
-				matches.push({ index: match.index!, length: match[0].length, iconId: resolved });
+				matches.push({ index: match.index, length: match[0].length, iconId: resolved });
 			}
 
 			if (matches.length > 0) {

@@ -43,7 +43,7 @@ export class CustomTab implements TabRenderer {
 
 		if (icons.length === 0) {
 			this.gridContainer.createEl("p", {
-				text: "No custom icons yet. Upload one in the Upload tab.",
+				text: "No custom icons yet. Upload one in the upload tab.",
 				cls: `${CSS_PREFIX}-placeholder`,
 			});
 			return;
@@ -78,16 +78,18 @@ export class CustomTab implements TabRenderer {
 				attr: { "aria-label": "Remove" },
 			});
 			removeBtn.textContent = "\u00D7";
-			removeBtn.addEventListener("click", async (e) => {
+			removeBtn.addEventListener("click", (e) => {
 				e.stopPropagation();
-				await this.plugin.iconLibrary.remove(icon.id);
-				// Remove all iconMap references to this deleted icon
-				for (const [path, data] of Object.entries(this.plugin.iconMap)) {
-					if (data.value === icon.id) {
-						this.plugin.removeIcon(path);
+				void (async () => {
+					await this.plugin.iconLibrary.remove(icon.id);
+					// Remove all iconMap references to this deleted icon
+					for (const [path, data] of Object.entries(this.plugin.iconMap)) {
+						if (data.value === icon.id) {
+							this.plugin.removeIcon(path);
+						}
 					}
-				}
-				this.renderIcons(this.plugin.iconLibrary.getAll());
+					this.renderIcons(this.plugin.iconLibrary.getAll());
+				})();
 			});
 		}
 	}

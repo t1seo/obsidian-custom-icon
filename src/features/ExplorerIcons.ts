@@ -30,7 +30,7 @@ export class ExplorerIcons {
 				if (this.plugin.iconMap[oldPath]) {
 					this.plugin.iconMap[file.path] = this.plugin.iconMap[oldPath];
 					delete this.plugin.iconMap[oldPath];
-					this.plugin.saveSettings();
+					void this.plugin.saveSettings();
 					this.applyAllIcons();
 				}
 			}),
@@ -41,7 +41,7 @@ export class ExplorerIcons {
 			this.plugin.app.vault.on("delete", (file) => {
 				if (this.plugin.iconMap[file.path]) {
 					delete this.plugin.iconMap[file.path];
-					this.plugin.saveSettings();
+					void this.plugin.saveSettings();
 				}
 			}),
 		);
@@ -90,7 +90,7 @@ export class ExplorerIcons {
 			el.insertBefore(iconEl, el.firstChild);
 			const defaultIcon = el.querySelector(":scope > .tree-item-icon");
 			if (defaultIcon instanceof HTMLElement) {
-				defaultIcon.style.display = "none";
+				defaultIcon.classList.add("iconica-hidden");
 			}
 		}
 	}
@@ -111,7 +111,7 @@ export class ExplorerIcons {
 				// Restore hidden default icon (for both files and folders)
 				const treeIcon = parent.querySelector(":scope > .tree-item-icon");
 				if (treeIcon instanceof HTMLElement) {
-					treeIcon.style.display = "";
+					treeIcon.classList.remove("iconica-hidden");
 				}
 			}
 			el.remove();

@@ -57,7 +57,7 @@ export default class IconicaPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		const data: Partial<IconicaData> = (await this.loadData()) ?? {};
+		const data = ((await this.loadData()) ?? {}) as Partial<IconicaData>;
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings);
 		this.iconMap = data.iconMap ?? {};
 	}
@@ -77,7 +77,7 @@ export default class IconicaPlugin extends Plugin {
 		this.explorerIcons?.applyIcon(path, icon);
 		this.tabIcons?.refresh();
 		this.titleIcons?.refresh();
-		this.saveSettings();
+		void this.saveSettings();
 	}
 
 	/** Remove icon mapping for a file/folder path */
@@ -86,6 +86,6 @@ export default class IconicaPlugin extends Plugin {
 		this.explorerIcons?.refresh();
 		this.tabIcons?.refresh();
 		this.titleIcons?.refresh();
-		this.saveSettings();
+		void this.saveSettings();
 	}
 }

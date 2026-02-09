@@ -63,7 +63,7 @@ export class UploadTab implements TabRenderer {
 			zone.removeClass("is-dragover");
 			const file = e.dataTransfer?.files[0];
 			if (file?.type.startsWith("image/")) {
-				this.handleFile(file);
+				void this.handleFile(file);
 			}
 		});
 
@@ -76,7 +76,7 @@ export class UploadTab implements TabRenderer {
 					const file = item.getAsFile();
 					if (file) {
 						e.preventDefault();
-						this.handleFile(file);
+						void this.handleFile(file);
 						return;
 					}
 				}
@@ -91,7 +91,7 @@ export class UploadTab implements TabRenderer {
 		input.accept = "image/*";
 		input.addEventListener("change", () => {
 			const file = input.files?.[0];
-			if (file) this.handleFile(file);
+			if (file) void this.handleFile(file);
 		});
 		input.click();
 	}
@@ -159,7 +159,7 @@ export class UploadTab implements TabRenderer {
 		});
 
 		const nameGroup = leftGroup.createDiv({ cls: `${CSS_PREFIX}-upload-name-group` });
-		nameGroup.style.display = "none";
+		nameGroup.classList.add("iconica-hidden");
 		const nameInput = nameGroup.createEl("input", {
 			type: "text",
 			placeholder: "Icon name",
@@ -169,7 +169,7 @@ export class UploadTab implements TabRenderer {
 		nameInput.value = defaultName;
 
 		checkbox.addEventListener("change", () => {
-			nameGroup.style.display = checkbox.checked ? "" : "none";
+			nameGroup.classList.toggle("iconica-hidden", !checkbox.checked);
 		});
 
 		// Right: buttons
@@ -194,7 +194,7 @@ export class UploadTab implements TabRenderer {
 			.addEventListener("click", () => {
 				const saveToLibrary = checkbox.checked;
 				const name = nameInput.value.trim() || defaultName;
-				this.applyIcon(name, saveToLibrary);
+				void this.applyIcon(name, saveToLibrary);
 			});
 	}
 
