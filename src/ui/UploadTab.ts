@@ -126,7 +126,7 @@ export class UploadTab implements TabRenderer {
 	}
 
 	/** Route to single or batch handling based on file count */
-	private async handleFiles(files: FileList) {
+	private handleFiles(files: FileList) {
 		const imageFiles: File[] = [];
 		for (let i = 0; i < files.length; i++) {
 			const f = files[i];
