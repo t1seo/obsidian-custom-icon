@@ -10,6 +10,9 @@ import {
 import type { CustomIcon } from "../types";
 import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
 
+/** Accepted file extensions for the file picker */
+const ACCEPT_TYPES = ".png,.jpg,.jpeg,.svg,.webp";
+
 /** Tracks processed result and its detected file type */
 interface ProcessedFile {
 	data: ArrayBuffer;
@@ -17,9 +20,16 @@ interface ProcessedFile {
 	ext: "png" | "svg";
 }
 
+/** Entry in the batch review list */
+interface BatchEntry {
+	file: File;
+	name: string;
+	ext: "png" | "svg";
+}
+
 /**
  * Upload tab: drag-and-drop or file picker to upload a custom icon image.
- * Supports single file preview, SVG pass-through, and batch import.
+ * Supports single file preview, SVG pass-through, and batch import with review.
  */
 export class UploadTab implements TabRenderer {
 	private container!: HTMLElement;
@@ -57,7 +67,11 @@ export class UploadTab implements TabRenderer {
 			cls: `${CSS_PREFIX}-upload-zone-text`,
 		});
 		zone.createDiv({
-			text: "PNG, JPG, SVG \u00B7 Multiple files supported \u00B7 Cmd+V to paste",
+			text: "PNG, JPG, SVG supported",
+			cls: `${CSS_PREFIX}-upload-zone-hint`,
+		});
+		zone.createDiv({
+			text: "Select multiple files for batch import \u00B7 Cmd+V to paste",
 			cls: `${CSS_PREFIX}-upload-zone-hint`,
 		});
 
@@ -101,7 +115,7 @@ export class UploadTab implements TabRenderer {
 	private openFilePicker() {
 		const input = document.createElement("input");
 		input.type = "file";
-		input.accept = "image/*";
+		input.accept = ACCEPT_TYPES;
 		input.multiple = true;
 		input.addEventListener("change", () => {
 			if (input.files && input.files.length > 0) {
@@ -113,7 +127,6 @@ export class UploadTab implements TabRenderer {
 
 	/** Route to single or batch handling based on file count */
 	private async handleFiles(files: FileList) {
-		// Filter to image files only
 		const imageFiles: File[] = [];
 		for (let i = 0; i < files.length; i++) {
 			const f = files[i];
@@ -127,11 +140,12 @@ export class UploadTab implements TabRenderer {
 		if (imageFiles.length === 1) {
 			void this.handleSingleFile(imageFiles[0]);
 		} else {
-			void this.handleBatch(imageFiles);
+			this.renderBatchReview(imageFiles);
 		}
 	}
 
-	/** Single file: process and show preview */
+	// ─── Single File Flow ───────────────────────────
+
 	private async handleSingleFile(file: File) {
 		this.container.empty();
 		this.container.createEl("p", {
@@ -163,93 +177,6 @@ export class UploadTab implements TabRenderer {
 		}
 	}
 
-	/** Batch: process all files, save to library, show result */
-	private async handleBatch(files: File[]) {
-		this.container.empty();
-
-		const statusEl = this.container.createEl("p", {
-			text: `Importing 0/${files.length}...`,
-			cls: `${CSS_PREFIX}-placeholder`,
-		});
-
-		const adapter = this.plugin.app.vault.adapter;
-		const pluginDir = this.plugin.manifest.dir!;
-		const iconsDir = `${pluginDir}/${ICONS_DIR}`;
-
-		// Ensure icons directory exists
-		if (!(await adapter.exists(iconsDir))) {
-			await adapter.mkdir(iconsDir);
-		}
-
-		const now = Date.now();
-		const icons: CustomIcon[] = [];
-		let imported = 0;
-
-		for (let i = 0; i < files.length; i++) {
-			const file = files[i];
-			const isSvg = isSvgFile(file);
-			const ext = isSvg ? "svg" : "png";
-
-			try {
-				let data: ArrayBuffer;
-				if (isSvg) {
-					const result = await processSvg(file);
-					data = result.data;
-				} else {
-					const result = await processImage(file);
-					data = result.data;
-				}
-
-				const id = `custom-${now}-${i}`;
-				const name = file.name.replace(/\.[^.]+$/, "");
-
-				await adapter.writeBinary(`${iconsDir}/${id}.${ext}`, data);
-
-				icons.push({
-					id,
-					name,
-					path: `${ICONS_DIR}/${id}.${ext}`,
-					createdAt: now,
-					tags: [],
-					ext,
-				});
-
-				imported++;
-			} catch {
-				// Skip failed files
-			}
-
-			statusEl.textContent = `Importing ${i + 1}/${files.length}...`;
-		}
-
-		// Save all to library in one write
-		if (icons.length > 0) {
-			await this.plugin.iconLibrary.addBatch(icons);
-		}
-
-		// Show result
-		this.container.empty();
-		this.renderBatchResult(imported, files.length);
-	}
-
-	private renderBatchResult(imported: number, total: number) {
-		const result = this.container.createDiv({ cls: `${CSS_PREFIX}-batch-result` });
-
-		result.createDiv({
-			text: `Imported ${imported} of ${total} icons to library.`,
-			cls: `${CSS_PREFIX}-upload-zone-text`,
-		});
-
-		result
-			.createEl("button", {
-				text: "Done",
-				cls: `${CSS_PREFIX}-save-btn`,
-			})
-			.addEventListener("click", () => {
-				this.modal.close();
-			});
-	}
-
 	private renderPreview(defaultName: string) {
 		if (!this.processed) return;
 
@@ -257,7 +184,6 @@ export class UploadTab implements TabRenderer {
 
 		// Preview section
 		const section = this.container.createDiv({ cls: `${CSS_PREFIX}-preview-section` });
-
 		const row = section.createDiv({ cls: `${CSS_PREFIX}-preview-row` });
 
 		// Sidebar preview
@@ -276,10 +202,8 @@ export class UploadTab implements TabRenderer {
 		editorImg.alt = "Editor";
 		editorCol.createDiv({ text: "Editor", cls: `${CSS_PREFIX}-preview-card-label` });
 
-		// Bottom bar: checkbox left, buttons right
+		// Bottom bar
 		const bottomBar = this.container.createDiv({ cls: `${CSS_PREFIX}-upload-bottom` });
-
-		// Left: checkbox + name input
 		const leftGroup = bottomBar.createDiv({ cls: `${CSS_PREFIX}-upload-bottom-left` });
 
 		const checkboxRow = leftGroup.createDiv({ cls: `${CSS_PREFIX}-upload-checkbox-row` });
@@ -289,7 +213,6 @@ export class UploadTab implements TabRenderer {
 		});
 		checkbox.id = "iconica-save-to-library";
 
-		// SVG forces library save (extension must be tracked in metadata)
 		if (isSvg) {
 			checkbox.checked = true;
 			checkbox.disabled = true;
@@ -302,7 +225,6 @@ export class UploadTab implements TabRenderer {
 		});
 
 		const nameGroup = leftGroup.createDiv({ cls: `${CSS_PREFIX}-upload-name-group` });
-		// Show name input if SVG (forced library save) or hidden otherwise
 		if (!isSvg) {
 			nameGroup.classList.add("iconica-hidden");
 		}
@@ -320,7 +242,6 @@ export class UploadTab implements TabRenderer {
 			});
 		}
 
-		// Right: buttons
 		const actions = bottomBar.createDiv({ cls: `${CSS_PREFIX}-upload-actions` });
 
 		actions
@@ -355,15 +276,12 @@ export class UploadTab implements TabRenderer {
 		const pluginDir = this.plugin.manifest.dir!;
 		const iconsDir = `${pluginDir}/${ICONS_DIR}`;
 
-		// Ensure icons directory exists
 		if (!(await adapter.exists(iconsDir))) {
 			await adapter.mkdir(iconsDir);
 		}
 
-		// Write file with correct extension
 		await adapter.writeBinary(`${iconsDir}/${id}.${ext}`, this.processed.data);
 
-		// Optionally add to library
 		if (saveToLibrary) {
 			await this.plugin.iconLibrary.add({
 				id,
@@ -375,11 +293,182 @@ export class UploadTab implements TabRenderer {
 			});
 		}
 
-		// Apply icon immediately
 		this.modal.selectIcon({ type: "custom", value: id });
 	}
 
-	/** Create a FileList-like object from a single File (for paste handler) */
+	// ─── Batch Flow ─────────────────────────────────
+
+	/** Show review screen: list all files with editable names before importing */
+	private renderBatchReview(files: File[]) {
+		this.container.empty();
+
+		const entries: BatchEntry[] = files.map((f) => ({
+			file: f,
+			name: f.name.replace(/\.[^.]+$/, ""),
+			ext: isSvgFile(f) ? ("svg" as const) : ("png" as const),
+		}));
+
+		// Header
+		this.container.createDiv({
+			text: `${entries.length} files selected`,
+			cls: `${CSS_PREFIX}-batch-header`,
+		});
+
+		// Scrollable file list
+		const list = this.container.createDiv({ cls: `${CSS_PREFIX}-batch-list` });
+		const nameInputs: HTMLInputElement[] = [];
+
+		entries.forEach((entry, i) => {
+			const row = list.createDiv({ cls: `${CSS_PREFIX}-batch-row` });
+
+			// Index number
+			row.createDiv({
+				text: `${i + 1}`,
+				cls: `${CSS_PREFIX}-batch-row-index`,
+			});
+
+			// Extension badge
+			row.createDiv({
+				text: entry.ext.toUpperCase(),
+				cls: `${CSS_PREFIX}-batch-row-ext`,
+			});
+
+			// Editable name input
+			const nameInput = row.createEl("input", {
+				type: "text",
+				value: entry.name,
+				cls: `${CSS_PREFIX}-batch-row-name`,
+			});
+			nameInput.value = entry.name;
+			nameInput.addEventListener("input", () => {
+				entry.name = nameInput.value;
+			});
+			nameInputs.push(nameInput);
+
+			// Remove button
+			row
+				.createEl("button", {
+					text: "\u00D7",
+					cls: `${CSS_PREFIX}-batch-row-remove`,
+				})
+				.addEventListener("click", () => {
+					entries.splice(i, 1);
+					this.renderBatchReview(entries.map((e) => e.file));
+				});
+		});
+
+		// Bottom bar
+		const bottomBar = this.container.createDiv({ cls: `${CSS_PREFIX}-upload-bottom` });
+
+		bottomBar
+			.createEl("button", {
+				text: "Back",
+				cls: `${CSS_PREFIX}-cancel-btn`,
+			})
+			.addEventListener("click", () => {
+				this.container.empty();
+				this.renderUploadZone();
+			});
+
+		bottomBar
+			.createEl("button", {
+				text: `Import ${entries.length} icons`,
+				cls: `${CSS_PREFIX}-save-btn`,
+			})
+			.addEventListener("click", () => {
+				// Read final names from inputs before importing
+				nameInputs.forEach((input, i) => {
+					if (entries[i]) {
+						entries[i].name = input.value.trim() || entries[i].file.name.replace(/\.[^.]+$/, "");
+					}
+				});
+				void this.executeBatchImport(entries);
+			});
+	}
+
+	/** Process and save all batch entries */
+	private async executeBatchImport(entries: BatchEntry[]) {
+		this.container.empty();
+
+		const statusEl = this.container.createEl("p", {
+			text: `Importing 0/${entries.length}...`,
+			cls: `${CSS_PREFIX}-placeholder`,
+		});
+
+		const adapter = this.plugin.app.vault.adapter;
+		const pluginDir = this.plugin.manifest.dir!;
+		const iconsDir = `${pluginDir}/${ICONS_DIR}`;
+
+		if (!(await adapter.exists(iconsDir))) {
+			await adapter.mkdir(iconsDir);
+		}
+
+		const now = Date.now();
+		const icons: CustomIcon[] = [];
+		let imported = 0;
+
+		for (let i = 0; i < entries.length; i++) {
+			const entry = entries[i];
+
+			try {
+				let data: ArrayBuffer;
+				if (entry.ext === "svg") {
+					const result = await processSvg(entry.file);
+					data = result.data;
+				} else {
+					const result = await processImage(entry.file);
+					data = result.data;
+				}
+
+				const id = `custom-${now}-${i}`;
+
+				await adapter.writeBinary(`${iconsDir}/${id}.${entry.ext}`, data);
+
+				icons.push({
+					id,
+					name: entry.name,
+					path: `${ICONS_DIR}/${id}.${entry.ext}`,
+					createdAt: now,
+					tags: [],
+					ext: entry.ext,
+				});
+
+				imported++;
+			} catch {
+				// Skip failed files
+			}
+
+			statusEl.textContent = `Importing ${i + 1}/${entries.length}...`;
+		}
+
+		if (icons.length > 0) {
+			await this.plugin.iconLibrary.addBatch(icons);
+		}
+
+		this.container.empty();
+		this.renderBatchResult(imported, entries.length);
+	}
+
+	private renderBatchResult(imported: number, total: number) {
+		const result = this.container.createDiv({ cls: `${CSS_PREFIX}-batch-result` });
+
+		result.createDiv({
+			text: `Imported ${imported} of ${total} icons to library.`,
+			cls: `${CSS_PREFIX}-upload-zone-text`,
+		});
+
+		result
+			.createEl("button", {
+				text: "Done",
+				cls: `${CSS_PREFIX}-save-btn`,
+			})
+			.addEventListener("click", () => {
+				this.modal.close();
+			});
+	}
+
+	// ─── Helpers ─────────────────────────────────────
+
 	private fileListFromSingle(file: File): FileList {
 		const dt = new DataTransfer();
 		dt.items.add(file);
