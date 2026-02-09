@@ -16,6 +16,11 @@ export default tseslint.config(
 	},
 	...obsidianmd.configs.recommended,
 	{
+		rules: {
+			"@typescript-eslint/require-await": "error",
+		},
+	},
+	{
 		ignores: [
 			"node_modules/",
 			"dist/",
