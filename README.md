@@ -33,6 +33,14 @@ Browse and manage your icon library. Upload new icons via drag & drop, file pick
   <img src="assets/upload-tab.jpg" width="320" alt="Upload Tab" />
 </p>
 
+### Batch Import & SVG Support
+
+Select multiple files at once to batch import. SVG files are stored natively (no rasterization), preserving vector quality and transparency. Review and rename icons before importing.
+
+<p align="center">
+  <img src="assets/multiple-upload.jpg" width="320" alt="Batch Import" />
+</p>
+
 ### Context Menu
 
 Right-click any file or folder to change or remove its custom icon.
@@ -69,8 +77,9 @@ Use `:custom-icon-NAME:` shortcodes to embed icons directly in your notes.
 ## Usage
 
 1. **Upload icons** — Open the icon picker and go to the **Upload** tab. Drag & drop or click to upload PNG, JPG, or SVG files.
-2. **Assign icons** — Right-click a file or folder in the explorer and select **Change custom icon**, then pick from your library.
-3. **Inline icons** — Enable inline icons in settings, then type `:custom-icon-NAME:` in your notes (where `NAME` is the icon name in your library).
+2. **Batch import** — Select multiple files at once to import them all. Review names and remove unwanted files before importing.
+3. **Assign icons** — Right-click a file or folder in the explorer and select **Change custom icon**, then pick from your library.
+4. **Inline icons** — Enable inline icons in settings, then type `:custom-icon-NAME:` in your notes (where `NAME` is the icon name in your library).
 
 ## Support
 

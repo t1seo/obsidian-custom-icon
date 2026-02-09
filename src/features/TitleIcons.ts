@@ -68,8 +68,7 @@ export class TitleIcons {
 		const img = document.createElement("img");
 		img.width = TITLE_ICON_SIZE;
 		img.height = TITLE_ICON_SIZE;
-		const adapter = this.plugin.app.vault.adapter;
-		img.src = adapter.getResourcePath(`${this.plugin.manifest.dir}/icons/${icon.value}.png`);
+		img.src = this.plugin.iconLibrary.getIconUrl(icon.value);
 		img.alt = "";
 		wrapper.appendChild(img);
 

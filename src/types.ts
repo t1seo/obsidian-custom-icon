@@ -16,6 +16,8 @@ export interface CustomIcon {
 	path: string;
 	createdAt: number;
 	tags?: string[];
+	/** File extension: "png" | "svg". Defaults to "png" for backward compat */
+	ext?: string;
 }
 
 /** Persisted workspace icon library */

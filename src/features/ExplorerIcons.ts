@@ -173,17 +173,11 @@ export class ExplorerIcons {
 		const img = document.createElement("img");
 		img.width = EXPLORER_ICON_SIZE;
 		img.height = EXPLORER_ICON_SIZE;
-		img.src = this.getCustomIconPath(icon.value);
+		img.src = this.plugin.iconLibrary.getIconUrl(icon.value);
 		img.alt = "";
 		wrapper.appendChild(img);
 		wrapper.dataset.iconicaActive = "true";
 
 		return wrapper;
-	}
-
-	private getCustomIconPath(iconId: string): string {
-		const adapter = this.plugin.app.vault.adapter;
-		const basePath = `${this.plugin.manifest.dir}/icons/${iconId}.png`;
-		return adapter.getResourcePath(basePath);
 	}
 }

@@ -155,6 +155,13 @@ describe("IconLibraryService", () => {
 			expect(adapter.remove).toHaveBeenCalledWith(`${pluginDir}/icons/custom-1.png`);
 		});
 
+		it("removes SVG icon with correct extension", async () => {
+			await service.add({ id: "svg-1", name: "logo", path: "icons/svg-1.svg", createdAt: 2, ext: "svg" });
+			await service.remove("svg-1");
+
+			expect(adapter.remove).toHaveBeenCalledWith(`${pluginDir}/icons/svg-1.svg`);
+		});
+
 		it("does nothing for unknown ID", async () => {
 			await service.remove("unknown");
 			expect(service.getAll()).toHaveLength(1);
@@ -186,17 +193,87 @@ describe("IconLibraryService", () => {
 		});
 	});
 
+	describe("addBatch", () => {
+		it("adds multiple icons with a single save", async () => {
+			await service.load();
+
+			const icons = [
+				{ id: "batch-1", name: "icon-a", path: "icons/batch-1.png", createdAt: 100 },
+				{ id: "batch-2", name: "icon-b", path: "icons/batch-2.svg", createdAt: 100, ext: "svg" },
+				{ id: "batch-3", name: "icon-c", path: "icons/batch-3.png", createdAt: 100 },
+			];
+
+			adapter.write.mockClear();
+			await service.addBatch(icons);
+
+			expect(service.getAll()).toHaveLength(3);
+			expect(service.getById("batch-1")?.name).toBe("icon-a");
+			expect(service.getById("batch-2")?.ext).toBe("svg");
+			// addBatch calls save once (not per-icon)
+			expect(adapter.write).toHaveBeenCalledTimes(1);
+		});
+
+		it("handles empty array", async () => {
+			await service.load();
+			adapter.write.mockClear();
+			await service.addBatch([]);
+
+			expect(service.getAll()).toHaveLength(0);
+			expect(adapter.write).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	describe("getIconExt", () => {
+		it("returns 'png' for icons without ext field", async () => {
+			const icons = [{ id: "old-1", name: "legacy", path: "icons/old-1.png", createdAt: 1 }];
+			adapter._store[`${pluginDir}/icon-library.json`] = JSON.stringify({ icons });
+			await service.load();
+
+			expect(service.getIconExt("old-1")).toBe("png");
+		});
+
+		it("returns 'svg' for icons with ext: 'svg'", async () => {
+			const icons = [{ id: "svg-1", name: "logo", path: "icons/svg-1.svg", createdAt: 1, ext: "svg" }];
+			adapter._store[`${pluginDir}/icon-library.json`] = JSON.stringify({ icons });
+			await service.load();
+
+			expect(service.getIconExt("svg-1")).toBe("svg");
+		});
+
+		it("returns 'png' for unknown ID", () => {
+			expect(service.getIconExt("nonexistent")).toBe("png");
+		});
+	});
+
 	describe("getIconPath", () => {
-		it("returns correct path", () => {
+		it("returns correct path with default png extension", () => {
 			expect(service.getIconPath("custom-1")).toBe(`${pluginDir}/icons/custom-1.png`);
+		});
+
+		it("returns correct path with svg extension", async () => {
+			const icons = [{ id: "svg-1", name: "logo", path: "icons/svg-1.svg", createdAt: 1, ext: "svg" }];
+			adapter._store[`${pluginDir}/icon-library.json`] = JSON.stringify({ icons });
+			await service.load();
+
+			expect(service.getIconPath("svg-1")).toBe(`${pluginDir}/icons/svg-1.svg`);
 		});
 	});
 
 	describe("getIconUrl", () => {
-		it("returns resource URL via adapter", () => {
+		it("returns resource URL via adapter for png", () => {
 			const url = service.getIconUrl("custom-1");
 			expect(adapter.getResourcePath).toHaveBeenCalledWith(`${pluginDir}/icons/custom-1.png`);
 			expect(url).toBe(`app://local/${pluginDir}/icons/custom-1.png`);
+		});
+
+		it("returns resource URL via adapter for svg", async () => {
+			const icons = [{ id: "svg-1", name: "logo", path: "icons/svg-1.svg", createdAt: 1, ext: "svg" }];
+			adapter._store[`${pluginDir}/icon-library.json`] = JSON.stringify({ icons });
+			await service.load();
+
+			const url = service.getIconUrl("svg-1");
+			expect(adapter.getResourcePath).toHaveBeenCalledWith(`${pluginDir}/icons/svg-1.svg`);
+			expect(url).toBe(`app://local/${pluginDir}/icons/svg-1.svg`);
 		});
 	});
 });

@@ -66,3 +66,26 @@ export async function processImage(file: File, size = 128): Promise<ProcessedIma
 
 	return { data, dataUrl };
 }
+
+/** Check if a file is an SVG by MIME type or extension */
+export function isSvgFile(file: File): boolean {
+	return file.type === "image/svg+xml" || file.name.toLowerCase().endsWith(".svg");
+}
+
+/** Result of SVG processing (pass-through, no resize) */
+export interface ProcessedSvg {
+	data: ArrayBuffer;
+	dataUrl: string;
+}
+
+/** Read SVG as raw ArrayBuffer + base64 dataUrl (no canvas rasterization) */
+export async function processSvg(file: File): Promise<ProcessedSvg> {
+	const data = await file.arrayBuffer();
+	const bytes = new Uint8Array(data);
+	let binary = "";
+	bytes.forEach((b) => {
+		binary += String.fromCharCode(b);
+	});
+	const dataUrl = `data:image/svg+xml;base64,${btoa(binary)}`;
+	return { data, dataUrl };
+}
