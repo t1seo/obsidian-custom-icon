@@ -441,6 +441,15 @@
 	text-align: center;
 }
 
+.iconica-batch-row-thumb {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+	border-radius: 4px;
+	background: var(--background-primary);
+	flex-shrink: 0;
+}
+
 .iconica-batch-row-ext {
 	font-size: 10px;
 	font-weight: 600;

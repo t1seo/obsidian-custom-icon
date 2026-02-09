@@ -327,6 +327,13 @@ export class UploadTab implements TabRenderer {
 				cls: `${CSS_PREFIX}-batch-row-index`,
 			});
 
+			// Thumbnail preview
+			const thumb = row.createEl("img", {
+				cls: `${CSS_PREFIX}-batch-row-thumb`,
+			});
+			thumb.src = URL.createObjectURL(entry.file);
+			thumb.alt = "";
+
 			// Extension badge
 			row.createDiv({
 				text: entry.ext.toUpperCase(),
