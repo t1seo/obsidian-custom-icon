@@ -1,7 +1,7 @@
 {
 	"id": "custom-icon",
 	"name": "Custom Icon",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"minAppVersion": "1.4.0",
 	"description": "Add custom uploaded image icons to files and folders in the explorer, tabs, and note titles.",
 	"author": "t1seo",
