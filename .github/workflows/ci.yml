@@ -54,3 +54,40 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx tsc -noEmit -skipLibCheck
+
+  version-check:
+    name: Version Consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check version consistency
+        run: |
+          MANIFEST_VER=$(jq -r .version manifest.json)
+          PACKAGE_VER=$(jq -r .version package.json)
+          VERSIONS_ENTRY=$(jq -r --arg v "$MANIFEST_VER" 'has($v)' versions.json)
+          CHANGELOG_ENTRY=$(grep -c "## \[$MANIFEST_VER\]" CHANGELOG.md || true)
+
+          echo "manifest.json:  $MANIFEST_VER"
+          echo "package.json:   $PACKAGE_VER"
+          echo "versions.json:  entry exists = $VERSIONS_ENTRY"
+          echo "CHANGELOG.md:   entries found = $CHANGELOG_ENTRY"
+
+          FAIL=0
+
+          if [ "$MANIFEST_VER" != "$PACKAGE_VER" ]; then
+            echo "::error::Version mismatch: manifest.json ($MANIFEST_VER) != package.json ($PACKAGE_VER)"
+            FAIL=1
+          fi
+
+          if [ "$VERSIONS_ENTRY" != "true" ]; then
+            echo "::error::versions.json is missing entry for $MANIFEST_VER"
+            FAIL=1
+          fi
+
+          if [ "$CHANGELOG_ENTRY" -eq 0 ]; then
+            echo "::error::CHANGELOG.md is missing section for [$MANIFEST_VER]"
+            FAIL=1
+          fi
+
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All versions consistent: $MANIFEST_VER"
