@@ -1,15 +1,29 @@
 import { CSS_PREFIX, ICONS_DIR } from "../constants";
 import type IconicaPlugin from "../main";
-import { type ProcessedImage, processImage } from "../services/ImageProcessor";
+import {
+	type ProcessedImage,
+	type ProcessedSvg,
+	isSvgFile,
+	processImage,
+	processSvg,
+} from "../services/ImageProcessor";
+import type { CustomIcon } from "../types";
 import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
+
+/** Tracks processed result and its detected file type */
+interface ProcessedFile {
+	data: ArrayBuffer;
+	dataUrl: string;
+	ext: "png" | "svg";
+}
 
 /**
  * Upload tab: drag-and-drop or file picker to upload a custom icon image.
- * Processes the image for light/dark mode variants, saves to library.
+ * Supports single file preview, SVG pass-through, and batch import.
  */
 export class UploadTab implements TabRenderer {
 	private container!: HTMLElement;
-	private processedImage: ProcessedImage | null = null;
+	private processed: ProcessedFile | null = null;
 	private pasteHandler: ((e: ClipboardEvent) => void) | null = null;
 
 	constructor(
@@ -19,7 +33,7 @@ export class UploadTab implements TabRenderer {
 
 	render(container: HTMLElement): void {
 		this.container = container;
-		this.processedImage = null;
+		this.processed = null;
 		this.renderUploadZone();
 	}
 
@@ -39,11 +53,11 @@ export class UploadTab implements TabRenderer {
 		iconDiv.textContent = "\uD83D\uDCC1";
 
 		zone.createDiv({
-			text: "Click to upload or drag an image",
+			text: "Click to upload or drag images",
 			cls: `${CSS_PREFIX}-upload-zone-text`,
 		});
 		zone.createDiv({
-			text: "PNG, JPG, SVG \u00B7 Cmd+V to paste",
+			text: "PNG, JPG, SVG \u00B7 Multiple files supported \u00B7 Cmd+V to paste",
 			cls: `${CSS_PREFIX}-upload-zone-hint`,
 		});
 
@@ -61,10 +75,9 @@ export class UploadTab implements TabRenderer {
 		zone.addEventListener("drop", (e) => {
 			e.preventDefault();
 			zone.removeClass("is-dragover");
-			const file = e.dataTransfer?.files[0];
-			if (file?.type.startsWith("image/")) {
-				void this.handleFile(file);
-			}
+			const files = e.dataTransfer?.files;
+			if (!files || files.length === 0) return;
+			void this.handleFiles(files);
 		});
 
 		// Paste handler
@@ -76,7 +89,7 @@ export class UploadTab implements TabRenderer {
 					const file = item.getAsFile();
 					if (file) {
 						e.preventDefault();
-						void this.handleFile(file);
+						void this.handleFiles(this.fileListFromSingle(file));
 						return;
 					}
 				}
@@ -89,14 +102,37 @@ export class UploadTab implements TabRenderer {
 		const input = document.createElement("input");
 		input.type = "file";
 		input.accept = "image/*";
+		input.multiple = true;
 		input.addEventListener("change", () => {
-			const file = input.files?.[0];
-			if (file) void this.handleFile(file);
+			if (input.files && input.files.length > 0) {
+				void this.handleFiles(input.files);
+			}
 		});
 		input.click();
 	}
 
-	private async handleFile(file: File) {
+	/** Route to single or batch handling based on file count */
+	private async handleFiles(files: FileList) {
+		// Filter to image files only
+		const imageFiles: File[] = [];
+		for (let i = 0; i < files.length; i++) {
+			const f = files[i];
+			if (f.type.startsWith("image/") || f.name.toLowerCase().endsWith(".svg")) {
+				imageFiles.push(f);
+			}
+		}
+
+		if (imageFiles.length === 0) return;
+
+		if (imageFiles.length === 1) {
+			void this.handleSingleFile(imageFiles[0]);
+		} else {
+			void this.handleBatch(imageFiles);
+		}
+	}
+
+	/** Single file: process and show preview */
+	private async handleSingleFile(file: File) {
 		this.container.empty();
 		this.container.createEl("p", {
 			text: "Processing image...",
@@ -104,7 +140,18 @@ export class UploadTab implements TabRenderer {
 		});
 
 		try {
-			this.processedImage = await processImage(file);
+			const isSvg = isSvgFile(file);
+			let result: ProcessedImage | ProcessedSvg;
+			if (isSvg) {
+				result = await processSvg(file);
+			} else {
+				result = await processImage(file);
+			}
+			this.processed = {
+				data: result.data,
+				dataUrl: result.dataUrl,
+				ext: isSvg ? "svg" : "png",
+			};
 			this.container.empty();
 			this.renderPreview(file.name.replace(/\.[^.]+$/, ""));
 		} catch {
@@ -116,8 +163,97 @@ export class UploadTab implements TabRenderer {
 		}
 	}
 
+	/** Batch: process all files, save to library, show result */
+	private async handleBatch(files: File[]) {
+		this.container.empty();
+
+		const statusEl = this.container.createEl("p", {
+			text: `Importing 0/${files.length}...`,
+			cls: `${CSS_PREFIX}-placeholder`,
+		});
+
+		const adapter = this.plugin.app.vault.adapter;
+		const pluginDir = this.plugin.manifest.dir!;
+		const iconsDir = `${pluginDir}/${ICONS_DIR}`;
+
+		// Ensure icons directory exists
+		if (!(await adapter.exists(iconsDir))) {
+			await adapter.mkdir(iconsDir);
+		}
+
+		const now = Date.now();
+		const icons: CustomIcon[] = [];
+		let imported = 0;
+
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+			const isSvg = isSvgFile(file);
+			const ext = isSvg ? "svg" : "png";
+
+			try {
+				let data: ArrayBuffer;
+				if (isSvg) {
+					const result = await processSvg(file);
+					data = result.data;
+				} else {
+					const result = await processImage(file);
+					data = result.data;
+				}
+
+				const id = `custom-${now}-${i}`;
+				const name = file.name.replace(/\.[^.]+$/, "");
+
+				await adapter.writeBinary(`${iconsDir}/${id}.${ext}`, data);
+
+				icons.push({
+					id,
+					name,
+					path: `${ICONS_DIR}/${id}.${ext}`,
+					createdAt: now,
+					tags: [],
+					ext,
+				});
+
+				imported++;
+			} catch {
+				// Skip failed files
+			}
+
+			statusEl.textContent = `Importing ${i + 1}/${files.length}...`;
+		}
+
+		// Save all to library in one write
+		if (icons.length > 0) {
+			await this.plugin.iconLibrary.addBatch(icons);
+		}
+
+		// Show result
+		this.container.empty();
+		this.renderBatchResult(imported, files.length);
+	}
+
+	private renderBatchResult(imported: number, total: number) {
+		const result = this.container.createDiv({ cls: `${CSS_PREFIX}-batch-result` });
+
+		result.createDiv({
+			text: `Imported ${imported} of ${total} icons to library.`,
+			cls: `${CSS_PREFIX}-upload-zone-text`,
+		});
+
+		result
+			.createEl("button", {
+				text: "Done",
+				cls: `${CSS_PREFIX}-save-btn`,
+			})
+			.addEventListener("click", () => {
+				this.modal.close();
+			});
+	}
+
 	private renderPreview(defaultName: string) {
-		if (!this.processedImage) return;
+		if (!this.processed) return;
+
+		const isSvg = this.processed.ext === "svg";
 
 		// Preview section
 		const section = this.container.createDiv({ cls: `${CSS_PREFIX}-preview-section` });
@@ -128,7 +264,7 @@ export class UploadTab implements TabRenderer {
 		const sidebarCol = row.createDiv({ cls: `${CSS_PREFIX}-preview-col` });
 		const sidebarCard = sidebarCol.createDiv({ cls: `${CSS_PREFIX}-preview-card is-sidebar` });
 		const sidebarImg = sidebarCard.createEl("img");
-		sidebarImg.src = this.processedImage.dataUrl;
+		sidebarImg.src = this.processed.dataUrl;
 		sidebarImg.alt = "Sidebar";
 		sidebarCol.createDiv({ text: "Sidebar", cls: `${CSS_PREFIX}-preview-card-label` });
 
@@ -136,7 +272,7 @@ export class UploadTab implements TabRenderer {
 		const editorCol = row.createDiv({ cls: `${CSS_PREFIX}-preview-col` });
 		const editorCard = editorCol.createDiv({ cls: `${CSS_PREFIX}-preview-card is-editor` });
 		const editorImg = editorCard.createEl("img");
-		editorImg.src = this.processedImage.dataUrl;
+		editorImg.src = this.processed.dataUrl;
 		editorImg.alt = "Editor";
 		editorCol.createDiv({ text: "Editor", cls: `${CSS_PREFIX}-preview-card-label` });
 
@@ -152,6 +288,13 @@ export class UploadTab implements TabRenderer {
 			cls: `${CSS_PREFIX}-upload-checkbox`,
 		});
 		checkbox.id = "iconica-save-to-library";
+
+		// SVG forces library save (extension must be tracked in metadata)
+		if (isSvg) {
+			checkbox.checked = true;
+			checkbox.disabled = true;
+		}
+
 		checkboxRow.createEl("label", {
 			text: "Save to library",
 			cls: `${CSS_PREFIX}-upload-checkbox-label`,
@@ -159,7 +302,10 @@ export class UploadTab implements TabRenderer {
 		});
 
 		const nameGroup = leftGroup.createDiv({ cls: `${CSS_PREFIX}-upload-name-group` });
-		nameGroup.classList.add("iconica-hidden");
+		// Show name input if SVG (forced library save) or hidden otherwise
+		if (!isSvg) {
+			nameGroup.classList.add("iconica-hidden");
+		}
 		const nameInput = nameGroup.createEl("input", {
 			type: "text",
 			placeholder: "Icon name",
@@ -168,9 +314,11 @@ export class UploadTab implements TabRenderer {
 		});
 		nameInput.value = defaultName;
 
-		checkbox.addEventListener("change", () => {
-			nameGroup.classList.toggle("iconica-hidden", !checkbox.checked);
-		});
+		if (!isSvg) {
+			checkbox.addEventListener("change", () => {
+				nameGroup.classList.toggle("iconica-hidden", !checkbox.checked);
+			});
+		}
 
 		// Right: buttons
 		const actions = bottomBar.createDiv({ cls: `${CSS_PREFIX}-upload-actions` });
@@ -182,7 +330,7 @@ export class UploadTab implements TabRenderer {
 			})
 			.addEventListener("click", () => {
 				this.container.empty();
-				this.processedImage = null;
+				this.processed = null;
 				this.renderUploadZone();
 			});
 
@@ -199,8 +347,9 @@ export class UploadTab implements TabRenderer {
 	}
 
 	private async applyIcon(name: string, saveToLibrary: boolean) {
-		if (!this.processedImage) return;
+		if (!this.processed) return;
 
+		const ext = this.processed.ext;
 		const id = `custom-${Date.now()}`;
 		const adapter = this.plugin.app.vault.adapter;
 		const pluginDir = this.plugin.manifest.dir!;
@@ -211,21 +360,29 @@ export class UploadTab implements TabRenderer {
 			await adapter.mkdir(iconsDir);
 		}
 
-		// Write single transparent image
-		await adapter.writeBinary(`${iconsDir}/${id}.png`, this.processedImage.data);
+		// Write file with correct extension
+		await adapter.writeBinary(`${iconsDir}/${id}.${ext}`, this.processed.data);
 
 		// Optionally add to library
 		if (saveToLibrary) {
 			await this.plugin.iconLibrary.add({
 				id,
 				name,
-				path: `${ICONS_DIR}/${id}.png`,
+				path: `${ICONS_DIR}/${id}.${ext}`,
 				createdAt: Date.now(),
 				tags: [],
+				ext,
 			});
 		}
 
 		// Apply icon immediately
 		this.modal.selectIcon({ type: "custom", value: id });
+	}
+
+	/** Create a FileList-like object from a single File (for paste handler) */
+	private fileListFromSingle(file: File): FileList {
+		const dt = new DataTransfer();
+		dt.items.add(file);
+		return dt.files;
 	}
 }

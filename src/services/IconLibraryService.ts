@@ -65,15 +65,24 @@ export class IconLibraryService {
 		const icon = this.getById(id);
 		if (!icon) return;
 
-		// Delete image file
+		// Delete image file using actual extension
+		const ext = this.getIconExt(id);
 		const iconsDir = `${this.pluginDir}/${ICONS_DIR}`;
 		try {
-			await this.adapter.remove(`${iconsDir}/${id}.png`);
+			await this.adapter.remove(`${iconsDir}/${id}.${ext}`);
 		} catch {
 			// File may not exist
 		}
 
 		this.library.icons = this.library.icons.filter((i) => i.id !== id);
+		await this.save();
+	}
+
+	/** Add multiple icons to the library with a single save */
+	async addBatch(icons: CustomIcon[]): Promise<void> {
+		for (const icon of icons) {
+			this.library.icons.push(icon);
+		}
 		await this.save();
 	}
 
@@ -86,9 +95,16 @@ export class IconLibraryService {
 		await this.save();
 	}
 
+	/** Get the file extension for a custom icon (defaults to "png") */
+	getIconExt(id: string): string {
+		const icon = this.getById(id);
+		return icon?.ext ?? "png";
+	}
+
 	/** Get the file path for a custom icon */
 	getIconPath(id: string): string {
-		return `${this.pluginDir}/${ICONS_DIR}/${id}.png`;
+		const ext = this.getIconExt(id);
+		return `${this.pluginDir}/${ICONS_DIR}/${id}.${ext}`;
 	}
 
 	/** Get resource URL for a custom icon (for <img> src) */
