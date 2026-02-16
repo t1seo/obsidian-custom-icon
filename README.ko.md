@@ -15,22 +15,34 @@
 
 ## 주요 기능
 
-### 탐색기 커스텀 아이콘
+### 탐색기, 탭 & 노트 제목 아이콘
 
-업로드한 아이콘을 파일과 폴더에 적용할 수 있습니다. 라이트/다크 테마 모두 지원합니다.
+업로드한 아이콘을 파일과 폴더에 적용할 수 있습니다. 탐색기, 탭 헤더, 노트 제목 위(Notion 스타일)에 아이콘이 표시됩니다. 라이트/다크 테마 모두 투명 배경을 완벽 지원합니다.
 
 <p align="center">
   <img src="assets/explorer-light.jpg" width="280" alt="탐색기 라이트 테마" />
   <img src="assets/explorer-dark.jpg" width="280" alt="탐색기 다크 테마" />
 </p>
 
-### 아이콘 피커
+<p align="center">
+  <img src="assets/tab-icons.jpg" width="480" alt="탭 아이콘" />
+</p>
 
-아이콘 라이브러리를 탐색하고 관리하세요. 드래그 앤 드롭, 파일 선택, 클립보드 붙여넣기로 새 아이콘을 업로드할 수 있습니다.
+<p align="center">
+  <img src="assets/title-icon.jpg" width="480" alt="노트 제목 아이콘" />
+</p>
+
+### 아이콘 피커 & 이름 변경
+
+아이콘 라이브러리를 탐색하고 관리하세요. 드래그 앤 드롭, 파일 선택, 클립보드 붙여넣기로 새 아이콘을 업로드할 수 있습니다. 아이콘 이름을 **더블클릭**하면 바로 이름을 변경할 수 있습니다.
 
 <p align="center">
   <img src="assets/icons-tab.jpg" width="320" alt="아이콘 탭" />
   <img src="assets/upload-tab.jpg" width="320" alt="업로드 탭" />
+</p>
+
+<p align="center">
+  <img src="assets/rename-icon.jpg" width="320" alt="아이콘 이름 변경" />
 </p>
 
 ### 배치 가져오기 & SVG 지원
@@ -41,21 +53,48 @@
   <img src="assets/multiple-upload.jpg" width="320" alt="배치 가져오기" />
 </p>
 
-### 컨텍스트 메뉴
+### 인라인 아이콘
 
-파일이나 폴더를 우클릭하면 커스텀 아이콘을 변경하거나 제거할 수 있습니다.
+`:ci-이름:` 단축코드를 사용해 노트 본문에 아이콘을 삽입할 수 있습니다. 편집 모드와 읽기 모드 모두 지원합니다.
+
+- **호버 프리뷰** — 인라인 아이콘에 마우스를 올리면 큰 미리보기와 이름이 표시됩니다
+- **크기 조절** — 아이콘 크기를 12~64px로 즉시 조절 가능합니다
+- **커스텀 접두사** — 단축코드 접두사를 자유롭게 변경할 수 있습니다 (예: `:my-이름:`)
+- **커맨드 팔레트** — `Cmd/Ctrl+P` → "Insert inline icon"으로 간편 삽입
+
+<p align="center">
+  <img src="assets/inline-icons.jpg" width="480" alt="인라인 아이콘" />
+</p>
+
+<p align="center">
+  <img src="assets/inline-hover.jpg" width="320" alt="호버 프리뷰" />
+  <img src="assets/inline-sizes.jpg" width="320" alt="크기 옵션" />
+</p>
+
+### 컨텍스트 메뉴 & 커맨드
+
+파일이나 폴더를 우클릭하면 커스텀 아이콘을 변경하거나 제거할 수 있습니다. 커맨드 팔레트에서 세 가지 명령을 사용할 수 있습니다:
+
+- **Change icon for current file** — 현재 노트의 아이콘 변경
+- **Remove icon from current file** — 아이콘 제거
+- **Insert inline icon at cursor** — 인라인 아이콘 삽입
 
 <p align="center">
   <img src="assets/change-icon-menu.jpg" width="320" alt="컨텍스트 메뉴" />
+  <img src="assets/command-palette.jpg" width="320" alt="커맨드 팔레트" />
 </p>
 
-### 인라인 아이콘
-
-`:custom-icon-이름:` 단축코드를 사용해 노트 본문에 아이콘을 삽입할 수 있습니다.
+### 설정
 
 <p align="center">
-  <img src="assets/note-page.jpg" width="480" alt="인라인 아이콘" />
+  <img src="assets/settings.jpg" width="480" alt="설정" />
 </p>
+
+| 설정 | 설명 | 기본값 |
+|------|------|--------|
+| Enable inline icons | 노트에서 `:ci-이름:` 단축코드 활성화 | Off |
+| Inline icon size | 인라인 아이콘 크기 (12-64px) | 20px |
+| Inline icon prefix | 단축코드 접두사 (예: `ci`, `my`, `icon`) | `ci` |
 
 ## 설치 방법
 
@@ -76,10 +115,12 @@
 
 ## 사용 방법
 
-1. **아이콘 업로드** — 아이콘 피커를 열고 **Upload** 탭으로 이동합니다. 드래그 앤 드롭 또는 클릭으로 PNG, JPG, SVG 파일을 업로드하세요.
-2. **배치 가져오기** — 여러 파일을 한 번에 선택하면 일괄 가져오기됩니다. 가져오기 전에 이름을 수정하거나 불필요한 파일을 제거할 수 있습니다.
-3. **아이콘 적용** — 탐색기에서 파일이나 폴더를 우클릭하고 **Change custom icon**을 선택한 뒤 라이브러리에서 아이콘을 선택하세요.
-4. **인라인 아이콘** — 설정에서 인라인 아이콘을 활성화한 뒤, 노트에 `:custom-icon-이름:`을 입력하세요 (`이름`은 라이브러리에 등록된 아이콘 이름).
+1. **아이콘 업로드** — 아이콘 피커의 **Upload** 탭에서 드래그 앤 드롭, 클릭, 또는 클립보드 붙여넣기로 업로드
+2. **배치 가져오기** — 여러 파일을 한 번에 선택하면 일괄 가져오기. 이름 수정 후 가져오기 가능
+3. **아이콘 적용** — 탐색기에서 파일/폴더 우클릭 → **Change custom icon** 선택
+4. **이름 변경** — 아이콘 피커에서 아이콘 이름을 더블클릭하면 즉시 변경 가능
+5. **인라인 아이콘** — 설정에서 활성화 후 `:ci-이름:` 입력 (`이름`은 라이브러리의 아이콘 이름 또는 ID)
+6. **커맨드 삽입** — `Cmd/Ctrl+P` → "Insert inline icon" 검색 → 라이브러리에서 선택
 
 ## 지원
 
