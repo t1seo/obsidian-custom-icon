@@ -4,7 +4,7 @@
 
 /* ─── Icon Picker Modal ─── */
 
-.iconica-picker {
+.custom-icon-picker {
 	width: 400px;
 	max-height: 560px;
 	display: flex;
@@ -14,8 +14,8 @@
 	overflow: hidden;
 }
 
-/* .iconica-picker IS the modal-content element */
-.iconica-picker.modal-content {
+/* .custom-icon-picker IS the modal-content element */
+.custom-icon-picker.modal-content {
 	padding: 0 !important;
 	display: flex;
 	flex-direction: column;
@@ -24,14 +24,14 @@
 }
 
 /* Remove padding from parent .modal container (class added via JS) */
-.iconica-modal {
+.custom-icon-modal {
 	padding: 0 !important;
 	width: auto !important;
 }
 
 /* ─── Header: tab bar ─── */
 
-.iconica-picker-header {
+.custom-icon-picker-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -39,12 +39,12 @@
 	gap: 4px;
 }
 
-.iconica-picker-tabs {
+.custom-icon-picker-tabs {
 	display: flex;
 	gap: 6px;
 }
 
-.iconica-tab-btn {
+.custom-icon-tab-btn {
 	background: none;
 	border: none;
 	padding: 6px 12px;
@@ -56,12 +56,12 @@
 	transition: color 0.12s, background 0.12s;
 }
 
-.iconica-tab-btn:hover {
+.custom-icon-tab-btn:hover {
 	color: var(--text-normal);
 	background: var(--background-modifier-hover);
 }
 
-.iconica-tab-btn.is-active {
+.custom-icon-tab-btn.is-active {
 	color: var(--text-normal);
 	font-weight: 600;
 	background: var(--background-modifier-hover);
@@ -69,14 +69,14 @@
 
 /* ─── Search Bar ─── */
 
-.iconica-picker-search {
+.custom-icon-picker-search {
 	display: flex;
 	align-items: center;
 	gap: 6px;
 	padding: 8px 12px;
 }
 
-.iconica-search-input {
+.custom-icon-search-input {
 	flex: 1;
 	padding: 7px 10px;
 	border: 1px solid var(--background-modifier-border);
@@ -88,15 +88,15 @@
 	transition: border-color 0.15s;
 }
 
-.iconica-search-input:focus {
+.custom-icon-search-input:focus {
 	border-color: var(--interactive-accent);
 }
 
-.iconica-search-input::placeholder {
+.custom-icon-search-input::placeholder {
 	color: var(--text-faint);
 }
 
-.iconica-random-btn {
+.custom-icon-random-btn {
 	background: none;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 8px;
@@ -107,13 +107,13 @@
 	transition: background 0.1s;
 }
 
-.iconica-random-btn:hover {
+.custom-icon-random-btn:hover {
 	background: var(--background-modifier-hover);
 }
 
 /* ─── Tab Content Area ─── */
 
-.iconica-picker-content {
+.custom-icon-picker-content {
 	flex: 1;
 	overflow-y: auto;
 	padding: 4px 12px 12px;
@@ -124,7 +124,7 @@
 
 /* ─── Section Labels ─── */
 
-.iconica-section-label {
+.custom-icon-section-label {
 	font-size: 11px;
 	font-weight: 600;
 	color: var(--text-faint);
@@ -134,19 +134,26 @@
 	padding: 0 2px;
 }
 
-.iconica-section-label:first-child {
+.custom-icon-section-label:first-child {
 	margin-top: 4px;
 }
 
 /* ─── Custom Icon Grid ─── */
 
-.iconica-custom-grid {
+.custom-icon-grid-hint {
+	font-size: 11px;
+	color: var(--text-faint);
+	text-align: right;
+	padding: 0 4px 4px;
+}
+
+.custom-icon-custom-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
 	gap: 4px;
 }
 
-.iconica-custom-item {
+.custom-icon-custom-item {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -154,7 +161,7 @@
 	position: relative;
 }
 
-.iconica-custom-item-btn {
+.custom-icon-custom-item-btn {
 	width: 56px;
 	height: 56px;
 	display: flex;
@@ -168,12 +175,12 @@
 	padding: 4px;
 }
 
-.iconica-custom-item-btn:hover {
+.custom-icon-custom-item-btn:hover {
 	border-color: var(--interactive-accent);
 	background: var(--background-modifier-hover);
 }
 
-.iconica-custom-item-btn img {
+.custom-icon-custom-item-btn img {
 	width: 40px;
 	height: 40px;
 	object-fit: contain;
@@ -181,7 +188,7 @@
 	background-color: var(--background-secondary);
 }
 
-.iconica-custom-item-label {
+.custom-icon-custom-item-label {
 	font-size: 10px;
 	color: var(--text-muted);
 	text-align: center;
@@ -189,9 +196,23 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	cursor: default;
 }
 
-.iconica-custom-item-remove {
+.custom-icon-rename-input {
+	width: 100%;
+	max-width: 72px;
+	font-size: 10px;
+	text-align: center;
+	padding: 0 2px;
+	border: 1px solid var(--interactive-accent);
+	border-radius: 3px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	outline: none;
+}
+
+.custom-icon-custom-item-remove {
 	position: absolute;
 	top: -4px;
 	right: 2px;
@@ -211,13 +232,13 @@
 	transition: opacity 0.12s;
 }
 
-.iconica-custom-item:hover .iconica-custom-item-remove {
+.custom-icon-custom-item:hover .custom-icon-custom-item-remove {
 	opacity: 1;
 }
 
 /* ─── Upload Tab ─── */
 
-.iconica-upload-zone {
+.custom-icon-upload-zone {
 	border: 2px dashed var(--background-modifier-border);
 	border-radius: 12px;
 	padding: 40px 20px;
@@ -228,24 +249,24 @@
 	margin: 12px 0;
 }
 
-.iconica-upload-zone:hover,
-.iconica-upload-zone.is-dragover {
+.custom-icon-upload-zone:hover,
+.custom-icon-upload-zone.is-dragover {
 	border-color: var(--interactive-accent);
 	background: var(--background-secondary);
 }
 
-.iconica-upload-zone-icon {
+.custom-icon-upload-zone-icon {
 	font-size: 32px;
 	margin-bottom: 8px;
 }
 
-.iconica-upload-zone-text {
+.custom-icon-upload-zone-text {
 	font-size: 14px;
 	font-weight: 500;
 	color: var(--text-normal);
 }
 
-.iconica-upload-zone-hint {
+.custom-icon-upload-zone-hint {
 	font-size: 12px;
 	color: var(--text-faint);
 	margin-top: 6px;
@@ -253,27 +274,27 @@
 
 /* ─── Preview ─── */
 
-.iconica-preview-section {
+.custom-icon-preview-section {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	padding: 20px 0 16px;
 }
 
-.iconica-preview-row {
+.custom-icon-preview-row {
 	display: flex;
 	justify-content: center;
 	gap: 24px;
 }
 
-.iconica-preview-col {
+.custom-icon-preview-col {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 8px;
 }
 
-.iconica-preview-card {
+.custom-icon-preview-card {
 	width: 72px;
 	height: 72px;
 	display: flex;
@@ -283,21 +304,21 @@
 	border: 1px solid var(--background-modifier-border);
 }
 
-.iconica-preview-card.is-sidebar {
+.custom-icon-preview-card.is-sidebar {
 	background: var(--background-secondary);
 }
 
-.iconica-preview-card.is-editor {
+.custom-icon-preview-card.is-editor {
 	background: var(--background-primary);
 }
 
-.iconica-preview-card img {
+.custom-icon-preview-card img {
 	width: 44px;
 	height: 44px;
 	object-fit: contain;
 }
 
-.iconica-preview-card-label {
+.custom-icon-preview-card-label {
 	font-size: 10px;
 	font-weight: 600;
 	color: var(--text-faint);
@@ -307,7 +328,7 @@
 
 /* ─── Upload Bottom Bar ─── */
 
-.iconica-upload-bottom {
+.custom-icon-upload-bottom {
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
@@ -315,19 +336,19 @@
 	border-top: 1px solid var(--background-modifier-border);
 }
 
-.iconica-upload-bottom-left {
+.custom-icon-upload-bottom-left {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
 }
 
-.iconica-upload-checkbox-row {
+.custom-icon-upload-checkbox-row {
 	display: flex;
 	align-items: center;
 	gap: 6px;
 }
 
-.iconica-upload-checkbox {
+.custom-icon-upload-checkbox {
 	width: 15px;
 	height: 15px;
 	cursor: pointer;
@@ -335,7 +356,7 @@
 	margin: 0;
 }
 
-.iconica-upload-checkbox-label {
+.custom-icon-upload-checkbox-label {
 	font-size: 13px;
 	color: var(--text-normal);
 	cursor: pointer;
@@ -343,11 +364,11 @@
 }
 
 /* Name input */
-.iconica-upload-name-group {
+.custom-icon-upload-name-group {
 	padding-left: 21px;
 }
 
-.iconica-upload-name-input {
+.custom-icon-upload-name-input {
 	width: 160px;
 	padding: 5px 8px;
 	border: 1px solid var(--background-modifier-border);
@@ -359,12 +380,12 @@
 	transition: border-color 0.15s;
 }
 
-.iconica-upload-name-input:focus {
+.custom-icon-upload-name-input:focus {
 	border-color: var(--interactive-accent);
 }
 
 /* Upload actions */
-.iconica-upload-actions {
+.custom-icon-upload-actions {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -373,7 +394,7 @@
 
 /* ─── Buttons ─── */
 
-.iconica-save-btn {
+.custom-icon-save-btn {
 	padding: 6px 16px;
 	border-radius: 6px;
 	border: none;
@@ -386,11 +407,11 @@
 	white-space: nowrap;
 }
 
-.iconica-save-btn:hover {
+.custom-icon-save-btn:hover {
 	opacity: 0.9;
 }
 
-.iconica-cancel-btn {
+.custom-icon-cancel-btn {
 	background: none;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 6px;
@@ -402,21 +423,21 @@
 	white-space: nowrap;
 }
 
-.iconica-cancel-btn:hover {
+.custom-icon-cancel-btn:hover {
 	color: var(--text-normal);
 	background: var(--background-modifier-hover);
 }
 
 /* ─── Batch Review ─── */
 
-.iconica-batch-header {
+.custom-icon-batch-header {
 	font-size: 13px;
 	font-weight: 600;
 	color: var(--text-normal);
 	padding: 8px 0 4px;
 }
 
-.iconica-batch-list {
+.custom-icon-batch-list {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -425,7 +446,7 @@
 	padding: 4px 0;
 }
 
-.iconica-batch-row {
+.custom-icon-batch-row {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -434,14 +455,14 @@
 	background: var(--background-secondary);
 }
 
-.iconica-batch-row-index {
+.custom-icon-batch-row-index {
 	font-size: 11px;
 	color: var(--text-faint);
 	min-width: 18px;
 	text-align: center;
 }
 
-.iconica-batch-row-thumb {
+.custom-icon-batch-row-thumb {
 	width: 28px;
 	height: 28px;
 	object-fit: contain;
@@ -450,7 +471,7 @@
 	flex-shrink: 0;
 }
 
-.iconica-batch-row-ext {
+.custom-icon-batch-row-ext {
 	font-size: 10px;
 	font-weight: 600;
 	color: var(--text-on-accent);
@@ -461,7 +482,7 @@
 	flex-shrink: 0;
 }
 
-.iconica-batch-row-name {
+.custom-icon-batch-row-name {
 	flex: 1;
 	padding: 4px 8px;
 	border: 1px solid var(--background-modifier-border);
@@ -473,11 +494,11 @@
 	min-width: 0;
 }
 
-.iconica-batch-row-name:focus {
+.custom-icon-batch-row-name:focus {
 	border-color: var(--interactive-accent);
 }
 
-.iconica-batch-row-remove {
+.custom-icon-batch-row-remove {
 	background: none;
 	border: none;
 	color: var(--text-faint);
@@ -489,14 +510,14 @@
 	flex-shrink: 0;
 }
 
-.iconica-batch-row-remove:hover {
+.custom-icon-batch-row-remove:hover {
 	color: var(--background-modifier-error, #e03e3e);
 	background: var(--background-modifier-hover);
 }
 
 /* ─── Batch Import Result ─── */
 
-.iconica-batch-result {
+.custom-icon-batch-result {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -506,7 +527,7 @@
 
 /* ─── Placeholder ─── */
 
-.iconica-placeholder {
+.custom-icon-placeholder {
 	text-align: center;
 	color: var(--text-faint);
 	padding: 40px 0;
@@ -515,13 +536,13 @@
 
 /* ─── Utility ─── */
 
-.iconica-hidden {
+.custom-icon-hidden {
 	display: none !important;
 }
 
 /* ─── File Explorer Icon ─── */
 
-.iconica-explorer-icon {
+.custom-icon-explorer-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -532,30 +553,28 @@
 	height: 17px;
 }
 
-.iconica-explorer-icon.is-img img {
+.custom-icon-explorer-icon.is-img img {
 	width: 17px;
 	height: 17px;
 	object-fit: contain;
-	background-color: var(--background-secondary);
 	border-radius: 3px;
 }
 
 /* ─── Tab Header Icon ─── */
 
-.iconica-tab-icon {
+.custom-icon-tab-icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.iconica-tab-icon img {
-	background-color: var(--background-secondary);
+.custom-icon-tab-icon img {
 	border-radius: 3px;
 }
 
 /* ─── Title Icon ─── */
 
-.iconica-title-icon {
+.custom-icon-title-icon {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
@@ -566,35 +585,80 @@
 	transition: opacity 0.12s;
 }
 
-.iconica-title-icon img {
-	background-color: var(--background-primary);
+.custom-icon-title-icon img {
 	border-radius: 6px;
 }
 
-.iconica-title-icon:hover {
+.custom-icon-title-icon:hover {
 	opacity: 0.75;
 }
 
 /* ─── Inline Icons ─── */
 
-.iconica-inline-icon {
+.custom-icon-inline-icon {
 	display: inline;
 	font-size: 1em;
 	line-height: 1;
 	vertical-align: baseline;
 }
 
-.iconica-inline-icon.is-img {
+.custom-icon-inline-icon.is-img {
 	display: inline-flex;
 	align-items: center;
 	vertical-align: middle;
 }
 
-.iconica-inline-icon.is-img img {
-	width: 18px;
-	height: 18px;
+.custom-icon-inline-icon.is-img img {
+	width: var(--custom-icon-inline-size, 20px);
+	height: var(--custom-icon-inline-size, 20px);
 	object-fit: contain;
-	background-color: var(--background-primary);
 	border-radius: 3px;
 	vertical-align: middle;
+}
+
+/* ─── Inline Icon Hover Preview ─── */
+
+.custom-icon-inline-preview {
+	position: fixed;
+	z-index: var(--layer-popover);
+	transform: translate(-50%, -100%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	padding: 8px;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	box-shadow: var(--shadow-s);
+	pointer-events: none;
+	animation: custom-icon-preview-in 0.12s ease-out;
+}
+
+.custom-icon-inline-preview img {
+	width: 96px;
+	height: 96px;
+	object-fit: contain;
+	border-radius: 4px;
+}
+
+.custom-icon-inline-preview-label {
+	font-size: 11px;
+	color: var(--text-muted);
+	max-width: 120px;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+@keyframes custom-icon-preview-in {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -100%) scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -100%) scale(1);
+	}
 }

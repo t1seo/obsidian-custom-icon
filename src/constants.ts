@@ -1,4 +1,4 @@
-import type { IconicaSettings } from "./types";
+import type { CustomIconSettings } from "./types";
 
 /** Icon size rendered in the file explorer (px) */
 export const EXPLORER_ICON_SIZE = 17;
@@ -10,12 +10,15 @@ export const TAB_ICON_SIZE = 16;
 export const TITLE_ICON_SIZE = 48;
 
 /** Default plugin settings */
-export const DEFAULT_SETTINGS: IconicaSettings = {
+/** Default plugin settings */
+export const DEFAULT_SETTINGS: CustomIconSettings = {
 	enableInlineIcons: false,
+	inlineIconSize: 20,
+	inlineIconPrefix: "ci",
 };
 
 /** CSS class prefix for the plugin */
-export const CSS_PREFIX = "iconica";
+export const CSS_PREFIX = "custom-icon";
 
 /** Plugin icons directory name (relative to plugin dir) */
 export const ICONS_DIR = "icons";

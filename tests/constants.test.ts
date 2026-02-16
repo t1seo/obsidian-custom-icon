@@ -22,12 +22,16 @@ describe("constants", () => {
 		expect(TITLE_ICON_SIZE).toBe(48);
 	});
 
-	it("DEFAULT_SETTINGS has enableInlineIcons false", () => {
-		expect(DEFAULT_SETTINGS).toEqual({ enableInlineIcons: false });
+	it("DEFAULT_SETTINGS has correct defaults", () => {
+		expect(DEFAULT_SETTINGS).toEqual({
+			enableInlineIcons: false,
+			inlineIconSize: 20,
+			inlineIconPrefix: "ci",
+		});
 	});
 
-	it("CSS_PREFIX is iconica", () => {
-		expect(CSS_PREFIX).toBe("iconica");
+	it("CSS_PREFIX is custom-icon", () => {
+		expect(CSS_PREFIX).toBe("custom-icon");
 	});
 
 	it("ICONS_DIR is icons", () => {

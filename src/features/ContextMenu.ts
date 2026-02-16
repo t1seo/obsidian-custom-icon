@@ -1,5 +1,5 @@
 import type { Editor } from "obsidian";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
 /**
@@ -7,7 +7,7 @@ import { IconPickerModal } from "../ui/IconPickerModal";
  * and registers Command Palette commands.
  */
 export class ContextMenu {
-	constructor(private plugin: IconicaPlugin) {}
+	constructor(private plugin: CustomIconPlugin) {}
 
 	enable() {
 		// File explorer context menu
@@ -69,7 +69,8 @@ export class ContextMenu {
 				const path = file?.path ?? "";
 				const modal = new IconPickerModal(this.plugin.app, this.plugin, path, (icon) => {
 					if (!icon) return;
-					editor.replaceSelection(`:custom-icon-${icon.value}:`);
+					const prefix = this.plugin.settings.inlineIconPrefix;
+					editor.replaceSelection(`:${prefix}-${icon.value}:`);
 				});
 				modal.open();
 			},

@@ -1,6 +1,6 @@
 import type { View, WorkspaceLeaf } from "obsidian";
 import { CSS_PREFIX, TAB_ICON_SIZE } from "../constants";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 import type { IconData } from "../types";
 
 /** Internal Obsidian API — not in public type declarations */
@@ -17,7 +17,7 @@ interface LeafWithTabHeader extends WorkspaceLeaf {
  * Replaces tab header icons with user-set icons.
  */
 export class TabIcons {
-	constructor(private plugin: IconicaPlugin) {}
+	constructor(private plugin: CustomIconPlugin) {}
 
 	enable() {
 		this.plugin.registerEvent(
@@ -78,7 +78,7 @@ export class TabIcons {
 
 		// Hide the default icon and prepend ours
 		const defaultIcon = tabHeaderEl.querySelector("svg");
-		if (defaultIcon) defaultIcon.classList.add("iconica-hidden");
+		if (defaultIcon) defaultIcon.classList.add("custom-icon-hidden");
 
 		tabHeaderEl.prepend(wrapper);
 	}
@@ -87,8 +87,8 @@ export class TabIcons {
 		document.querySelectorAll(`.${CSS_PREFIX}-tab-icon`).forEach((el) => {
 			// Restore the hidden default icon
 			const parent = el.parentElement;
-			const defaultIcon = parent?.querySelector("svg:not(:scope > .iconica-tab-icon svg)");
-			if (defaultIcon) defaultIcon.classList.remove("iconica-hidden");
+			const defaultIcon = parent?.querySelector("svg:not(:scope > .custom-icon-tab-icon svg)");
+			if (defaultIcon) defaultIcon.classList.remove("custom-icon-hidden");
 			el.remove();
 		});
 	}
