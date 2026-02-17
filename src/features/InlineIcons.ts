@@ -28,9 +28,17 @@ function resolveIconId(value: string, plugin: CustomIconPlugin): string | null {
 	return byName ? byName.id : null;
 }
 
-/** Attach a hover preview tooltip to an inline icon span */
-function attachHoverPreview(span: HTMLElement, iconUrl: string, iconName: string) {
+/** Attach a hover preview tooltip to an inline icon span. Returns a cleanup function. */
+function attachHoverPreview(span: HTMLElement, iconUrl: string, iconName: string): () => void {
 	let tooltip: HTMLElement | null = null;
+
+	const removeTooltip = () => {
+		if (tooltip) {
+			tooltip.remove();
+			tooltip = null;
+		}
+		document.removeEventListener("keydown", removeTooltip);
+	};
 
 	span.addEventListener("mouseenter", () => {
 		tooltip = document.createElement("div");
@@ -51,18 +59,20 @@ function attachHoverPreview(span: HTMLElement, iconUrl: string, iconName: string
 		const rect = span.getBoundingClientRect();
 		tooltip.style.left = `${rect.left + rect.width / 2}px`;
 		tooltip.style.top = `${rect.top - 8}px`;
+
+		// Remove tooltip on any keypress (user may edit text while hovering)
+		document.addEventListener("keydown", removeTooltip);
 	});
 
-	span.addEventListener("mouseleave", () => {
-		if (tooltip) {
-			tooltip.remove();
-			tooltip = null;
-		}
-	});
+	span.addEventListener("mouseleave", removeTooltip);
+
+	return removeTooltip;
 }
 
 /** CM6 Widget that renders an inline custom icon image */
 class InlineCustomIconWidget extends WidgetType {
+	private removeTooltip?: () => void;
+
 	constructor(
 		private iconId: string,
 		private plugin: CustomIconPlugin,
@@ -82,12 +92,16 @@ class InlineCustomIconWidget extends WidgetType {
 		img.alt = "";
 		span.appendChild(img);
 
-		attachHoverPreview(span, iconUrl, iconMeta?.name ?? this.iconId);
+		this.removeTooltip = attachHoverPreview(span, iconUrl, iconMeta?.name ?? this.iconId);
 		return span;
 	}
 
 	eq(other: InlineCustomIconWidget): boolean {
 		return this.iconId === other.iconId;
+	}
+
+	destroy(_dom: HTMLElement) {
+		this.removeTooltip?.();
 	}
 }
 
@@ -130,6 +144,9 @@ function createInlineIconPlugin(plugin: CustomIconPlugin) {
 			}
 
 			update(update: ViewUpdate) {
+				if (update.docChanged) {
+					document.querySelectorAll(".custom-icon-inline-preview").forEach((el) => el.remove());
+				}
 				this.decorations = buildDecorations(update.view, plugin);
 			}
 		},

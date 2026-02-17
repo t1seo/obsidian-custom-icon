@@ -662,3 +662,26 @@
 		transform: translate(-50%, -100%) scale(1);
 	}
 }
+
+/* ─── Inline Icon Autocomplete Suggest ─── */
+
+.custom-icon-suggest-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 2px 0;
+}
+
+.custom-icon-suggest-icon {
+	flex-shrink: 0;
+	border-radius: 3px;
+	object-fit: contain;
+}
+
+.custom-icon-suggest-name {
+	font-size: 13px;
+	color: var(--text-normal);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

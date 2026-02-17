@@ -3,6 +3,7 @@ import { DEFAULT_SETTINGS } from "./constants";
 import { ContextMenu } from "./features/ContextMenu";
 import { ExplorerIcons } from "./features/ExplorerIcons";
 import { InlineIcons } from "./features/InlineIcons";
+import { InlineIconSuggest } from "./features/InlineIconSuggest";
 import { TabIcons } from "./features/TabIcons";
 import { TitleIcons } from "./features/TitleIcons";
 import { IconLibraryService } from "./services/IconLibraryService";
@@ -47,6 +48,9 @@ export default class CustomIconPlugin extends Plugin {
 
 		// Inline icons (always register; checks setting dynamically)
 		new InlineIcons(this).enable();
+
+		// Inline icon autocomplete (IDE-style suggestions)
+		this.registerEditorSuggest(new InlineIconSuggest(this));
 
 		// Context menu & commands
 		new ContextMenu(this).enable();
