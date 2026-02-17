@@ -32,13 +32,13 @@ export class CustomIconSettingTab extends PluginSettingTab {
 		let sizeInput: HTMLInputElement;
 		new Setting(containerEl)
 			.setName("Inline icon size")
-			.setDesc("Size of inline icons in notes (px). Min: 12, Max: 64.")
+			.setDesc("Size of inline icons in notes (px), from 12 to 64.")
 			.addText((text) => {
 				sizeInput = text.inputEl;
 				text.inputEl.type = "number";
 				text.inputEl.min = "12";
 				text.inputEl.max = "64";
-				text.inputEl.style.width = "60px";
+				text.inputEl.addClass("custom-icon-size-input");
 				text.setValue(String(this.plugin.settings.inlineIconSize));
 			})
 			.addButton((btn) =>

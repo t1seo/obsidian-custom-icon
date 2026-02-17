@@ -692,3 +692,9 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+
+/* ─── Settings ─── */
+
+.custom-icon-size-input {
+	width: 60px;
+}
