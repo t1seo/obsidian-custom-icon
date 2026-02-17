@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-02-17
+
+### Added
+
+- Inline icon autocomplete — type `:ci-` in the editor to get IDE-style suggestions with icon previews ([#4](https://github.com/t1seo/obsidian-custom-icon/issues/4))
+- Configurable inline icon size (12–64px) with instant preview in settings
+- Configurable shortcode prefix — change `:ci-NAME:` to any prefix (e.g. `:my-NAME:`)
+- Hover preview for inline icons — mouse over any inline icon to see a large preview with its name
+- Insert inline icon command palette action (`Cmd/Ctrl+P` → "Insert inline icon at cursor")
+- Icon rename — double-click an icon's name in the picker to rename it instantly
+
+### Fixed
+
+- Tab header icons now display correctly (was hidden by Obsidian's default CSS)
+- Tab icons no longer accumulate when switching between files
+- Tab icons now work correctly in popout windows (multi-window support)
+- Hover tooltip now disappears immediately when editing the shortcode text
+
+### Changed
+
+- Tab icon rendering rewritten to leaf-based approach for cross-window reliability
+- Updated README with new screenshots and feature documentation (EN/KO)
+
 ## [1.1.0] - 2026-02-09
 
 ### Added
