@@ -562,6 +562,13 @@
 
 /* ─── Tab Header Icon ─── */
 
+/* Force the icon area visible when our custom icon is inside */
+.workspace-tab-header-inner-icon:has(.custom-icon-tab-icon) {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+}
+
 .custom-icon-tab-icon {
 	display: inline-flex;
 	align-items: center;

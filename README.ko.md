@@ -15,7 +15,7 @@
 
 ## 주요 기능
 
-### 탐색기, 탭 & 노트 제목 아이콘
+### 탐색기 아이콘
 
 업로드한 아이콘을 파일과 폴더에 적용할 수 있습니다. 탐색기, 탭 헤더, 노트 제목 위(Notion 스타일)에 아이콘이 표시됩니다. 라이트/다크 테마 모두 투명 배경을 완벽 지원합니다.
 
@@ -24,20 +24,12 @@
   <img src="assets/explorer-dark.jpg" width="280" alt="탐색기 다크 테마" />
 </p>
 
-<p align="center">
-  <img src="assets/tab-icons.jpg" width="480" alt="탭 아이콘" />
-</p>
-
-<p align="center">
-  <img src="assets/title-icon.jpg" width="480" alt="노트 제목 아이콘" />
-</p>
-
 ### 아이콘 피커 & 이름 변경
 
 아이콘 라이브러리를 탐색하고 관리하세요. 드래그 앤 드롭, 파일 선택, 클립보드 붙여넣기로 새 아이콘을 업로드할 수 있습니다. 아이콘 이름을 **더블클릭**하면 바로 이름을 변경할 수 있습니다.
 
 <p align="center">
-  <img src="assets/icons-tab.jpg" width="320" alt="아이콘 탭" />
+  <img src="assets/icons-tab.jpg" width="320" alt="아이콘 피커" />
   <img src="assets/upload-tab.jpg" width="320" alt="업로드 탭" />
 </p>
 
@@ -57,6 +49,7 @@
 
 `:ci-이름:` 단축코드를 사용해 노트 본문에 아이콘을 삽입할 수 있습니다. 편집 모드와 읽기 모드 모두 지원합니다.
 
+- **자동완성** — `:ci-` 입력 시 IDE 스타일 자동완성으로 아이콘을 빠르게 선택
 - **호버 프리뷰** — 인라인 아이콘에 마우스를 올리면 큰 미리보기와 이름이 표시됩니다
 - **크기 조절** — 아이콘 크기를 12~64px로 즉시 조절 가능합니다
 - **커스텀 접두사** — 단축코드 접두사를 자유롭게 변경할 수 있습니다 (예: `:my-이름:`)
@@ -67,7 +60,11 @@
 </p>
 
 <p align="center">
+  <img src="assets/icon-select.jpg" width="320" alt="자동완성" />
   <img src="assets/inline-hover.jpg" width="320" alt="호버 프리뷰" />
+</p>
+
+<p align="center">
   <img src="assets/inline-sizes.jpg" width="320" alt="크기 옵션" />
 </p>
 
@@ -120,7 +117,8 @@
 3. **아이콘 적용** — 탐색기에서 파일/폴더 우클릭 → **Change custom icon** 선택
 4. **이름 변경** — 아이콘 피커에서 아이콘 이름을 더블클릭하면 즉시 변경 가능
 5. **인라인 아이콘** — 설정에서 활성화 후 `:ci-이름:` 입력 (`이름`은 라이브러리의 아이콘 이름 또는 ID)
-6. **커맨드 삽입** — `Cmd/Ctrl+P` → "Insert inline icon" 검색 → 라이브러리에서 선택
+6. **자동완성** — 에디터에서 `:ci-` 입력 시 자동완성 팝업에서 아이콘 선택. 글자를 더 입력하면 필터링
+7. **커맨드 삽입** — `Cmd/Ctrl+P` → "Insert inline icon" 검색 → 라이브러리에서 선택
 
 ## 지원
 

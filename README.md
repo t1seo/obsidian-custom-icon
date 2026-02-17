@@ -15,21 +15,13 @@ Add **custom image icons** to files and folders in [Obsidian](https://obsidian.m
 
 ## Features
 
-### Explorer, Tabs & Title Icons
+### Explorer Icons
 
 Assign uploaded icons to any file or folder. Icons appear in the file explorer, tab headers, and as a large Notion-style icon above the note title. Works seamlessly in both light and dark themes with full transparency support.
 
 <p align="center">
   <img src="assets/explorer-light.jpg" width="280" alt="Explorer Light Theme" />
   <img src="assets/explorer-dark.jpg" width="280" alt="Explorer Dark Theme" />
-</p>
-
-<p align="center">
-  <img src="assets/tab-icons.jpg" width="480" alt="Tab Header Icons" />
-</p>
-
-<p align="center">
-  <img src="assets/title-icon.jpg" width="480" alt="Title Icon" />
 </p>
 
 ### Icon Picker & Rename
@@ -57,6 +49,7 @@ Select multiple files at once to batch import. SVG files are stored natively (no
 
 Use `:ci-NAME:` shortcodes to embed icons directly in your notes. Works in both editing and reading mode.
 
+- **Autocomplete** — Type `:ci-` and get IDE-style suggestions with icon previews
 - **Hover preview** — Mouse over any inline icon to see a large preview with its name
 - **Configurable size** — Adjust icon size (12-64px) with instant preview
 - **Custom prefix** — Change the shortcode prefix to anything you like (e.g. `:my-NAME:`)
@@ -67,7 +60,11 @@ Use `:ci-NAME:` shortcodes to embed icons directly in your notes. Works in both 
 </p>
 
 <p align="center">
+  <img src="assets/icon-select.jpg" width="320" alt="Autocomplete" />
   <img src="assets/inline-hover.jpg" width="320" alt="Hover Preview" />
+</p>
+
+<p align="center">
   <img src="assets/inline-sizes.jpg" width="320" alt="Icon Size Options" />
 </p>
 
@@ -120,7 +117,8 @@ Right-click any file or folder to change or remove its custom icon. Three comman
 3. **Assign icons** — Right-click a file or folder in the explorer and select **Change custom icon**.
 4. **Rename icons** — In the icon picker, double-click an icon's name to rename it.
 5. **Inline icons** — Enable in settings, then type `:ci-NAME:` in your notes (where `NAME` is the icon name or ID).
-6. **Insert via command** — Press `Cmd/Ctrl+P`, search "Insert inline icon", and pick from your library.
+6. **Autocomplete** — Type `:ci-` in the editor and select from the suggestion popup. Filter by typing more characters.
+7. **Insert via command** — Press `Cmd/Ctrl+P`, search "Insert inline icon", and pick from your library.
 
 ## Support
 
