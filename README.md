@@ -7,7 +7,7 @@
   <a href="./README.ko.md"><img src="https://img.shields.io/badge/lang-한국어-%23e8590c?style=for-the-badge" alt="한국어" /></a>
 </p>
 
-Add **custom image icons** to files and folders in [Obsidian](https://obsidian.md). Upload your own PNG, JPG, or SVG images and use them across the explorer, tab headers, note titles, and inline text.
+Add **custom image icons** to files and folders in [Obsidian](https://obsidian.md). Upload your own PNG, JPG, or SVG images and use them across the file explorer, tab headers, note titles, and inline text.
 
 <p align="center">
   <img src="assets/overview.jpg" width="600" alt="Overview" />
@@ -15,22 +15,26 @@ Add **custom image icons** to files and folders in [Obsidian](https://obsidian.m
 
 ## Features
 
-### Custom Icons in Explorer
+### Explorer Icons
 
-Assign uploaded icons to any file or folder. Works seamlessly in both light and dark themes.
+Assign uploaded icons to any file or folder. Icons appear in the file explorer, tab headers, and as a large Notion-style icon above the note title. Works seamlessly in both light and dark themes with full transparency support.
 
 <p align="center">
   <img src="assets/explorer-light.jpg" width="280" alt="Explorer Light Theme" />
   <img src="assets/explorer-dark.jpg" width="280" alt="Explorer Dark Theme" />
 </p>
 
-### Icon Picker
+### Icon Picker & Rename
 
-Browse and manage your icon library. Upload new icons via drag & drop, file picker, or clipboard paste.
+Browse and manage your icon library. Upload new icons via drag & drop, file picker, or clipboard paste. **Double-click** an icon's name to rename it instantly.
 
 <p align="center">
   <img src="assets/icons-tab.jpg" width="320" alt="Icons Tab" />
   <img src="assets/upload-tab.jpg" width="320" alt="Upload Tab" />
+</p>
+
+<p align="center">
+  <img src="assets/rename-icon.jpg" width="320" alt="Rename Icon" />
 </p>
 
 ### Batch Import & SVG Support
@@ -41,21 +45,53 @@ Select multiple files at once to batch import. SVG files are stored natively (no
   <img src="assets/multiple-upload.jpg" width="320" alt="Batch Import" />
 </p>
 
-### Context Menu
+### Inline Icons
 
-Right-click any file or folder to change or remove its custom icon.
+Use `:ci-NAME:` shortcodes to embed icons directly in your notes. Works in both editing and reading mode.
+
+- **Autocomplete** — Type `:ci-` and get IDE-style suggestions with icon previews
+- **Hover preview** — Mouse over any inline icon to see a large preview with its name
+- **Configurable size** — Adjust icon size (12-64px) with instant preview
+- **Custom prefix** — Change the shortcode prefix to anything you like (e.g. `:my-NAME:`)
+- **Command palette** — Insert icons via `Cmd/Ctrl+P` → "Insert inline icon"
+
+<p align="center">
+  <img src="assets/inline-icons.jpg" width="480" alt="Inline Icons" />
+</p>
+
+<p align="center">
+  <img src="assets/icon-select.jpg" width="320" alt="Autocomplete" />
+  <img src="assets/inline-hover.jpg" width="320" alt="Hover Preview" />
+</p>
+
+<p align="center">
+  <img src="assets/inline-sizes.jpg" width="320" alt="Icon Size Options" />
+</p>
+
+### Context Menu & Commands
+
+Right-click any file or folder to change or remove its custom icon. Three commands are available in the command palette:
+
+- **Change icon for current file** — Open the icon picker for the active note
+- **Remove icon from current file** — Remove the assigned icon
+- **Insert inline icon at cursor** — Pick and insert an inline icon shortcode
 
 <p align="center">
   <img src="assets/change-icon-menu.jpg" width="320" alt="Context Menu" />
+  <img src="assets/command-palette.jpg" width="320" alt="Command Palette" />
 </p>
 
-### Inline Icons
-
-Use `:custom-icon-NAME:` shortcodes to embed icons directly in your notes.
+### Settings
 
 <p align="center">
-  <img src="assets/note-page.jpg" width="480" alt="Inline Icons in Note" />
+  <img src="assets/settings.jpg" width="480" alt="Settings" />
 </p>
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| Enable inline icons | Toggle `:ci-NAME:` shortcodes in notes | Off |
+| Inline icon size | Icon size in pixels (12-64) | 20px |
+| Inline icon prefix | Shortcode prefix (e.g. `ci`, `my`, `icon`) | `ci` |
 
 ## Installation
 
@@ -76,10 +112,13 @@ Use `:custom-icon-NAME:` shortcodes to embed icons directly in your notes.
 
 ## Usage
 
-1. **Upload icons** — Open the icon picker and go to the **Upload** tab. Drag & drop or click to upload PNG, JPG, or SVG files.
-2. **Batch import** — Select multiple files at once to import them all. Review names and remove unwanted files before importing.
-3. **Assign icons** — Right-click a file or folder in the explorer and select **Change custom icon**, then pick from your library.
-4. **Inline icons** — Enable inline icons in settings, then type `:custom-icon-NAME:` in your notes (where `NAME` is the icon name in your library).
+1. **Upload icons** — Open the icon picker and go to the **Upload** tab. Drag & drop, click to browse, or paste from clipboard.
+2. **Batch import** — Select multiple files to import them all at once. Review names before importing.
+3. **Assign icons** — Right-click a file or folder in the explorer and select **Change custom icon**.
+4. **Rename icons** — In the icon picker, double-click an icon's name to rename it.
+5. **Inline icons** — Enable in settings, then type `:ci-NAME:` in your notes (where `NAME` is the icon name or ID).
+6. **Autocomplete** — Type `:ci-` in the editor and select from the suggestion popup. Filter by typing more characters.
+7. **Insert via command** — Press `Cmd/Ctrl+P`, search "Insert inline icon", and pick from your library.
 
 ## Support
 

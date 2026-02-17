@@ -1,5 +1,5 @@
 import { CSS_PREFIX, EXPLORER_ICON_SIZE } from "../constants";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 import type { IconData } from "../types";
 
 /**
@@ -10,7 +10,7 @@ export class ExplorerIcons {
 	private observer: MutationObserver | null = null;
 	private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-	constructor(private plugin: IconicaPlugin) {}
+	constructor(private plugin: CustomIconPlugin) {}
 
 	/** Start observing and apply all icons */
 	enable() {
@@ -90,7 +90,7 @@ export class ExplorerIcons {
 			el.insertBefore(iconEl, el.firstChild);
 			const defaultIcon = el.querySelector(":scope > .tree-item-icon");
 			if (defaultIcon instanceof HTMLElement) {
-				defaultIcon.classList.add("iconica-hidden");
+				defaultIcon.classList.add("custom-icon-hidden");
 			}
 		}
 	}
@@ -111,7 +111,7 @@ export class ExplorerIcons {
 				// Restore hidden default icon (for both files and folders)
 				const treeIcon = parent.querySelector(":scope > .tree-item-icon");
 				if (treeIcon instanceof HTMLElement) {
-					treeIcon.classList.remove("iconica-hidden");
+					treeIcon.classList.remove("custom-icon-hidden");
 				}
 			}
 			el.remove();
@@ -176,7 +176,7 @@ export class ExplorerIcons {
 		img.src = this.plugin.iconLibrary.getIconUrl(icon.value);
 		img.alt = "";
 		wrapper.appendChild(img);
-		wrapper.dataset.iconicaActive = "true";
+		wrapper.dataset.customIconActive = "true";
 
 		return wrapper;
 	}

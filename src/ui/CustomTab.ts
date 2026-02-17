@@ -1,5 +1,5 @@
 import { CSS_PREFIX } from "../constants";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 import type { CustomIcon } from "../types";
 import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
 
@@ -13,7 +13,7 @@ export class CustomTab implements TabRenderer {
 	private searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(
-		private plugin: IconicaPlugin,
+		private plugin: CustomIconPlugin,
 		private modal: IconPickerModal,
 	) {}
 
@@ -38,6 +38,44 @@ export class CustomTab implements TabRenderer {
 
 	// ─── Private ────────────────────────────────────
 
+	private startRename(label: HTMLElement, icon: CustomIcon) {
+		const input = document.createElement("input");
+		input.type = "text";
+		input.value = icon.name;
+		input.className = `${CSS_PREFIX}-rename-input`;
+
+		const commit = () => {
+			const newName = input.value.trim();
+			if (newName && newName !== icon.name) {
+				void (async () => {
+					await this.plugin.iconLibrary.rename(icon.id, newName);
+					label.textContent = newName;
+					label.setAttribute("title", "Double-click to rename");
+				})();
+			} else {
+				label.textContent = icon.name;
+				label.setAttribute("title", "Double-click to rename");
+			}
+		};
+
+		input.addEventListener("blur", commit);
+		input.addEventListener("keydown", (e) => {
+			if (e.key === "Enter") {
+				e.preventDefault();
+				input.blur();
+			} else if (e.key === "Escape") {
+				input.value = icon.name;
+				input.blur();
+			}
+		});
+
+		label.textContent = "";
+		label.removeAttribute("title");
+		label.appendChild(input);
+		input.focus();
+		input.select();
+	}
+
 	private renderIcons(icons: CustomIcon[]) {
 		this.gridContainer.empty();
 
@@ -48,6 +86,11 @@ export class CustomTab implements TabRenderer {
 			});
 			return;
 		}
+
+		this.gridContainer.createEl("div", {
+			text: "Double-click icon name to rename",
+			cls: `${CSS_PREFIX}-grid-hint`,
+		});
 
 		const grid = this.gridContainer.createDiv({ cls: `${CSS_PREFIX}-custom-grid` });
 
@@ -69,8 +112,16 @@ export class CustomTab implements TabRenderer {
 				this.modal.selectIcon({ type: "custom", value: icon.id });
 			});
 
-			const label = item.createDiv({ cls: `${CSS_PREFIX}-custom-item-label` });
+			const label = item.createDiv({
+				cls: `${CSS_PREFIX}-custom-item-label`,
+				attr: { title: "Double-click to rename" },
+			});
 			label.textContent = icon.name;
+
+			label.addEventListener("dblclick", (e) => {
+				e.stopPropagation();
+				this.startRename(label, icon);
+			});
 
 			// Remove button
 			const removeBtn = item.createEl("button", {

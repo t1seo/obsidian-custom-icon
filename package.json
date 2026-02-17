@@ -1,6 +1,6 @@
 {
 	"name": "custom-icon",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Add custom uploaded image icons to files and folders in Obsidian.",
 	"main": "main.js",
 	"scripts": {

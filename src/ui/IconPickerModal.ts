@@ -1,6 +1,6 @@
 import { type App, Modal } from "obsidian";
 import { CSS_PREFIX } from "../constants";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 import type { IconData, IconSelectCallback, PickerTab } from "../types";
 import { CustomTab } from "./CustomTab";
 import { UploadTab } from "./UploadTab";
@@ -32,7 +32,7 @@ export class IconPickerModal extends Modal {
 
 	constructor(
 		app: App,
-		private plugin: IconicaPlugin,
+		private plugin: CustomIconPlugin,
 		path: string,
 		onSelect: IconSelectCallback,
 	) {
@@ -57,6 +57,9 @@ export class IconPickerModal extends Modal {
 		this.buildTabContent(contentEl);
 
 		this.switchTab(this.activeTab);
+
+		// Auto-focus search input for immediate filtering
+		this.searchEl.focus();
 
 		// Keyboard navigation
 		this.scope.register([], "ArrowDown", (e) => this.navigateGrid(e, "down"));
@@ -207,7 +210,7 @@ export class IconPickerModal extends Modal {
 		});
 
 		// Show/hide search bar (hide for Upload tab)
-		this.searchBarEl.classList.toggle("iconica-hidden", tab === "upload");
+		this.searchBarEl.classList.toggle("custom-icon-hidden", tab === "upload");
 
 		// Destroy previous tab renderers (cleanup timers)
 		for (const [key, r] of this.tabRenderers) {

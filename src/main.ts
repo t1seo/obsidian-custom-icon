@@ -1,16 +1,18 @@
-import { Plugin } from "obsidian";
+import { type Editor, Plugin } from "obsidian";
 import { DEFAULT_SETTINGS } from "./constants";
 import { ContextMenu } from "./features/ContextMenu";
 import { ExplorerIcons } from "./features/ExplorerIcons";
 import { InlineIcons } from "./features/InlineIcons";
+import { InlineIconSuggest } from "./features/InlineIconSuggest";
 import { TabIcons } from "./features/TabIcons";
 import { TitleIcons } from "./features/TitleIcons";
 import { IconLibraryService } from "./services/IconLibraryService";
-import { IconicaSettingTab } from "./settings";
-import type { IconData, IconMapping, IconicaData, IconicaSettings } from "./types";
+import { CustomIconSettingTab } from "./settings";
+import type { IconData, IconMapping, CustomIconData, CustomIconSettings } from "./types";
+import { IconPickerModal } from "./ui/IconPickerModal";
 
-export default class IconicaPlugin extends Plugin {
-	settings!: IconicaSettings;
+export default class CustomIconPlugin extends Plugin {
+	settings!: CustomIconSettings;
 	iconMap!: IconMapping;
 	explorerIcons!: ExplorerIcons;
 	tabIcons!: TabIcons;
@@ -19,7 +21,8 @@ export default class IconicaPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-		this.addSettingTab(new IconicaSettingTab(this.app, this));
+		this.updateInlineSizeCSSVar();
+		this.addSettingTab(new CustomIconSettingTab(this.app, this));
 
 		// Initialize icon library
 		this.iconLibrary = new IconLibraryService(this.app.vault.adapter, this.manifest.dir!);
@@ -46,8 +49,27 @@ export default class IconicaPlugin extends Plugin {
 		// Inline icons (always register; checks setting dynamically)
 		new InlineIcons(this).enable();
 
+		// Inline icon autocomplete (IDE-style suggestions)
+		this.registerEditorSuggest(new InlineIconSuggest(this));
+
 		// Context menu & commands
 		new ContextMenu(this).enable();
+
+		// Insert inline icon command
+		this.addCommand({
+			id: "insert-inline-icon",
+			name: "Insert inline icon",
+			editorCallback: (editor: Editor) => {
+				new IconPickerModal(this.app, this, "", (icon) => {
+					if (!icon) return;
+					const lib = this.iconLibrary.getById(icon.value);
+					if (!lib) return;
+					const prefix = this.settings.inlineIconPrefix;
+					const syntax = `:${prefix}-${lib.id}:`;
+					editor.replaceSelection(syntax);
+				}).open();
+			},
+		});
 	}
 
 	onunload() {
@@ -57,17 +79,25 @@ export default class IconicaPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		const data = ((await this.loadData()) ?? {}) as Partial<IconicaData>;
+		const data = ((await this.loadData()) ?? {}) as Partial<CustomIconData>;
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings);
 		this.iconMap = data.iconMap ?? {};
 	}
 
 	async saveSettings() {
-		const data: IconicaData = {
+		const data: CustomIconData = {
 			settings: this.settings,
 			iconMap: this.iconMap,
 		};
 		await this.saveData(data);
+	}
+
+	/** Sync inline icon size CSS variable with current setting */
+	updateInlineSizeCSSVar() {
+		document.body.style.setProperty(
+			"--custom-icon-inline-size",
+			`${this.settings.inlineIconSize}px`,
+		);
 	}
 
 	/** Update icon mapping for a file/folder path */

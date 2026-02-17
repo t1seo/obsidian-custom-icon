@@ -1,5 +1,5 @@
 import { CSS_PREFIX, ICONS_DIR } from "../constants";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 import {
 	type ProcessedImage,
 	type ProcessedSvg,
@@ -37,7 +37,7 @@ export class UploadTab implements TabRenderer {
 	private pasteHandler: ((e: ClipboardEvent) => void) | null = null;
 
 	constructor(
-		private plugin: IconicaPlugin,
+		private plugin: CustomIconPlugin,
 		private modal: IconPickerModal,
 	) {}
 
@@ -211,7 +211,7 @@ export class UploadTab implements TabRenderer {
 			type: "checkbox",
 			cls: `${CSS_PREFIX}-upload-checkbox`,
 		});
-		checkbox.id = "iconica-save-to-library";
+		checkbox.id = "custom-icon-save-to-library";
 
 		if (isSvg) {
 			checkbox.checked = true;
@@ -221,12 +221,12 @@ export class UploadTab implements TabRenderer {
 		checkboxRow.createEl("label", {
 			text: "Save to library",
 			cls: `${CSS_PREFIX}-upload-checkbox-label`,
-			attr: { for: "iconica-save-to-library" },
+			attr: { for: "custom-icon-save-to-library" },
 		});
 
 		const nameGroup = leftGroup.createDiv({ cls: `${CSS_PREFIX}-upload-name-group` });
 		if (!isSvg) {
-			nameGroup.classList.add("iconica-hidden");
+			nameGroup.classList.add("custom-icon-hidden");
 		}
 		const nameInput = nameGroup.createEl("input", {
 			type: "text",
@@ -238,7 +238,7 @@ export class UploadTab implements TabRenderer {
 
 		if (!isSvg) {
 			checkbox.addEventListener("change", () => {
-				nameGroup.classList.toggle("iconica-hidden", !checkbox.checked);
+				nameGroup.classList.toggle("custom-icon-hidden", !checkbox.checked);
 			});
 		}
 

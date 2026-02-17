@@ -1,5 +1,5 @@
 import { CSS_PREFIX, TITLE_ICON_SIZE } from "../constants";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
 /**
@@ -7,7 +7,7 @@ import { IconPickerModal } from "../ui/IconPickerModal";
  * Clicking the icon opens the picker to change it.
  */
 export class TitleIcons {
-	constructor(private plugin: IconicaPlugin) {}
+	constructor(private plugin: CustomIconPlugin) {}
 
 	enable() {
 		this.plugin.registerEvent(

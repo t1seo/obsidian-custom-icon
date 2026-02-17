@@ -26,14 +26,18 @@ export interface IconLibrary {
 }
 
 /** Plugin settings stored in data.json */
-export interface IconicaSettings {
+export interface CustomIconSettings {
 	/** Enable inline :icon: shortcodes in notes */
 	enableInlineIcons: boolean;
+	/** Inline icon size in px */
+	inlineIconSize: number;
+	/** Prefix for inline icon syntax (e.g. "custom-icon" → :custom-icon-NAME:) */
+	inlineIconPrefix: string;
 }
 
 /** Persisted plugin data (settings + icon mappings combined) */
-export interface IconicaData {
-	settings: IconicaSettings;
+export interface CustomIconData {
+	settings: CustomIconSettings;
 	iconMap: IconMapping;
 }
 

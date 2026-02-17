@@ -8,48 +8,105 @@ import {
 	WidgetType,
 } from "@codemirror/view";
 import type { MarkdownPostProcessorContext } from "obsidian";
-import type IconicaPlugin from "../main";
+import type CustomIconPlugin from "../main";
 
-/** Regex to match :custom-icon-ICONID: or :custom-icon-NAME: patterns */
-const CUSTOM_ICON_REGEX = /:custom-icon-([\w-]+):/g;
+/** Escape special regex characters in a string */
+function escapeRegex(s: string): string {
+	return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Build inline icon regex from the user's prefix setting */
+function buildIconRegex(prefix: string): RegExp {
+	return new RegExp(`:${escapeRegex(prefix)}-([\\w-]+):`, "g");
+}
 
 /** Resolve a captured value to an actual icon ID by checking ID first, then name */
-function resolveIconId(value: string, plugin: IconicaPlugin): string | null {
+function resolveIconId(value: string, plugin: CustomIconPlugin): string | null {
 	const lib = plugin.iconLibrary;
 	if (lib.getById(value)) return value;
 	const byName = lib.getAll().find((i) => i.name === value);
 	return byName ? byName.id : null;
 }
 
+/** Attach a hover preview tooltip to an inline icon span. Returns a cleanup function. */
+function attachHoverPreview(span: HTMLElement, iconUrl: string, iconName: string): () => void {
+	let tooltip: HTMLElement | null = null;
+
+	const removeTooltip = () => {
+		if (tooltip) {
+			tooltip.remove();
+			tooltip = null;
+		}
+		document.removeEventListener("keydown", removeTooltip);
+	};
+
+	span.addEventListener("mouseenter", () => {
+		tooltip = document.createElement("div");
+		tooltip.className = "custom-icon-inline-preview";
+
+		const img = document.createElement("img");
+		img.src = iconUrl;
+		img.alt = iconName;
+		tooltip.appendChild(img);
+
+		const label = document.createElement("div");
+		label.className = "custom-icon-inline-preview-label";
+		label.textContent = iconName;
+		tooltip.appendChild(label);
+
+		document.body.appendChild(tooltip);
+
+		const rect = span.getBoundingClientRect();
+		tooltip.style.left = `${rect.left + rect.width / 2}px`;
+		tooltip.style.top = `${rect.top - 8}px`;
+
+		// Remove tooltip on any keypress (user may edit text while hovering)
+		document.addEventListener("keydown", removeTooltip);
+	});
+
+	span.addEventListener("mouseleave", removeTooltip);
+
+	return removeTooltip;
+}
+
 /** CM6 Widget that renders an inline custom icon image */
 class InlineCustomIconWidget extends WidgetType {
+	private removeTooltip?: () => void;
+
 	constructor(
 		private iconId: string,
-		private plugin: IconicaPlugin,
+		private plugin: CustomIconPlugin,
 	) {
 		super();
 	}
 
 	toDOM(): HTMLElement {
 		const span = document.createElement("span");
-		span.className = "iconica-inline-icon is-img";
+		span.className = "custom-icon-inline-icon is-img";
+
+		const iconUrl = this.plugin.iconLibrary.getIconUrl(this.iconId);
+		const iconMeta = this.plugin.iconLibrary.getById(this.iconId);
 
 		const img = document.createElement("img");
-		img.src = this.plugin.iconLibrary.getIconUrl(this.iconId);
+		img.src = iconUrl;
 		img.alt = "";
-		img.width = 18;
-		img.height = 18;
 		span.appendChild(img);
+
+		this.removeTooltip = attachHoverPreview(span, iconUrl, iconMeta?.name ?? this.iconId);
 		return span;
 	}
 
 	eq(other: InlineCustomIconWidget): boolean {
 		return this.iconId === other.iconId;
 	}
+
+	destroy(_dom: HTMLElement) {
+		this.removeTooltip?.();
+	}
 }
 
-/** Build decorations for all visible :iconica-ICONID: matches */
-function buildDecorations(view: EditorView, plugin: IconicaPlugin): DecorationSet {
+/** Build decorations for all visible :PREFIX-ICONID: matches */
+function buildDecorations(view: EditorView, plugin: CustomIconPlugin): DecorationSet {
 	if (!plugin.settings.enableInlineIcons) return Decoration.none;
 
 	const widgets: Array<{ from: number; to: number; deco: Decoration }> = [];
@@ -57,7 +114,7 @@ function buildDecorations(view: EditorView, plugin: IconicaPlugin): DecorationSe
 	for (const { from, to } of view.visibleRanges) {
 		const text = view.state.doc.sliceString(from, to);
 
-		for (const match of text.matchAll(CUSTOM_ICON_REGEX)) {
+		for (const match of text.matchAll(buildIconRegex(plugin.settings.inlineIconPrefix))) {
 			const iconId = resolveIconId(match[1], plugin);
 			if (!iconId) continue;
 			const widget = new InlineCustomIconWidget(iconId, plugin);
@@ -77,7 +134,7 @@ function buildDecorations(view: EditorView, plugin: IconicaPlugin): DecorationSe
 }
 
 /** Create the CM6 ViewPlugin for inline icon decoration */
-function createInlineIconPlugin(plugin: IconicaPlugin) {
+function createInlineIconPlugin(plugin: CustomIconPlugin) {
 	return ViewPlugin.fromClass(
 		class implements PluginValue {
 			decorations: DecorationSet;
@@ -87,6 +144,9 @@ function createInlineIconPlugin(plugin: IconicaPlugin) {
 			}
 
 			update(update: ViewUpdate) {
+				if (update.docChanged) {
+					document.querySelectorAll(".custom-icon-inline-preview").forEach((el) => el.remove());
+				}
 				this.decorations = buildDecorations(update.view, plugin);
 			}
 		},
@@ -99,7 +159,7 @@ function createInlineIconPlugin(plugin: IconicaPlugin) {
  * Supports custom icons via :custom-icon-ICONID: shortcodes.
  */
 export class InlineIcons {
-	constructor(private plugin: IconicaPlugin) {}
+	constructor(private plugin: CustomIconPlugin) {}
 
 	enable() {
 		// Editor mode: CM6 extension
@@ -128,7 +188,7 @@ export class InlineIcons {
 			const text = textNode.textContent ?? "";
 			const matches: { index: number; length: number; iconId: string }[] = [];
 
-			for (const match of text.matchAll(CUSTOM_ICON_REGEX)) {
+			for (const match of text.matchAll(buildIconRegex(this.plugin.settings.inlineIconPrefix))) {
 				const resolved = resolveIconId(match[1], this.plugin);
 				if (!resolved) continue;
 				matches.push({ index: match.index, length: match[0].length, iconId: resolved });
@@ -153,14 +213,15 @@ export class InlineIcons {
 					fragment.appendChild(document.createTextNode(text.slice(lastIndex, m.index)));
 				}
 
+				const iconUrl = this.plugin.iconLibrary.getIconUrl(m.iconId);
+				const iconMeta = this.plugin.iconLibrary.getById(m.iconId);
 				const span = document.createElement("span");
-				span.className = "iconica-inline-icon is-img";
+				span.className = "custom-icon-inline-icon is-img";
 				const img = document.createElement("img");
-				img.src = this.plugin.iconLibrary.getIconUrl(m.iconId);
+				img.src = iconUrl;
 				img.alt = "";
-				img.width = 18;
-				img.height = 18;
 				span.appendChild(img);
+				attachHoverPreview(span, iconUrl, iconMeta?.name ?? m.iconId);
 				fragment.appendChild(span);
 
 				lastIndex = m.index + m.length;
