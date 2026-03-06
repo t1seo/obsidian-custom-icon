@@ -59,10 +59,7 @@ export class InlineIconSuggest extends EditorSuggest<IconSuggestion> {
 			.getAll()
 			.filter((icon) => {
 				if (!query) return true;
-				return (
-					icon.name.toLowerCase().includes(query) ||
-					icon.id.toLowerCase().includes(query)
-				);
+				return icon.name.toLowerCase().includes(query) || icon.id.toLowerCase().includes(query);
 			})
 			.map((icon) => ({ id: icon.id, name: icon.name }));
 	}

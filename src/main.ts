@@ -2,13 +2,13 @@ import { type Editor, Plugin } from "obsidian";
 import { DEFAULT_SETTINGS } from "./constants";
 import { ContextMenu } from "./features/ContextMenu";
 import { ExplorerIcons } from "./features/ExplorerIcons";
-import { InlineIcons } from "./features/InlineIcons";
 import { InlineIconSuggest } from "./features/InlineIconSuggest";
+import { InlineIcons } from "./features/InlineIcons";
 import { TabIcons } from "./features/TabIcons";
 import { TitleIcons } from "./features/TitleIcons";
 import { IconLibraryService } from "./services/IconLibraryService";
 import { CustomIconSettingTab } from "./settings";
-import type { IconData, IconMapping, CustomIconData, CustomIconSettings } from "./types";
+import type { CustomIconData, CustomIconSettings, IconData, IconMapping } from "./types";
 import { IconPickerModal } from "./ui/IconPickerModal";
 
 export default class CustomIconPlugin extends Plugin {

@@ -18,9 +18,7 @@ export class CustomIconSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Enable inline icons")
-			.setDesc(
-				`Allow :${this.plugin.settings.inlineIconPrefix}-name: shortcodes in note content.`,
-			)
+			.setDesc(`Allow :${this.plugin.settings.inlineIconPrefix}-name: shortcodes in note content.`)
 			.addToggle((toggle) =>
 				toggle.setValue(this.plugin.settings.enableInlineIcons).onChange(async (value) => {
 					this.plugin.settings.enableInlineIcons = value;
@@ -55,9 +53,7 @@ export class CustomIconSettingTab extends PluginSettingTab {
 		let prefixInput: HTMLInputElement;
 		new Setting(containerEl)
 			.setName("Inline icon prefix")
-			.setDesc(
-				"Prefix for inline icon syntax. E.g. \"ci\" → :ci-iconname:, \"my\" → :my-iconname:",
-			)
+			.setDesc('Prefix for inline icon syntax. E.g. "ci" → :ci-iconname:, "my" → :my-iconname:')
 			.addText((text) => {
 				prefixInput = text.inputEl;
 				text.setPlaceholder(DEFAULT_SETTINGS.inlineIconPrefix);

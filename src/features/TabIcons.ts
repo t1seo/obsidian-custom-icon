@@ -54,9 +54,7 @@ export class TabIcons {
 			const tabHeaderEl = (leaf as LeafWithTabHeader).tabHeaderEl;
 			if (!tabHeaderEl) continue;
 
-			const iconEl = tabHeaderEl.querySelector<HTMLElement>(
-				".workspace-tab-header-inner-icon",
-			);
+			const iconEl = tabHeaderEl.querySelector<HTMLElement>(".workspace-tab-header-inner-icon");
 			if (!iconEl) continue;
 
 			// Clean this specific tab first (works across all windows)
@@ -101,9 +99,7 @@ export class TabIcons {
 			const tabHeaderEl = (leaf as LeafWithTabHeader).tabHeaderEl;
 			if (!tabHeaderEl) continue;
 
-			const iconEl = tabHeaderEl.querySelector<HTMLElement>(
-				".workspace-tab-header-inner-icon",
-			);
+			const iconEl = tabHeaderEl.querySelector<HTMLElement>(".workspace-tab-header-inner-icon");
 			if (iconEl) this.cleanTabIcon(iconEl);
 		}
 	}
