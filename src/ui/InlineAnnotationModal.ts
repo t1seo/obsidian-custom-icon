@@ -119,6 +119,8 @@ export class InlineAnnotationModal extends Modal {
 
 	onClose() {
 		if (this.previewTimer !== null) window.clearTimeout(this.previewTimer);
+		this.previewTimer = null;
+		this.renderVersion += 1;
 		this.previewComponent?.unload();
 		this.previewComponent = null;
 		this.contentEl.empty();

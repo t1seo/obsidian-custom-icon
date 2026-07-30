@@ -12,11 +12,13 @@ import {
 	type MarkdownPostProcessorContext,
 	MarkdownRenderChild,
 	MarkdownRenderer,
+	MarkdownView,
 	Menu,
 	editorInfoField,
 } from "obsidian";
 import type CustomIconPlugin from "../main";
 import { InlineAnnotationModal } from "../ui/InlineAnnotationModal";
+import { removeInlineIconAnnotation } from "../utils/inlineAnnotationTransactions";
 import {
 	buildInlineIconRegex,
 	replaceInlineIconInSection,
@@ -72,18 +74,13 @@ function openAnnotationModal(plugin: CustomIconPlugin, iconName: string, target:
 				}
 			},
 			onRemove: async () => {
-				if (!target.annotationId || !annotation) return;
-				await plugin.removeInlineAnnotation(target.annotationId);
-				try {
-					await target.replaceShortcode(setInlineIconAnnotation(target.shortcode, null));
-				} catch (error) {
-					try {
-						await plugin.saveInlineAnnotation(annotation.id, annotation.markdown);
-					} catch (rollbackError) {
-						console.error("Failed to restore inline icon annotation", rollbackError);
-					}
-					throw error;
-				}
+				const annotationId = target.annotationId;
+				if (!annotationId || !annotation) return;
+				await removeInlineIconAnnotation({
+					annotatedShortcode: target.shortcode,
+					replaceShortcode: target.replaceShortcode,
+					removeAnnotation: () => plugin.removeInlineAnnotation(annotationId),
+				});
 			},
 		},
 		plugin.app,
@@ -264,18 +261,21 @@ class InlineCustomIconWidget extends WidgetType {
 
 	toDOM(view: EditorView): HTMLElement {
 		const sourcePath = view.state.field(editorInfoField).file?.path ?? "";
+		let currentShortcode = this.shortcode;
 		const { span, cleanup } = createInlineIconElement(this.plugin, this.iconId, this.annotationId, {
 			shortcode: this.shortcode,
 			annotationId: this.annotationId,
 			sourcePath,
 			replaceShortcode: (nextShortcode) => {
-				const current = view.state.doc.sliceString(this.from, this.to);
-				if (current !== this.shortcode) {
+				const currentTo = this.from + currentShortcode.length;
+				const current = view.state.doc.sliceString(this.from, currentTo);
+				if (current !== currentShortcode) {
 					throw new Error("The inline icon changed before the annotation was saved.");
 				}
 				view.dispatch({
-					changes: { from: this.from, to: this.to, insert: nextShortcode },
+					changes: { from: this.from, to: currentTo, insert: nextShortcode },
 				});
+				currentShortcode = nextShortcode;
 				return Promise.resolve();
 			},
 		});
@@ -441,6 +441,8 @@ export class InlineIcons {
 					fragment.appendChild(document.createTextNode(text.slice(lastIndex, m.index)));
 				}
 
+				let currentShortcode = m.shortcode;
+				let currentSourceIndex: number | null = null;
 				const { span, cleanup } = createInlineIconElement(this.plugin, m.iconId, m.annotationId, {
 					shortcode: m.shortcode,
 					annotationId: m.annotationId,
@@ -453,6 +455,20 @@ export class InlineIcons {
 						const file = this.plugin.app.vault.getFileByPath(ctx.sourcePath);
 						if (!file) throw new Error("The note file is no longer available.");
 						await this.plugin.app.vault.process(file, (source) => {
+							if (currentSourceIndex !== null) {
+								const current = source.slice(
+									currentSourceIndex,
+									currentSourceIndex + currentShortcode.length,
+								);
+								if (current !== currentShortcode) {
+									throw new Error("The inline icon changed before the annotation was saved.");
+								}
+								const nextSource = `${source.slice(0, currentSourceIndex)}${nextShortcode}${source.slice(
+									currentSourceIndex + currentShortcode.length,
+								)}`;
+								currentShortcode = nextShortcode;
+								return nextSource;
+							}
 							const nextSource = replaceInlineIconInSection(
 								source,
 								section.lineStart,
@@ -464,8 +480,34 @@ export class InlineIcons {
 							if (nextSource === null) {
 								throw new Error("The inline icon changed before the annotation was saved.");
 							}
+							const linesBeforeSection = source.split("\n").slice(0, section.lineStart);
+							const sectionOffset = linesBeforeSection.reduce(
+								(length, line) => length + line.length + 1,
+								0,
+							);
+							const sectionSource = source
+								.split("\n")
+								.slice(section.lineStart, section.lineEnd + 1)
+								.join("\n");
+							let matchIndex = -1;
+							let searchFrom = 0;
+							for (let index = 0; index <= m.occurrenceIndex; index += 1) {
+								matchIndex = sectionSource.indexOf(currentShortcode, searchFrom);
+								searchFrom = matchIndex + currentShortcode.length;
+							}
+							currentSourceIndex = sectionOffset + matchIndex;
+							currentShortcode = nextShortcode;
 							return nextSource;
 						});
+						for (const leaf of this.plugin.app.workspace.getLeavesOfType("markdown")) {
+							if (
+								leaf.view instanceof MarkdownView &&
+								leaf.view.file?.path === ctx.sourcePath &&
+								leaf.view.getMode() === "preview"
+							) {
+								leaf.view.previewMode.rerender(true);
+							}
+						}
 					},
 				});
 				const child = new MarkdownRenderChild(span);
