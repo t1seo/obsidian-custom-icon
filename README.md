@@ -51,6 +51,7 @@ Use `:ci-NAME:` shortcodes to embed icons directly in your notes. Works in both 
 
 - **Autocomplete** — Type `:ci-` and get IDE-style suggestions with icon previews
 - **Hover preview** — Mouse over any inline icon to see a large preview with its name
+- **Markdown annotations** — Right-click an inline icon to attach formatted notes, wiki links, or embeds
 - **Configurable size** — Adjust icon size (12-64px) with instant preview
 - **Custom prefix** — Change the shortcode prefix to anything you like (e.g. `:my-NAME:`)
 - **Command palette** — Insert icons via `Cmd/Ctrl+P` → "Insert inline icon"
@@ -119,6 +120,9 @@ Right-click any file or folder to change or remove its custom icon. Three comman
 5. **Inline icons** — Enable in settings, then type `:ci-NAME:` in your notes (where `NAME` is the icon name or ID).
 6. **Autocomplete** — Type `:ci-` in the editor and select from the suggestion popup. Filter by typing more characters.
 7. **Insert via command** — Press `Cmd/Ctrl+P`, search "Insert inline icon", and pick from your library.
+8. **Annotate an inline icon** — Right-click a rendered inline icon, choose **Add icon annotation**, write Markdown, and save. Annotated icons show an accent dot and render the annotation on hover. Right-click again to edit or remove it.
+
+Annotations support standard Markdown formatting, headings, wiki links, and embeds. They are stored in the plugin's `data.json`; the shortcode receives an instance ID such as `:ci-NAME~note-a1b2c3d4:` automatically, so separate uses of the same icon can have different annotations.
 
 ## Support
 

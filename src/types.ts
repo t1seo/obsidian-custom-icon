@@ -25,6 +25,15 @@ export interface IconLibrary {
 	icons: CustomIcon[];
 }
 
+export interface InlineIconAnnotation {
+	id: string;
+	markdown: string;
+	createdAt: number;
+	updatedAt: number;
+}
+
+export type InlineIconAnnotationMapping = Record<string, InlineIconAnnotation>;
+
 /** Plugin settings stored in data.json */
 export interface CustomIconSettings {
 	/** Enable inline :icon: shortcodes in notes */
@@ -39,6 +48,7 @@ export interface CustomIconSettings {
 export interface CustomIconData {
 	settings: CustomIconSettings;
 	iconMap: IconMapping;
+	inlineIconAnnotations: InlineIconAnnotationMapping;
 }
 
 /** Active tab in the Icon Picker Modal */

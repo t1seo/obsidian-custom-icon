@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Markdown comments and annotations for individual inline icon instances ([#11](https://github.com/t1seo/obsidian-custom-icon/issues/11))
+- Right-click annotation editing in Live Preview and Reading view
+- Formatted hover previews with headings, wiki links, and embeds
+- JSON-backed annotation persistence with backward-compatible inline icon syntax
+
 ## [1.2.0] - 2026-02-17
 
 ### Added
