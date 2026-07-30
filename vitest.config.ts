@@ -18,6 +18,7 @@ export default defineConfig({
 				"src/features/TitleIcons.ts",
 				"src/features/ContextMenu.ts",
 				"src/features/InlineIcons.ts",
+				"src/features/InlineIconSuggest.ts",
 			],
 			thresholds: {
 				statements: 100,

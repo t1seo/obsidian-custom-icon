@@ -7,6 +7,7 @@ import { InlineIcons } from "./features/InlineIcons";
 import { TabIcons } from "./features/TabIcons";
 import { TitleIcons } from "./features/TitleIcons";
 import { IconLibraryService } from "./services/IconLibraryService";
+import { InlineAnnotationStore } from "./services/InlineAnnotationStore";
 import { CustomIconSettingTab } from "./settings";
 import type { CustomIconData, CustomIconSettings, IconData, IconMapping } from "./types";
 import { IconPickerModal } from "./ui/IconPickerModal";
@@ -18,6 +19,7 @@ export default class CustomIconPlugin extends Plugin {
 	tabIcons!: TabIcons;
 	titleIcons!: TitleIcons;
 	iconLibrary!: IconLibraryService;
+	inlineAnnotations!: InlineAnnotationStore;
 
 	async onload() {
 		await this.loadSettings();
@@ -82,14 +84,54 @@ export default class CustomIconPlugin extends Plugin {
 		const data = ((await this.loadData()) ?? {}) as Partial<CustomIconData>;
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings);
 		this.iconMap = data.iconMap ?? {};
+		this.inlineAnnotations = new InlineAnnotationStore(data.inlineIconAnnotations ?? {});
 	}
 
 	async saveSettings() {
 		const data: CustomIconData = {
 			settings: this.settings,
 			iconMap: this.iconMap,
+			inlineIconAnnotations: this.inlineAnnotations.toJSON(),
 		};
 		await this.saveData(data);
+	}
+
+	async saveInlineAnnotation(id: string, markdown: string) {
+		const previous = this.inlineAnnotations.get(id);
+		const annotation = this.inlineAnnotations.set(id, markdown, Date.now());
+		try {
+			await this.saveSettings();
+			return annotation;
+		} catch (error) {
+			if (previous) {
+				this.inlineAnnotations.set(
+					previous.id,
+					previous.markdown,
+					previous.updatedAt,
+					previous.createdAt,
+				);
+			} else {
+				this.inlineAnnotations.remove(id);
+			}
+			throw error;
+		}
+	}
+
+	async removeInlineAnnotation(id: string) {
+		const previous = this.inlineAnnotations.get(id);
+		if (!previous) return;
+		this.inlineAnnotations.remove(id);
+		try {
+			await this.saveSettings();
+		} catch (error) {
+			this.inlineAnnotations.set(
+				previous.id,
+				previous.markdown,
+				previous.updatedAt,
+				previous.createdAt,
+			);
+			throw error;
+		}
 	}
 
 	/** Sync inline icon size CSS variable with current setting */

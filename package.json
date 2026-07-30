@@ -27,6 +27,7 @@
 		"@codemirror/state": "^6.5.4",
 		"@codemirror/view": "^6.39.13",
 		"@eslint/js": "^9.39.2",
+		"@eslint/json": "^0.14.0",
 		"@types/node": "^22.0.0",
 		"@vitest/coverage-v8": "^4.0.18",
 		"builtin-modules": "^4.0.0",
