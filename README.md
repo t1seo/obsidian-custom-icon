@@ -109,7 +109,7 @@ Open the command palette with `Cmd/Ctrl+P` and search for **Vault Icon Studio**:
 
 ### Obsidian Community Plugins
 
-The Community directory submission is in progress. After approval:
+Vault Icon Studio is not listed in the Community directory yet. Until the repository owner completes the account-based submission and Obsidian review, install it with BRAT or manually. After approval:
 
 1. Open **Settings → Community plugins → Browse**.
 2. Search for **Vault Icon Studio**.

@@ -11,13 +11,13 @@ npm run verify
 
 `verify` checks formatting, Obsidian lint rules, unit coverage, TypeScript, the production bundle, manifest rules, version consistency, and required release assets.
 
-## Create a version
+## Publish the prepared 1.3.0 release
 
-Use npm's version command so `package.json`, `manifest.json`, and `versions.json` stay aligned:
+Version 1.3.0 is already aligned across `package.json`, `manifest.json`, `versions.json`, and `CHANGELOG.md`. Publish that exact prepared version without incrementing it again:
 
 ```sh
-npm version minor
-git push origin main --follow-tags
+git tag 1.3.0
+git push origin 1.3.0
 ```
 
 The tag must be the exact semantic version from `manifest.json`, without a `v` prefix. Pushing it starts the release workflow, rebuilds and verifies the plugin, attests the artifacts, and publishes a GitHub release containing:
@@ -25,6 +25,15 @@ The tag must be the exact semantic version from `manifest.json`, without a `v` p
 - `main.js`
 - `manifest.json`
 - `styles.css`
+
+## Prepare a future version
+
+For a later patch or minor release, update `CHANGELOG.md`, then use npm's version command so `package.json`, `manifest.json`, and `versions.json` stay aligned:
+
+```sh
+npm version patch # or: npm version minor
+git push origin main --follow-tags
+```
 
 ## Verify the release
 

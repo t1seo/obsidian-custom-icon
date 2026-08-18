@@ -27,10 +27,10 @@ The command-registration regression test also checks that `change-icon`, `remove
 | Batch SVG import | Pass | Two SVGs were reviewed, renamed, imported, persisted, and then removed from the final sample |
 | Inline icons in Live Preview | Pass | Five language shortcodes rendered at the configured 24 px size |
 | Inline icons in Reading view | Pass | `Cmd+E` rendered the same five icons outside the editor |
-| Insert command | Pass | Command opened the picker and inserted a shortcode at the cursor |
+| Insert command | Pass | Command opened the picker, TypeScript was selected by keyboard, and `:ci-typescript:` was inserted at the cursor |
 | Change and remove commands | Pass | All three branded commands appeared in the command palette |
 | Annotation add/edit/remove UI | Pass | Context menu, Markdown editor, live preview, wiki link, save shortcut, accent marker, and persisted JSON worked |
-| Restart persistence | Pass | Icon assignments, library entries, settings, and annotation were present after plugin reload |
+| Restart persistence | Pass | Disabling the plugin exposed raw shortcodes; re-enabling restored folder, note, inline, and annotated icons, while `data.json` and `icon-library.json` hashes stayed unchanged |
 | Autocomplete | Automated | Syntax and suggestion behavior are unit-tested; direct text injection was not used as visual evidence because the active Korean IME transformed synthetic keystrokes |
 | Mobile | Not run | No mobile Obsidian runtime was available in the local QA environment |
 

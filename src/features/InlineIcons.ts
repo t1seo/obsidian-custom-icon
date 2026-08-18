@@ -362,7 +362,7 @@ function createInlineIconPlugin(plugin: VaultIconStudioPlugin) {
 
 /**
  * Registers inline icon support for both editor and reading mode.
- * Supports custom icons via :custom-icon-ICONID: shortcodes.
+ * Supports custom icons via the configured prefix, such as :ci-ICONID:.
  */
 export class InlineIcons {
 	constructor(private plugin: VaultIconStudioPlugin) {}

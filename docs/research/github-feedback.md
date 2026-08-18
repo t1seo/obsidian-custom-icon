@@ -25,4 +25,4 @@ The annotation code was merged, but the repository still exposed 1.2.0 as its la
 - Prepare the repository for the current account-based Community directory submission flow.
 - Test the annotation feature and the complete existing workflow in Obsidian 1.13.7.
 
-The one remaining external step is the initial Community directory submission. It requires the repository owner to sign in with an Obsidian account, connect GitHub, and accept the directory's owner-facing declarations.
+After the `1.3.0` tag and GitHub release are published, the only owner-only step is the initial Community directory submission. It requires the repository owner to sign in with an Obsidian account, connect GitHub, and accept the directory's owner-facing declarations.
