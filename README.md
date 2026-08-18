@@ -105,6 +105,12 @@ Open the command palette with `Cmd/Ctrl+P` and search for **Vault Icon Studio**:
 | Inline icon size | Set inline icons from 12 to 64 px | 20 px |
 | Inline icon prefix | Replace `ci` with your own prefix | `ci` |
 
+## Desktop and mobile
+
+The explorer icons, inline icons, annotations, commands, and picker adapt to Obsidian's desktop and mobile layouts. The mobile view below was captured from the sample vault with Obsidian's official desktop mobile emulation enabled.
+
+![Vault Icon Studio icon picker and programming-language icons in Obsidian's mobile layout](assets/vault-icon-studio-mobile.png)
+
 ## Installation
 
 ### Obsidian Community Plugins

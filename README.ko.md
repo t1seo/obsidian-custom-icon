@@ -105,6 +105,12 @@ Programming Languages/       </> 폴더 아이콘
 | Inline icon size | 인라인 아이콘 크기 12~64 px | 20 px |
 | Inline icon prefix | `ci`를 원하는 접두사로 변경 | `ci` |
 
+## 데스크톱과 모바일
+
+탐색기 아이콘, 인라인 아이콘, 주석, 명령, 아이콘 피커는 Obsidian의 데스크톱과 모바일 레이아웃에 맞게 동작합니다. 아래 화면은 샘플 볼트를 Obsidian 공식 데스크톱 모바일 에뮬레이션으로 실행해 직접 캡처했습니다.
+
+![Obsidian 모바일 레이아웃에서 실행한 Vault Icon Studio 아이콘 피커와 프로그래밍 언어 아이콘](assets/vault-icon-studio-mobile.png)
+
 ## 설치
 
 ### Obsidian 커뮤니티 플러그인

@@ -6,8 +6,9 @@ QA date: 2026-08-19
 
 - macOS desktop
 - Obsidian 1.13.7
-- Isolated vault: `examples/programming-languages-vault`
+- Isolated vault: a temporary copy of `examples/programming-languages-vault`
 - Plugin build: Vault Icon Studio 1.3.0
+- Mobile surface: Obsidian's documented desktop mobile emulation, enabled with `this.app.emulateMobile(true)`
 
 ## Automated gate
 
@@ -31,8 +32,8 @@ The command-registration regression test also checks that `change-icon`, `remove
 | Change and remove commands | Pass | All three branded commands appeared in the command palette |
 | Annotation add/edit/remove UI | Pass | Context menu, Markdown editor, live preview, wiki link, save shortcut, accent marker, and persisted JSON worked |
 | Restart persistence | Pass | Disabling the plugin exposed raw shortcodes; re-enabling restored folder, note, inline, and annotated icons, while `data.json` and `icon-library.json` hashes stayed unchanged |
-| Autocomplete | Automated | Syntax and suggestion behavior are unit-tested; direct text injection was not used as visual evidence because the active Korean IME transformed synthetic keystrokes |
-| Mobile | Not run | No mobile Obsidian runtime was available in the local QA environment |
+| Autocomplete | Pass | With the ABC input source selected, typing `:ci-` in the editor opened all seven icon suggestions; pressing Return inserted the selected shortcode |
+| Mobile | Pass | In Obsidian's [documented desktop mobile emulation](https://docs.obsidian.md/Plugins/Getting%20started/Mobile%20development), five inline icons and the annotation marker rendered; the remove command, insert command, and seven-item picker were exercised in the mobile layout |
 
 ## Screenshot evidence
 
@@ -46,5 +47,6 @@ The repository screenshots were captured from the isolated QA vault after the fi
 - `assets/vault-icon-studio-commands.png`
 - `assets/vault-icon-studio-annotation.png`
 - `assets/vault-icon-studio-settings.png`
+- `assets/vault-icon-studio-mobile.png`
 
 No screenshot was fabricated or taken from the user's main vault.
