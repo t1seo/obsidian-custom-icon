@@ -1,4 +1,4 @@
-import type { CustomIconSettings } from "./types";
+import type { VaultIconStudioSettings } from "./types";
 
 /** Icon size rendered in the file explorer (px) */
 export const EXPLORER_ICON_SIZE = 17;
@@ -10,14 +10,12 @@ export const TAB_ICON_SIZE = 16;
 export const TITLE_ICON_SIZE = 48;
 
 /** Default plugin settings */
-/** Default plugin settings */
-export const DEFAULT_SETTINGS: CustomIconSettings = {
+export const DEFAULT_SETTINGS: VaultIconStudioSettings = {
 	enableInlineIcons: false,
 	inlineIconSize: 20,
 	inlineIconPrefix: "ci",
 };
 
-/** CSS class prefix for the plugin */
 export const CSS_PREFIX = "custom-icon";
 
 /** Plugin icons directory name (relative to plugin dir) */

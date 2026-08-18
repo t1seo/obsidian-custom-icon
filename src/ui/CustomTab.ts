@@ -1,5 +1,5 @@
 import { CSS_PREFIX } from "../constants";
-import type CustomIconPlugin from "../main";
+import type VaultIconStudioPlugin from "../main";
 import type { CustomIcon } from "../types";
 import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
 
@@ -13,7 +13,7 @@ export class CustomTab implements TabRenderer {
 	private searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(
-		private plugin: CustomIconPlugin,
+		private plugin: VaultIconStudioPlugin,
 		private modal: IconPickerModal,
 	) {}
 

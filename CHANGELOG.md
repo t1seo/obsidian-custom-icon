@@ -7,18 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-19
+
 ### Added
 
-- Markdown comments and annotations for individual inline icon instances ([#11](https://github.com/t1seo/obsidian-custom-icon/issues/11))
+- Markdown comments and annotations for individual inline icon instances ([#11](https://github.com/t1seo/vault-icon-studio/issues/11))
 - Right-click annotation editing in Live Preview and Reading view
 - Formatted hover previews with headings, wiki links, and embeds
 - JSON-backed annotation persistence with backward-compatible inline icon syntax
+- Automated, attested GitHub releases with required Obsidian assets
+- Release metadata validation for Community directory submissions
+
+### Changed
+
+- Renamed the product from Custom Icon to Vault Icon Studio
+- Renamed the package and repository while preserving the stable `custom-icon` plugin ID
+- Updated English and Korean installation, branding, support, and release documentation
+
+### Fixed
+
+- Restored the **Insert inline icon** command by removing a duplicate command registration discovered during hands-on Obsidian QA
 
 ## [1.2.0] - 2026-02-17
 
 ### Added
 
-- Inline icon autocomplete — type `:ci-` in the editor to get IDE-style suggestions with icon previews ([#4](https://github.com/t1seo/obsidian-custom-icon/issues/4))
+- Inline icon autocomplete — type `:ci-` in the editor to get IDE-style suggestions with icon previews ([#4](https://github.com/t1seo/vault-icon-studio/issues/4))
 - Configurable inline icon size (12–64px) with instant preview in settings
 - Configurable shortcode prefix — change `:ci-NAME:` to any prefix (e.g. `:my-NAME:`)
 - Hover preview for inline icons — mouse over any inline icon to see a large preview with its name
@@ -41,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Native SVG support — SVGs stored as vector files without canvas rasterization, preserving transparency and scalability ([#1](https://github.com/t1seo/obsidian-custom-icon/issues/1))
+- Native SVG support — SVGs stored as vector files without canvas rasterization, preserving transparency and scalability ([#1](https://github.com/t1seo/vault-icon-studio/issues/1))
 - Batch import — select or drag multiple files at once to import all to library
 - Import progress indicator ("Importing 3/5...")
 - Original filename preservation — icon names derived from filename instead of timestamps

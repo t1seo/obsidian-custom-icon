@@ -24,7 +24,7 @@ function createMockAdapter(data: Record<string, string> = {}) {
 describe("IconLibraryService", () => {
 	let service: IconLibraryService;
 	let adapter: ReturnType<typeof createMockAdapter>;
-	const pluginDir = ".obsidian/plugins/obsidian-custom-icon";
+	const pluginDir = ".obsidian/plugins/custom-icon";
 
 	beforeEach(() => {
 		adapter = createMockAdapter();

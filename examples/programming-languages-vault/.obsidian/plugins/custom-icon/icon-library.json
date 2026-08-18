@@ -1,0 +1,53 @@
+{
+	"icons": [
+		{
+			"id": "vault-icon-studio",
+			"name": "Vault Icon Studio",
+			"path": "icons/vault-icon-studio.svg",
+			"createdAt": 1787083200000,
+			"ext": "svg"
+		},
+		{
+			"id": "programming",
+			"name": "Programming",
+			"path": "icons/programming.svg",
+			"createdAt": 1787083200001,
+			"ext": "svg"
+		},
+		{
+			"id": "typescript",
+			"name": "TypeScript",
+			"path": "icons/typescript.svg",
+			"createdAt": 1787083200002,
+			"ext": "svg"
+		},
+		{
+			"id": "python",
+			"name": "Python",
+			"path": "icons/python.svg",
+			"createdAt": 1787083200003,
+			"ext": "svg"
+		},
+		{
+			"id": "rust",
+			"name": "Rust",
+			"path": "icons/rust.svg",
+			"createdAt": 1787083200004,
+			"ext": "svg"
+		},
+		{
+			"id": "go",
+			"name": "Go",
+			"path": "icons/go.svg",
+			"createdAt": 1787083200005,
+			"ext": "svg"
+		},
+		{
+			"id": "swift",
+			"name": "Swift",
+			"path": "icons/swift.svg",
+			"createdAt": 1787083200006,
+			"ext": "svg"
+		}
+	]
+}
