@@ -35,6 +35,8 @@ npm version patch # or: npm version minor
 git push origin main --follow-tags
 ```
 
+The repository `.npmrc` keeps npm's tag prefix empty, so these commands create `1.3.1` rather than `v1.3.1` and satisfy the release workflow's exact tag check.
+
 ## Verify the release
 
 Confirm that the release tag matches `manifest.json` and that all three assets can be downloaded. Install the repository with BRAT and exercise the changed behavior in both Live Preview and Reading view before announcing the release.
