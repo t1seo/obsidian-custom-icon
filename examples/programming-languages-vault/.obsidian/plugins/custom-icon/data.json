@@ -1,0 +1,45 @@
+{
+  "settings": {
+    "enableInlineIcons": true,
+    "inlineIconSize": 24,
+    "inlineIconPrefix": "ci"
+  },
+  "iconMap": {
+    "Programming Languages": {
+      "type": "custom",
+      "value": "programming"
+    },
+    "Programming Languages/TypeScript.md": {
+      "type": "custom",
+      "value": "typescript"
+    },
+    "Programming Languages/Python.md": {
+      "type": "custom",
+      "value": "python"
+    },
+    "Programming Languages/Rust.md": {
+      "type": "custom",
+      "value": "rust"
+    },
+    "Programming Languages/Go.md": {
+      "type": "custom",
+      "value": "go"
+    },
+    "Programming Languages/Swift.md": {
+      "type": "custom",
+      "value": "swift"
+    },
+    "Welcome to Vault Icon Studio.md": {
+      "type": "custom",
+      "value": "vault-icon-studio"
+    }
+  },
+  "inlineIconAnnotations": {
+    "note-d09e066138ab": {
+      "id": "note-d09e066138ab",
+      "markdown": "TypeScript is used for [[Typed application notes]].",
+      "createdAt": 1787088983445,
+      "updatedAt": 1787088983445
+    }
+  }
+}

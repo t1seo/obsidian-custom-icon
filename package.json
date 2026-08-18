@@ -1,7 +1,7 @@
 {
-	"name": "custom-icon",
-	"version": "1.2.0",
-	"description": "Add custom uploaded image icons to files and folders in Obsidian.",
+	"name": "vault-icon-studio",
+	"version": "1.3.0",
+	"description": "Upload and use custom image icons across files, folders, tabs, note titles, and inline text.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -12,13 +12,17 @@
 		"format": "biome format --write src/",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"test:coverage": "vitest run --coverage"
+		"test:coverage": "vitest run --coverage",
+		"check:release": "node scripts/check-release.mjs",
+		"verify": "npm run lint && npm run test:coverage && npm run build && npm run check:release",
+		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [
 		"obsidian",
 		"plugin",
 		"icon",
-		"custom-icon"
+		"custom-icon",
+		"vault-icon-studio"
 	],
 	"author": "t1seo",
 	"license": "MIT",

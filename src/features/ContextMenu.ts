@@ -1,5 +1,4 @@
-import type { Editor } from "obsidian";
-import type CustomIconPlugin from "../main";
+import type VaultIconStudioPlugin from "../main";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
 /**
@@ -7,7 +6,7 @@ import { IconPickerModal } from "../ui/IconPickerModal";
  * and registers Command Palette commands.
  */
 export class ContextMenu {
-	constructor(private plugin: CustomIconPlugin) {}
+	constructor(private plugin: VaultIconStudioPlugin) {}
 
 	enable() {
 		// File explorer context menu
@@ -57,22 +56,6 @@ export class ContextMenu {
 					this.plugin.removeIcon(file.path);
 				}
 				return true;
-			},
-		});
-
-		// Command palette: insert inline icon at cursor
-		this.plugin.addCommand({
-			id: "insert-inline-icon",
-			name: "Insert inline icon at cursor",
-			editorCallback: (editor: Editor) => {
-				const file = this.plugin.app.workspace.getActiveFile();
-				const path = file?.path ?? "";
-				const modal = new IconPickerModal(this.plugin.app, this.plugin, path, (icon) => {
-					if (!icon) return;
-					const prefix = this.plugin.settings.inlineIconPrefix;
-					editor.replaceSelection(`:${prefix}-${icon.value}:`);
-				});
-				modal.open();
 			},
 		});
 	}

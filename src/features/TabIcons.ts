@@ -1,6 +1,6 @@
 import type { View, WorkspaceLeaf } from "obsidian";
 import { CSS_PREFIX, TAB_ICON_SIZE } from "../constants";
-import type CustomIconPlugin from "../main";
+import type VaultIconStudioPlugin from "../main";
 import type { IconData } from "../types";
 
 /** Internal Obsidian API — not in public type declarations */
@@ -17,7 +17,7 @@ interface LeafWithTabHeader extends WorkspaceLeaf {
  * Replaces tab header icons with user-set icons.
  */
 export class TabIcons {
-	constructor(private plugin: CustomIconPlugin) {}
+	constructor(private plugin: VaultIconStudioPlugin) {}
 
 	enable() {
 		this.plugin.registerEvent(

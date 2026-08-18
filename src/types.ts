@@ -35,18 +35,18 @@ export interface InlineIconAnnotation {
 export type InlineIconAnnotationMapping = Record<string, InlineIconAnnotation>;
 
 /** Plugin settings stored in data.json */
-export interface CustomIconSettings {
+export interface VaultIconStudioSettings {
 	/** Enable inline :icon: shortcodes in notes */
 	enableInlineIcons: boolean;
 	/** Inline icon size in px */
 	inlineIconSize: number;
-	/** Prefix for inline icon syntax (e.g. "custom-icon" → :custom-icon-NAME:) */
+	/** Prefix for inline icon syntax (e.g. "ci" → :ci-NAME:) */
 	inlineIconPrefix: string;
 }
 
 /** Persisted plugin data (settings + icon mappings combined) */
-export interface CustomIconData {
-	settings: CustomIconSettings;
+export interface VaultIconStudioData {
+	settings: VaultIconStudioSettings;
 	iconMap: IconMapping;
 	inlineIconAnnotations: InlineIconAnnotationMapping;
 }

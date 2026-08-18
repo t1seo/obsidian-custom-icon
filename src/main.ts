@@ -8,12 +8,12 @@ import { TabIcons } from "./features/TabIcons";
 import { TitleIcons } from "./features/TitleIcons";
 import { IconLibraryService } from "./services/IconLibraryService";
 import { InlineAnnotationStore } from "./services/InlineAnnotationStore";
-import { CustomIconSettingTab } from "./settings";
-import type { CustomIconData, CustomIconSettings, IconData, IconMapping } from "./types";
+import { VaultIconStudioSettingTab } from "./settings";
+import type { IconData, IconMapping, VaultIconStudioData, VaultIconStudioSettings } from "./types";
 import { IconPickerModal } from "./ui/IconPickerModal";
 
-export default class CustomIconPlugin extends Plugin {
-	settings!: CustomIconSettings;
+export default class VaultIconStudioPlugin extends Plugin {
+	settings!: VaultIconStudioSettings;
 	iconMap!: IconMapping;
 	explorerIcons!: ExplorerIcons;
 	tabIcons!: TabIcons;
@@ -24,7 +24,7 @@ export default class CustomIconPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		this.updateInlineSizeCSSVar();
-		this.addSettingTab(new CustomIconSettingTab(this.app, this));
+		this.addSettingTab(new VaultIconStudioSettingTab(this.app, this));
 
 		// Initialize icon library
 		this.iconLibrary = new IconLibraryService(this.app.vault.adapter, this.manifest.dir!);
@@ -81,14 +81,14 @@ export default class CustomIconPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		const data = ((await this.loadData()) ?? {}) as Partial<CustomIconData>;
+		const data = ((await this.loadData()) ?? {}) as Partial<VaultIconStudioData>;
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings);
 		this.iconMap = data.iconMap ?? {};
 		this.inlineAnnotations = new InlineAnnotationStore(data.inlineIconAnnotations ?? {});
 	}
 
 	async saveSettings() {
-		const data: CustomIconData = {
+		const data: VaultIconStudioData = {
 			settings: this.settings,
 			iconMap: this.iconMap,
 			inlineIconAnnotations: this.inlineAnnotations.toJSON(),

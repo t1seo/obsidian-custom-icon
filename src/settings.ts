@@ -1,11 +1,11 @@
 import { type App, PluginSettingTab, Setting } from "obsidian";
 import { DEFAULT_SETTINGS } from "./constants";
-import type CustomIconPlugin from "./main";
+import type VaultIconStudioPlugin from "./main";
 
-export class CustomIconSettingTab extends PluginSettingTab {
+export class VaultIconStudioSettingTab extends PluginSettingTab {
 	constructor(
 		app: App,
-		private plugin: CustomIconPlugin,
+		private plugin: VaultIconStudioPlugin,
 	) {
 		super(app, plugin);
 	}

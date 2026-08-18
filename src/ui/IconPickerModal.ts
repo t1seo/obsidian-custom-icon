@@ -1,6 +1,6 @@
 import { type App, Modal } from "obsidian";
 import { CSS_PREFIX } from "../constants";
-import type CustomIconPlugin from "../main";
+import type VaultIconStudioPlugin from "../main";
 import type { IconData, IconSelectCallback, PickerTab } from "../types";
 import { CustomTab } from "./CustomTab";
 import { UploadTab } from "./UploadTab";
@@ -32,7 +32,7 @@ export class IconPickerModal extends Modal {
 
 	constructor(
 		app: App,
-		private plugin: CustomIconPlugin,
+		private plugin: VaultIconStudioPlugin,
 		path: string,
 		onSelect: IconSelectCallback,
 	) {

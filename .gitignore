@@ -15,13 +15,16 @@ CLAUDE.md
 *~
 .DS_Store
 
-# Docs & Planning
-docs/
-
 # Obsidian
 data.json
 icon-library.json
 icons/
+
+# Keep the documented sample vault self-contained
+!examples/programming-languages-vault/.obsidian/plugins/custom-icon/data.json
+!examples/programming-languages-vault/.obsidian/plugins/custom-icon/icon-library.json
+!examples/programming-languages-vault/.obsidian/plugins/custom-icon/icons/
+!examples/programming-languages-vault/.obsidian/plugins/custom-icon/icons/*.svg
 
 # Sample icons (for screenshots only)
 assets/sample_icons/

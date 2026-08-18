@@ -1,5 +1,5 @@
 import { CSS_PREFIX, ICONS_DIR } from "../constants";
-import type CustomIconPlugin from "../main";
+import type VaultIconStudioPlugin from "../main";
 import {
 	type ProcessedImage,
 	type ProcessedSvg,
@@ -37,7 +37,7 @@ export class UploadTab implements TabRenderer {
 	private pasteHandler: ((e: ClipboardEvent) => void) | null = null;
 
 	constructor(
-		private plugin: CustomIconPlugin,
+		private plugin: VaultIconStudioPlugin,
 		private modal: IconPickerModal,
 	) {}
 
