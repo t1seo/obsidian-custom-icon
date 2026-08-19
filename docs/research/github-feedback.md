@@ -14,7 +14,7 @@ Issues #5 through #9 were maintainer-created implementation trackers and contain
 
 ## Root cause
 
-The annotation code was merged, but the repository still exposed 1.2.0 as its latest GitHub release. There was also no Community directory entry. BRAT therefore had no newer tagged release to install, and Obsidian could not offer a directory install.
+The annotation code was merged, but the repository still exposed 1.2.0 as its latest GitHub release. A Community directory entry did exist, but its May 7, 2026 review failed because of a direct `element.style.width` assignment; the review also recommended artifact attestations for `main.js` and `styles.css`. BRAT therefore had no newer tagged release to install, and the directory's **Add to Obsidian** action remained unavailable.
 
 ## Resolution in 1.3.0
 
@@ -25,4 +25,6 @@ The annotation code was merged, but the repository still exposed 1.2.0 as its la
 - Prepare the repository for the current account-based Community directory submission flow.
 - Test the annotation feature and the complete existing workflow in Obsidian 1.13.7.
 
-The `1.3.0` tag and GitHub release were published on 2026-08-19, so BRAT can install the annotation build. Version 1.3.1 carries the final Icon Studio brand and the renamed `t1seo/obsidian-icon-studio` repository. After the 1.3.1 release and BRAT verification, the remaining external step is the initial Community directory submission. It requires a submitter to sign in with an Obsidian account, connect the repository owner's GitHub account, select themselves or an eligible organization as the directory Owner, and accept the Developer policies and continued-support declaration.
+The `1.3.0` tag and GitHub release were published on 2026-08-19, so BRAT can install the annotation build. Version 1.3.1 carries the final Icon Studio brand and the renamed `t1seo/obsidian-icon-studio` repository.
+
+On 2026-08-19, the repository owner's GitHub account was connected to the existing `custom-icon` directory entry and the 1.3.1 release scan was queued. The public listing now shows **Icon Studio** and version 1.3.1. The preview scan found only the intentional display-name mismatch with the previous **Custom Icon** release, so a manual review request was submitted explaining the rebrand, stable plugin ID, repository rename, fixed source finding, and attested release assets. That request is open for administrator review; **Add to Obsidian** remains disabled until approval.
