@@ -4,7 +4,7 @@ Research date: 2026-08-19
 
 ## Decision
 
-Vault Icon Studio will keep the existing `custom-icon` plugin ID, publish version `1.3.0` with the required release assets, and use the account-based Obsidian Community directory submission flow.
+Icon Studio will keep the existing `custom-icon` plugin ID, publish version `1.3.1` with the required release assets, and use the account-based Obsidian Community directory submission flow.
 
 ## Findings
 

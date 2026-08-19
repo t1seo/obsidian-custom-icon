@@ -6,9 +6,9 @@ Research date: 2026-08-19
 
 The project has eight closed issues. Three contain public discussion from users:
 
-- [#1: Support batch import and transparent background](https://github.com/t1seo/vault-icon-studio/issues/1) received two maintainer replies. Native SVG storage, transparent rendering, filenames, and batch import shipped in 1.1.0.
-- [#4: Suggestions to improve the inline icon feature](https://github.com/t1seo/vault-icon-studio/issues/4) received five replies across the user and maintainer. The reporter later confirmed that the 1.2.0 changes worked.
-- [#11: Adding comments/annotations to inline custom icons](https://github.com/t1seo/vault-icon-studio/issues/11) received five replies. After the annotation implementation merged, the reporter found that no new release was available through BRAT and that the plugin could not be installed from Obsidian's Community directory. A later follow-up noted a newer Obsidian version while still waiting for the release.
+- [#1: Support batch import and transparent background](https://github.com/t1seo/obsidian-icon-studio/issues/1) received two maintainer replies. Native SVG storage, transparent rendering, filenames, and batch import shipped in 1.1.0.
+- [#4: Suggestions to improve the inline icon feature](https://github.com/t1seo/obsidian-icon-studio/issues/4) received five replies across the user and maintainer. The reporter later confirmed that the 1.2.0 changes worked.
+- [#11: Adding comments/annotations to inline custom icons](https://github.com/t1seo/obsidian-icon-studio/issues/11) received five replies. After the annotation implementation merged, the reporter found that no new release was available through BRAT and that the plugin could not be installed from Obsidian's Community directory. A later follow-up noted a newer Obsidian version while still waiting for the release.
 
 Issues #5 through #9 were maintainer-created implementation trackers and contain no public comments.
 
@@ -25,4 +25,4 @@ The annotation code was merged, but the repository still exposed 1.2.0 as its la
 - Prepare the repository for the current account-based Community directory submission flow.
 - Test the annotation feature and the complete existing workflow in Obsidian 1.13.7.
 
-After the `1.3.0` tag and GitHub release are published, the only owner-only step is the initial Community directory submission. It requires the repository owner to sign in with an Obsidian account, connect GitHub, and accept the directory's owner-facing declarations.
+The `1.3.0` tag and GitHub release were published on 2026-08-19, so BRAT can install the annotation build. Version 1.3.1 carries the final Icon Studio brand and the renamed `t1seo/obsidian-icon-studio` repository. The remaining owner-only step is the initial Community directory submission. It requires the repository owner to sign in with an Obsidian account, connect GitHub, and accept the directory's owner-facing declarations.

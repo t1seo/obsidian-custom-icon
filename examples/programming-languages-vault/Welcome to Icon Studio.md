@@ -1,4 +1,4 @@
-# Vault Icon Studio
+# Icon Studio
 
 Your images. Your icons. Your vault.
 

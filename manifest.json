@@ -1,7 +1,7 @@
 {
 	"id": "custom-icon",
-	"name": "Vault Icon Studio",
-	"version": "1.3.0",
+	"name": "Icon Studio",
+	"version": "1.3.1",
 	"minAppVersion": "1.4.0",
 	"description": "Upload and use custom image icons across files, folders, tabs, note titles, and inline text.",
 	"author": "t1seo",

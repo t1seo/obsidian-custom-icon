@@ -1,5 +1,5 @@
 import { CSS_PREFIX, TITLE_ICON_SIZE } from "../constants";
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
 /**
@@ -7,7 +7,7 @@ import { IconPickerModal } from "../ui/IconPickerModal";
  * Clicking the icon opens the picker to change it.
  */
 export class TitleIcons {
-	constructor(private plugin: VaultIconStudioPlugin) {}
+	constructor(private plugin: IconStudioPlugin) {}
 
 	enable() {
 		this.plugin.registerEvent(

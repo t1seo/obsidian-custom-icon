@@ -1,4 +1,4 @@
-name: Release Vault Icon Studio
+name: Release Icon Studio
 
 on:
   push:

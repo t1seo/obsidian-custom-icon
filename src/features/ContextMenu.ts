@@ -1,4 +1,4 @@
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 import { IconPickerModal } from "../ui/IconPickerModal";
 
 /**
@@ -6,7 +6,7 @@ import { IconPickerModal } from "../ui/IconPickerModal";
  * and registers Command Palette commands.
  */
 export class ContextMenu {
-	constructor(private plugin: VaultIconStudioPlugin) {}
+	constructor(private plugin: IconStudioPlugin) {}
 
 	enable() {
 		// File explorer context menu
@@ -14,7 +14,7 @@ export class ContextMenu {
 			this.plugin.app.workspace.on("file-menu", (menu, file) => {
 				menu.addItem((item) => {
 					item
-						.setTitle("Change custom icon")
+						.setTitle("Change icon…")
 						.setIcon("palette")
 						.onClick(() => this.openPicker(file.path));
 				});
@@ -22,7 +22,7 @@ export class ContextMenu {
 				if (this.plugin.iconMap[file.path]) {
 					menu.addItem((item) => {
 						item
-							.setTitle("Remove custom icon")
+							.setTitle("Remove icon")
 							.setIcon("trash-2")
 							.onClick(() => this.plugin.removeIcon(file.path));
 					});

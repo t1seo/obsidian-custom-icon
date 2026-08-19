@@ -1,5 +1,5 @@
 import { CSS_PREFIX, EXPLORER_ICON_SIZE } from "../constants";
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 import type { IconData } from "../types";
 
 /**
@@ -10,7 +10,7 @@ export class ExplorerIcons {
 	private observer: MutationObserver | null = null;
 	private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-	constructor(private plugin: VaultIconStudioPlugin) {}
+	constructor(private plugin: IconStudioPlugin) {}
 
 	/** Start observing and apply all icons */
 	enable() {

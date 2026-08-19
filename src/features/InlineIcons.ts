@@ -16,7 +16,7 @@ import {
 	Menu,
 	editorInfoField,
 } from "obsidian";
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 import { InlineAnnotationModal } from "../ui/InlineAnnotationModal";
 import { removeInlineIconAnnotation } from "../utils/inlineAnnotationTransactions";
 import {
@@ -26,7 +26,7 @@ import {
 } from "../utils/inlineIconSyntax";
 
 /** Resolve a captured value to an actual icon ID by checking ID first, then name */
-function resolveIconId(value: string, plugin: VaultIconStudioPlugin): string | null {
+function resolveIconId(value: string, plugin: IconStudioPlugin): string | null {
 	const lib = plugin.iconLibrary;
 	if (lib.getById(value)) return value;
 	const byName = lib.getAll().find((i) => i.name === value);
@@ -41,7 +41,7 @@ interface InlineIconTarget {
 	replaceShortcode: (nextShortcode: string) => Promise<void>;
 }
 
-function createAnnotationId(plugin: VaultIconStudioPlugin): string {
+function createAnnotationId(plugin: IconStudioPlugin): string {
 	let id: string;
 	do {
 		id = `note-${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
@@ -49,11 +49,7 @@ function createAnnotationId(plugin: VaultIconStudioPlugin): string {
 	return id;
 }
 
-function openAnnotationModal(
-	plugin: VaultIconStudioPlugin,
-	iconName: string,
-	target: InlineIconTarget,
-) {
+function openAnnotationModal(plugin: IconStudioPlugin, iconName: string, target: InlineIconTarget) {
 	const annotationId = target.annotationId ?? createAnnotationId(plugin);
 	const annotation = plugin.inlineAnnotations.get(annotationId);
 
@@ -93,7 +89,7 @@ function openAnnotationModal(
 
 function attachAnnotationMenu(
 	span: HTMLElement,
-	plugin: VaultIconStudioPlugin,
+	plugin: IconStudioPlugin,
 	iconName: string,
 	target: InlineIconTarget,
 ) {
@@ -127,7 +123,7 @@ function attachAnnotationMenu(
 
 function attachHoverPreview(
 	span: HTMLElement,
-	plugin: VaultIconStudioPlugin,
+	plugin: IconStudioPlugin,
 	iconUrl: string,
 	iconName: string,
 	annotationId: string | undefined,
@@ -215,7 +211,7 @@ function attachHoverPreview(
 }
 
 function createInlineIconElement(
-	plugin: VaultIconStudioPlugin,
+	plugin: IconStudioPlugin,
 	iconId: string,
 	annotationId: string | undefined,
 	target: InlineIconTarget,
@@ -258,7 +254,7 @@ class InlineCustomIconWidget extends WidgetType {
 		private shortcode: string,
 		private from: number,
 		private to: number,
-		private plugin: VaultIconStudioPlugin,
+		private plugin: IconStudioPlugin,
 	) {
 		super();
 	}
@@ -303,7 +299,7 @@ class InlineCustomIconWidget extends WidgetType {
 }
 
 /** Build decorations for all visible :PREFIX-ICONID: matches */
-function buildDecorations(view: EditorView, plugin: VaultIconStudioPlugin): DecorationSet {
+function buildDecorations(view: EditorView, plugin: IconStudioPlugin): DecorationSet {
 	if (!plugin.settings.enableInlineIcons) return Decoration.none;
 
 	const widgets: Array<{ from: number; to: number; deco: Decoration }> = [];
@@ -340,7 +336,7 @@ function buildDecorations(view: EditorView, plugin: VaultIconStudioPlugin): Deco
 }
 
 /** Create the CM6 ViewPlugin for inline icon decoration */
-function createInlineIconPlugin(plugin: VaultIconStudioPlugin) {
+function createInlineIconPlugin(plugin: IconStudioPlugin) {
 	return ViewPlugin.fromClass(
 		class implements PluginValue {
 			decorations: DecorationSet;
@@ -365,7 +361,7 @@ function createInlineIconPlugin(plugin: VaultIconStudioPlugin) {
  * Supports custom icons via the configured prefix, such as :ci-ICONID:.
  */
 export class InlineIcons {
-	constructor(private plugin: VaultIconStudioPlugin) {}
+	constructor(private plugin: IconStudioPlugin) {}
 
 	enable() {
 		// Editor mode: CM6 extension
