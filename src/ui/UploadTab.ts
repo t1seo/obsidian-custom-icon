@@ -1,5 +1,6 @@
+import { setIcon } from "obsidian";
 import { CSS_PREFIX, ICONS_DIR } from "../constants";
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 import {
 	type ProcessedImage,
 	type ProcessedSvg,
@@ -34,10 +35,12 @@ interface BatchEntry {
 export class UploadTab implements TabRenderer {
 	private container!: HTMLElement;
 	private processed: ProcessedFile | null = null;
+	private fileInputEl: HTMLInputElement | null = null;
 	private pasteHandler: ((e: ClipboardEvent) => void) | null = null;
+	private objectUrls = new Set<string>();
 
 	constructor(
-		private plugin: VaultIconStudioPlugin,
+		private plugin: IconStudioPlugin,
 		private modal: IconPickerModal,
 	) {}
 
@@ -52,31 +55,68 @@ export class UploadTab implements TabRenderer {
 			document.removeEventListener("paste", this.pasteHandler);
 			this.pasteHandler = null;
 		}
+		this.fileInputEl = null;
+		this.clearObjectUrls();
 	}
 
 	// ─── Private ────────────────────────────────────
 
 	private renderUploadZone() {
-		const zone = this.container.createDiv({ cls: `${CSS_PREFIX}-upload-zone` });
+		this.clearObjectUrls();
+		this.fileInputEl = this.container.createEl("input", {
+			cls: `${CSS_PREFIX}-file-input`,
+			attr: {
+				type: "file",
+				accept: ACCEPT_TYPES,
+				multiple: "true",
+				tabindex: "-1",
+				"aria-hidden": "true",
+			},
+		});
+		this.fileInputEl.addEventListener("change", () => {
+			if (this.fileInputEl?.files && this.fileInputEl.files.length > 0) {
+				void this.handleFiles(this.fileInputEl.files);
+			}
+		});
+
+		const zone = this.container.createDiv({
+			cls: `${CSS_PREFIX}-upload-zone`,
+			attr: {
+				role: "button",
+				tabindex: "0",
+				"aria-label": "Choose icon images to upload",
+				"aria-describedby": `${CSS_PREFIX}-upload-formats ${CSS_PREFIX}-upload-methods`,
+			},
+		});
 
 		const iconDiv = zone.createDiv({ cls: `${CSS_PREFIX}-upload-zone-icon` });
-		iconDiv.textContent = "\uD83D\uDCC1";
+		setIcon(iconDiv, "upload-cloud");
 
 		zone.createDiv({
-			text: "Click to upload or drag images",
+			text: "Drop icon images here",
 			cls: `${CSS_PREFIX}-upload-zone-text`,
 		});
 		zone.createDiv({
-			text: "PNG, JPG, SVG supported",
+			text: "PNG, JPG, WebP, or SVG · multiple files supported",
 			cls: `${CSS_PREFIX}-upload-zone-hint`,
+			attr: { id: `${CSS_PREFIX}-upload-formats` },
+		});
+		zone.createSpan({
+			text: "Browse files",
+			cls: `${CSS_PREFIX}-upload-browse`,
 		});
 		zone.createDiv({
-			text: "Select multiple files for batch import \u00B7 Cmd+V to paste",
-			cls: `${CSS_PREFIX}-upload-zone-hint`,
+			text: "You can also paste an image from the clipboard",
+			cls: `${CSS_PREFIX}-upload-zone-hint is-secondary`,
+			attr: { id: `${CSS_PREFIX}-upload-methods` },
 		});
 
-		// Click
 		zone.addEventListener("click", () => this.openFilePicker());
+		zone.addEventListener("keydown", (event) => {
+			if (event.key !== "Enter" && event.key !== " ") return;
+			event.preventDefault();
+			this.openFilePicker();
+		});
 
 		// Drag & drop
 		zone.addEventListener("dragover", (e) => {
@@ -94,7 +134,7 @@ export class UploadTab implements TabRenderer {
 			void this.handleFiles(files);
 		});
 
-		// Paste handler
+		if (this.pasteHandler) document.removeEventListener("paste", this.pasteHandler);
 		this.pasteHandler = (e: ClipboardEvent) => {
 			const items = e.clipboardData?.items;
 			if (!items) return;
@@ -113,16 +153,9 @@ export class UploadTab implements TabRenderer {
 	}
 
 	private openFilePicker() {
-		const input = document.createElement("input");
-		input.type = "file";
-		input.accept = ACCEPT_TYPES;
-		input.multiple = true;
-		input.addEventListener("change", () => {
-			if (input.files && input.files.length > 0) {
-				void this.handleFiles(input.files);
-			}
-		});
-		input.click();
+		if (!this.fileInputEl) return;
+		this.fileInputEl.value = "";
+		this.fileInputEl.click();
 	}
 
 	/** Route to single or batch handling based on file count */
@@ -135,7 +168,10 @@ export class UploadTab implements TabRenderer {
 			}
 		}
 
-		if (imageFiles.length === 0) return;
+		if (imageFiles.length === 0) {
+			this.renderError("Choose a PNG, JPG, WebP, or SVG image.");
+			return;
+		}
 
 		if (imageFiles.length === 1) {
 			void this.handleSingleFile(imageFiles[0]);
@@ -151,6 +187,7 @@ export class UploadTab implements TabRenderer {
 		this.container.createEl("p", {
 			text: "Processing image...",
 			cls: `${CSS_PREFIX}-placeholder`,
+			attr: { role: "status", "aria-live": "polite" },
 		});
 
 		try {
@@ -170,10 +207,7 @@ export class UploadTab implements TabRenderer {
 			this.renderPreview(file.name.replace(/\.[^.]+$/, ""));
 		} catch {
 			this.container.empty();
-			this.container.createEl("p", {
-				text: "Failed to process image",
-				cls: `${CSS_PREFIX}-placeholder`,
-			});
+			this.renderError("This image could not be processed. Try another file.", true);
 		}
 	}
 
@@ -258,7 +292,7 @@ export class UploadTab implements TabRenderer {
 		actions
 			.createEl("button", {
 				text: "Apply",
-				cls: `${CSS_PREFIX}-save-btn`,
+				cls: `${CSS_PREFIX}-save-btn mod-cta`,
 			})
 			.addEventListener("click", () => {
 				const saveToLibrary = checkbox.checked;
@@ -307,11 +341,17 @@ export class UploadTab implements TabRenderer {
 			name: f.name.replace(/\.[^.]+$/, ""),
 			ext: isSvgFile(f) ? ("svg" as const) : ("png" as const),
 		}));
+		this.renderBatchEntries(entries);
+	}
 
-		// Header
-		this.container.createDiv({
-			text: `${entries.length} files selected`,
-			cls: `${CSS_PREFIX}-batch-header`,
+	private renderBatchEntries(entries: BatchEntry[]) {
+		this.clearObjectUrls();
+		this.container.empty();
+
+		const header = this.container.createDiv({ cls: `${CSS_PREFIX}-batch-header` });
+		header.createEl("strong", { text: `${entries.length} icons ready to import` });
+		header.createEl("span", {
+			text: "Review their library names before importing.",
 		});
 
 		// Scrollable file list
@@ -331,8 +371,10 @@ export class UploadTab implements TabRenderer {
 			const thumb = row.createEl("img", {
 				cls: `${CSS_PREFIX}-batch-row-thumb`,
 			});
-			thumb.src = URL.createObjectURL(entry.file);
-			thumb.alt = "";
+			const objectUrl = URL.createObjectURL(entry.file);
+			this.objectUrls.add(objectUrl);
+			thumb.src = objectUrl;
+			thumb.alt = `${entry.name} preview`;
 
 			// Extension badge
 			row.createDiv({
@@ -353,15 +395,24 @@ export class UploadTab implements TabRenderer {
 			nameInputs.push(nameInput);
 
 			// Remove button
-			row
-				.createEl("button", {
-					text: "\u00D7",
-					cls: `${CSS_PREFIX}-batch-row-remove`,
-				})
-				.addEventListener("click", () => {
-					entries.splice(i, 1);
-					this.renderBatchReview(entries.map((e) => e.file));
-				});
+			const removeButton = row.createEl("button", {
+				cls: `${CSS_PREFIX}-batch-row-remove`,
+				attr: {
+					type: "button",
+					"aria-label": `Remove ${entry.name} from import`,
+					title: `Remove ${entry.name}`,
+				},
+			});
+			setIcon(removeButton, "x");
+			removeButton.addEventListener("click", () => {
+				const remaining = entries.filter((candidate) => candidate !== entry);
+				if (remaining.length === 0) {
+					this.container.empty();
+					this.renderUploadZone();
+					return;
+				}
+				this.renderBatchEntries(remaining);
+			});
 		});
 
 		// Bottom bar
@@ -373,6 +424,7 @@ export class UploadTab implements TabRenderer {
 				cls: `${CSS_PREFIX}-cancel-btn`,
 			})
 			.addEventListener("click", () => {
+				this.clearObjectUrls();
 				this.container.empty();
 				this.renderUploadZone();
 			});
@@ -380,7 +432,7 @@ export class UploadTab implements TabRenderer {
 		bottomBar
 			.createEl("button", {
 				text: `Import ${entries.length} icons`,
-				cls: `${CSS_PREFIX}-save-btn`,
+				cls: `${CSS_PREFIX}-save-btn mod-cta`,
 			})
 			.addEventListener("click", () => {
 				// Read final names from inputs before importing
@@ -395,11 +447,13 @@ export class UploadTab implements TabRenderer {
 
 	/** Process and save all batch entries */
 	private async executeBatchImport(entries: BatchEntry[]) {
+		this.clearObjectUrls();
 		this.container.empty();
 
 		const statusEl = this.container.createEl("p", {
 			text: `Importing 0/${entries.length}...`,
 			cls: `${CSS_PREFIX}-placeholder`,
+			attr: { role: "status", "aria-live": "polite" },
 		});
 
 		const adapter = this.plugin.app.vault.adapter;
@@ -458,6 +512,8 @@ export class UploadTab implements TabRenderer {
 
 	private renderBatchResult(imported: number, total: number) {
 		const result = this.container.createDiv({ cls: `${CSS_PREFIX}-batch-result` });
+		const resultIcon = result.createDiv({ cls: `${CSS_PREFIX}-batch-result-icon` });
+		setIcon(resultIcon, imported === total ? "circle-check" : "triangle-alert");
 
 		result.createDiv({
 			text: `Imported ${imported} of ${total} icons to library.`,
@@ -467,7 +523,7 @@ export class UploadTab implements TabRenderer {
 		result
 			.createEl("button", {
 				text: "Done",
-				cls: `${CSS_PREFIX}-save-btn`,
+				cls: `${CSS_PREFIX}-save-btn mod-cta`,
 			})
 			.addEventListener("click", () => {
 				this.modal.close();
@@ -480,5 +536,29 @@ export class UploadTab implements TabRenderer {
 		const dt = new DataTransfer();
 		dt.items.add(file);
 		return dt.files;
+	}
+
+	private renderError(message: string, showBackButton = false) {
+		this.container.querySelector(`.${CSS_PREFIX}-upload-error`)?.remove();
+		const error = this.container.createDiv({
+			cls: `${CSS_PREFIX}-upload-error`,
+			attr: { role: "alert" },
+		});
+		const icon = error.createSpan();
+		setIcon(icon, "triangle-alert");
+		error.createSpan({ text: message });
+		if (showBackButton) {
+			error
+				.createEl("button", { text: "Choose another file", cls: `${CSS_PREFIX}-cancel-btn` })
+				.addEventListener("click", () => {
+					this.container.empty();
+					this.renderUploadZone();
+				});
+		}
+	}
+
+	private clearObjectUrls() {
+		for (const url of this.objectUrls) URL.revokeObjectURL(url);
+		this.objectUrls.clear();
 	}
 }

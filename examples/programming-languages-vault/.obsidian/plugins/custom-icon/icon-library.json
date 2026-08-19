@@ -1,9 +1,9 @@
 {
 	"icons": [
 		{
-			"id": "vault-icon-studio",
-			"name": "Vault Icon Studio",
-			"path": "icons/vault-icon-studio.svg",
+			"id": "icon-studio",
+			"name": "Icon Studio",
+			"path": "icons/icon-studio.svg",
 			"createdAt": 1787083200000,
 			"ext": "svg"
 		},

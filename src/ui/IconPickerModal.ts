@@ -1,6 +1,6 @@
-import { type App, Modal } from "obsidian";
+import { type App, Modal, setIcon } from "obsidian";
 import { CSS_PREFIX } from "../constants";
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 import type { IconData, IconSelectCallback, PickerTab } from "../types";
 import { CustomTab } from "./CustomTab";
 import { UploadTab } from "./UploadTab";
@@ -20,10 +20,12 @@ const TABS: TabDef[] = [
  * Main icon picker modal with 2 tabs: Custom | Upload
  */
 export class IconPickerModal extends Modal {
+	private static activeModal: IconPickerModal | null = null;
 	private activeTab: PickerTab = "custom";
 	private tabContentEl!: HTMLElement;
 	private searchEl!: HTMLInputElement;
 	private searchBarEl!: HTMLElement;
+	private tabButtons = new Map<PickerTab, HTMLButtonElement>();
 	private onSelect: IconSelectCallback;
 	private currentPath: string;
 
@@ -32,7 +34,7 @@ export class IconPickerModal extends Modal {
 
 	constructor(
 		app: App,
-		private plugin: VaultIconStudioPlugin,
+		private plugin: IconStudioPlugin,
 		path: string,
 		onSelect: IconSelectCallback,
 	) {
@@ -42,11 +44,15 @@ export class IconPickerModal extends Modal {
 	}
 
 	onOpen() {
+		const previousModal = IconPickerModal.activeModal;
+		IconPickerModal.activeModal = this;
+		if (previousModal && previousModal !== this) previousModal.close();
+
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass(`${CSS_PREFIX}-picker`);
-		// Add class to parent .modal element to strip its padding
 		this.modalEl.addClass(`${CSS_PREFIX}-modal`);
+		this.setTitle("Choose an icon");
 
 		// Register tabs
 		this.registerTab("custom", new CustomTab(this.plugin, this));
@@ -70,10 +76,12 @@ export class IconPickerModal extends Modal {
 	}
 
 	onClose() {
+		if (IconPickerModal.activeModal === this) IconPickerModal.activeModal = null;
 		for (const renderer of this.tabRenderers.values()) {
 			renderer.destroy?.();
 		}
 		this.tabRenderers.clear();
+		this.tabButtons.clear();
 		this.contentEl.empty();
 	}
 
@@ -103,26 +111,50 @@ export class IconPickerModal extends Modal {
 
 	private buildHeader(parent: HTMLElement) {
 		const header = parent.createDiv({ cls: `${CSS_PREFIX}-picker-header` });
+		header.createEl("p", {
+			cls: `${CSS_PREFIX}-picker-description`,
+			text: this.currentPath
+				? `Choose an icon for “${this.currentPath.split("/").pop() ?? this.currentPath}”.`
+				: "Choose an icon to insert into the current note.",
+		});
 
-		const tabs = header.createDiv({ cls: `${CSS_PREFIX}-picker-tabs` });
+		const tabs = header.createDiv({
+			cls: `${CSS_PREFIX}-picker-tabs`,
+			attr: { role: "tablist", "aria-label": "Icon source" },
+		});
 		for (const { key, label } of TABS) {
 			const btn = tabs.createEl("button", {
 				text: label,
 				cls: `${CSS_PREFIX}-tab-btn`,
+				attr: {
+					id: `${CSS_PREFIX}-tab-${key}`,
+					role: "tab",
+					"aria-controls": `${CSS_PREFIX}-tabpanel`,
+					"aria-selected": String(key === this.activeTab),
+					tabindex: key === this.activeTab ? "0" : "-1",
+				},
 			});
 			if (key === this.activeTab) btn.addClass("is-active");
+			this.tabButtons.set(key, btn);
 			btn.addEventListener("click", () => this.switchTab(key));
+			btn.addEventListener("keydown", (event) => this.navigateTabs(event, key));
 		}
 	}
 
 	private buildSearchBar(parent: HTMLElement) {
 		const bar = parent.createDiv({ cls: `${CSS_PREFIX}-picker-search` });
 		this.searchBarEl = bar;
+		const searchIcon = bar.createSpan({ cls: `${CSS_PREFIX}-search-icon` });
+		setIcon(searchIcon, "search");
+		searchIcon.setAttribute("aria-hidden", "true");
 
 		this.searchEl = bar.createEl("input", {
-			type: "text",
-			placeholder: "Filter...",
 			cls: `${CSS_PREFIX}-search-input`,
+			attr: {
+				type: "search",
+				placeholder: "Search your icon library",
+				"aria-label": "Search your icon library",
+			},
 		});
 		this.searchEl.addEventListener("input", () => {
 			const renderer = this.tabRenderers.get(this.activeTab);
@@ -131,9 +163,14 @@ export class IconPickerModal extends Modal {
 
 		const randomBtn = bar.createEl("button", {
 			cls: `${CSS_PREFIX}-random-btn`,
-			attr: { "aria-label": "Random", title: "Random" },
+			attr: {
+				type: "button",
+				"aria-label": "Choose a random icon",
+				title: "Choose a random icon",
+			},
 		});
-		randomBtn.textContent = "\uD83C\uDFB2";
+		setIcon(randomBtn, "shuffle");
+		randomBtn.createSpan({ text: "Random" });
 		randomBtn.addEventListener("click", () => {
 			const renderer = this.tabRenderers.get(this.activeTab);
 			renderer?.onRandom?.();
@@ -141,11 +178,23 @@ export class IconPickerModal extends Modal {
 	}
 
 	private buildTabContent(parent: HTMLElement) {
-		this.tabContentEl = parent.createDiv({ cls: `${CSS_PREFIX}-picker-content` });
+		this.tabContentEl = parent.createDiv({
+			cls: `${CSS_PREFIX}-picker-content`,
+			attr: {
+				id: `${CSS_PREFIX}-tabpanel`,
+				role: "tabpanel",
+				"aria-labelledby": `${CSS_PREFIX}-tab-${this.activeTab}`,
+			},
+		});
 	}
 
 	private navigateGrid(e: KeyboardEvent, direction: "up" | "down" | "left" | "right") {
-		if (document.activeElement === this.searchEl) return;
+		if (
+			document.activeElement === this.searchEl ||
+			(document.activeElement as HTMLElement | null)?.matches(`.${CSS_PREFIX}-tab-btn`)
+		) {
+			return;
+		}
 
 		const gridSelector = `.${CSS_PREFIX}-custom-item-btn`;
 		const items = Array.from(this.tabContentEl.querySelectorAll<HTMLElement>(gridSelector));
@@ -200,17 +249,36 @@ export class IconPickerModal extends Modal {
 		}
 	}
 
+	private navigateTabs(event: KeyboardEvent, currentTab: PickerTab) {
+		if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+		event.preventDefault();
+		event.stopPropagation();
+		const currentIndex = TABS.findIndex(({ key }) => key === currentTab);
+		let nextIndex = currentIndex;
+		if (event.key === "Home") nextIndex = 0;
+		if (event.key === "End") nextIndex = TABS.length - 1;
+		if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+		if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % TABS.length;
+		const nextTab = TABS[nextIndex].key;
+		this.switchTab(nextTab);
+		this.tabButtons.get(nextTab)?.focus();
+	}
+
 	private switchTab(tab: PickerTab) {
 		this.activeTab = tab;
 
 		// Update tab button active states
-		const buttons = this.contentEl.querySelectorAll(`.${CSS_PREFIX}-tab-btn`);
-		buttons.forEach((btn, i) => {
-			btn.toggleClass("is-active", TABS[i].key === tab);
-		});
+		for (const { key } of TABS) {
+			const button = this.tabButtons.get(key);
+			if (!button) continue;
+			const isActive = key === tab;
+			button.toggleClass("is-active", isActive);
+			button.setAttribute("aria-selected", String(isActive));
+			button.tabIndex = isActive ? 0 : -1;
+		}
 
 		// Show/hide search bar (hide for Upload tab)
-		this.searchBarEl.classList.toggle("custom-icon-hidden", tab === "upload");
+		this.searchBarEl.classList.toggle(`${CSS_PREFIX}-hidden`, tab === "upload");
 
 		// Destroy previous tab renderers (cleanup timers)
 		for (const [key, r] of this.tabRenderers) {
@@ -219,6 +287,7 @@ export class IconPickerModal extends Modal {
 
 		// Clear and re-render tab content
 		this.tabContentEl.empty();
+		this.tabContentEl.setAttribute("aria-labelledby", `${CSS_PREFIX}-tab-${tab}`);
 		this.searchEl.value = "";
 
 		const renderer = this.tabRenderers.get(tab);

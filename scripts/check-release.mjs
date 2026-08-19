@@ -25,7 +25,8 @@ if (manifest.version !== packageJson.version) {
 	errors.push(`version mismatch: manifest ${manifest.version}, package ${packageJson.version}`);
 }
 
-const expectedPackageName = manifest.name.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replaceAll(/(^-|-$)/g, "");
+const displayNameSlug = manifest.name.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replaceAll(/(^-|-$)/g, "");
+const expectedPackageName = `obsidian-${displayNameSlug}`;
 if (packageJson.name !== expectedPackageName) {
 	errors.push(`package name ${packageJson.name} must match manifest name slug ${expectedPackageName}`);
 }
@@ -45,4 +46,4 @@ if (errors.length > 0) {
 	process.exit(1);
 }
 
-console.log(`Release metadata and assets are valid for Vault Icon Studio ${manifest.version}.`);
+console.log(`Release metadata and assets are valid for Icon Studio ${manifest.version}.`);

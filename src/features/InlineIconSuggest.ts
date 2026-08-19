@@ -7,7 +7,7 @@ import {
 	type TFile,
 } from "obsidian";
 import { CSS_PREFIX } from "../constants";
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 
 /** Escape special regex characters in a string */
 function escapeRegex(s: string): string {
@@ -24,9 +24,9 @@ interface IconSuggestion {
  * Triggers when user types `:PREFIX-` and shows matching icons.
  */
 export class InlineIconSuggest extends EditorSuggest<IconSuggestion> {
-	private plugin: VaultIconStudioPlugin;
+	private plugin: IconStudioPlugin;
 
-	constructor(plugin: VaultIconStudioPlugin) {
+	constructor(plugin: IconStudioPlugin) {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.limit = 20;

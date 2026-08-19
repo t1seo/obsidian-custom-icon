@@ -7,11 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-08-19
+
+### Changed
+
+- Renamed the product from Vault Icon Studio to Icon Studio for a shorter, more direct name
+- Renamed the GitHub repository and npm package metadata to `obsidian-icon-studio`
+- Updated source type names, English and Korean documentation, the sample vault, and all current screenshots
+- Preserved the stable `custom-icon` plugin ID and `:ci-...:` syntax so existing installations and notes continue to work
+- Redesigned the icon picker with a task title, target context, searchable library, labeled random action, larger icon cards, and responsive Obsidian-native styling
+- Rebuilt the upload flow with a keyboard-accessible drop zone, visible browse action, supported-format guidance, per-file batch review, and clearer progress and result states
+- Simplified settings with an auto-saving size slider and prefix field, and separated destructive annotation actions from save controls
+
+### Fixed
+
+- Prevented duplicate picker modals from stacking when commands or menus are triggered repeatedly
+- Connected the previously inert random action to an actual library selection
+- Preserved edited batch names when another file is removed from the import review
+
 ## [1.3.0] - 2026-08-19
 
 ### Added
 
-- Markdown comments and annotations for individual inline icon instances ([#11](https://github.com/t1seo/vault-icon-studio/issues/11))
+- Markdown comments and annotations for individual inline icon instances ([#11](https://github.com/t1seo/obsidian-icon-studio/issues/11))
 - Right-click annotation editing in Live Preview and Reading view
 - Formatted hover previews with headings, wiki links, and embeds
 - JSON-backed annotation persistence with backward-compatible inline icon syntax
@@ -32,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Inline icon autocomplete — type `:ci-` in the editor to get IDE-style suggestions with icon previews ([#4](https://github.com/t1seo/vault-icon-studio/issues/4))
+- Inline icon autocomplete — type `:ci-` in the editor to get IDE-style suggestions with icon previews ([#4](https://github.com/t1seo/obsidian-icon-studio/issues/4))
 - Configurable inline icon size (12–64px) with instant preview in settings
 - Configurable shortcode prefix — change `:ci-NAME:` to any prefix (e.g. `:my-NAME:`)
 - Hover preview for inline icons — mouse over any inline icon to see a large preview with its name
@@ -55,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Native SVG support — SVGs stored as vector files without canvas rasterization, preserving transparency and scalability ([#1](https://github.com/t1seo/vault-icon-studio/issues/1))
+- Native SVG support — SVGs stored as vector files without canvas rasterization, preserving transparency and scalability ([#1](https://github.com/t1seo/obsidian-icon-studio/issues/1))
 - Batch import — select or drag multiple files at once to import all to library
 - Import progress indicator ("Importing 3/5...")
 - Original filename preservation — icon names derived from filename instead of timestamps

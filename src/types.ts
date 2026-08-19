@@ -35,7 +35,7 @@ export interface InlineIconAnnotation {
 export type InlineIconAnnotationMapping = Record<string, InlineIconAnnotation>;
 
 /** Plugin settings stored in data.json */
-export interface VaultIconStudioSettings {
+export interface IconStudioSettings {
 	/** Enable inline :icon: shortcodes in notes */
 	enableInlineIcons: boolean;
 	/** Inline icon size in px */
@@ -45,8 +45,8 @@ export interface VaultIconStudioSettings {
 }
 
 /** Persisted plugin data (settings + icon mappings combined) */
-export interface VaultIconStudioData {
-	settings: VaultIconStudioSettings;
+export interface IconStudioData {
+	settings: IconStudioSettings;
 	iconMap: IconMapping;
 	inlineIconAnnotations: InlineIconAnnotationMapping;
 }

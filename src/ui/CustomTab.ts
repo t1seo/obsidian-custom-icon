@@ -1,5 +1,6 @@
+import { setIcon } from "obsidian";
 import { CSS_PREFIX } from "../constants";
-import type VaultIconStudioPlugin from "../main";
+import type IconStudioPlugin from "../main";
 import type { CustomIcon } from "../types";
 import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
 
@@ -10,10 +11,11 @@ import type { IconPickerModal, TabRenderer } from "./IconPickerModal";
 export class CustomTab implements TabRenderer {
 	private container!: HTMLElement;
 	private gridContainer!: HTMLElement;
+	private visibleIcons: CustomIcon[] = [];
 	private searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(
-		private plugin: VaultIconStudioPlugin,
+		private plugin: IconStudioPlugin,
 		private modal: IconPickerModal,
 	) {}
 
@@ -30,6 +32,12 @@ export class CustomTab implements TabRenderer {
 			const results = this.plugin.iconLibrary.search(query);
 			this.renderIcons(results);
 		}, 150);
+	}
+
+	onRandom(): void {
+		if (this.visibleIcons.length === 0) return;
+		const icon = this.visibleIcons[Math.floor(Math.random() * this.visibleIcons.length)];
+		this.modal.selectIcon({ type: "custom", value: icon.id });
 	}
 
 	destroy(): void {
@@ -77,29 +85,42 @@ export class CustomTab implements TabRenderer {
 	}
 
 	private renderIcons(icons: CustomIcon[]) {
+		this.visibleIcons = icons;
 		this.gridContainer.empty();
 
 		if (icons.length === 0) {
-			this.gridContainer.createEl("p", {
-				text: "No custom icons yet. Upload one in the upload tab.",
-				cls: `${CSS_PREFIX}-placeholder`,
+			const empty = this.gridContainer.createDiv({
+				cls: `${CSS_PREFIX}-empty-state`,
+				attr: { role: "status" },
+			});
+			const emptyIcon = empty.createDiv({ cls: `${CSS_PREFIX}-empty-state-icon` });
+			setIcon(emptyIcon, "image-off");
+			empty.createEl("strong", { text: "No icons found" });
+			empty.createEl("p", {
+				text: "Try another search, or upload an image to build your library.",
 			});
 			return;
 		}
 
 		this.gridContainer.createEl("div", {
-			text: "Double-click icon name to rename",
+			text: "Select an icon to apply it. Double-click a name to rename.",
 			cls: `${CSS_PREFIX}-grid-hint`,
 		});
 
-		const grid = this.gridContainer.createDiv({ cls: `${CSS_PREFIX}-custom-grid` });
+		const grid = this.gridContainer.createDiv({
+			cls: `${CSS_PREFIX}-custom-grid`,
+			attr: { role: "list", "aria-label": "Icon library" },
+		});
 
 		for (const icon of icons) {
-			const item = grid.createDiv({ cls: `${CSS_PREFIX}-custom-item` });
+			const item = grid.createDiv({
+				cls: `${CSS_PREFIX}-custom-item`,
+				attr: { role: "listitem" },
+			});
 
 			const imgBtn = item.createEl("button", {
 				cls: `${CSS_PREFIX}-custom-item-btn`,
-				attr: { "aria-label": icon.name, title: icon.name },
+				attr: { type: "button", "aria-label": `Use ${icon.name}`, title: `Use ${icon.name}` },
 			});
 
 			const img = imgBtn.createEl("img");
@@ -126,9 +147,13 @@ export class CustomTab implements TabRenderer {
 			// Remove button
 			const removeBtn = item.createEl("button", {
 				cls: `${CSS_PREFIX}-custom-item-remove`,
-				attr: { "aria-label": "Remove" },
+				attr: {
+					type: "button",
+					"aria-label": `Delete ${icon.name} from library`,
+					title: `Delete ${icon.name}`,
+				},
 			});
-			removeBtn.textContent = "\u00D7";
+			setIcon(removeBtn, "x");
 			removeBtn.addEventListener("click", (e) => {
 				e.stopPropagation();
 				void (async () => {

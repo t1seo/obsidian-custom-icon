@@ -29,27 +29,36 @@ export class InlineAnnotationModal extends Modal {
 	}
 
 	onOpen() {
-		this.setTitle(`Annotation for ${this.options.iconName}`);
+		this.setTitle("Edit icon annotation");
 		this.modalEl.addClass("custom-icon-annotation-modal");
 		this.contentEl.empty();
 
 		this.contentEl.createEl("p", {
 			cls: "custom-icon-annotation-help",
-			text: "Write Markdown. Formatting, [[wiki links]], and ![[embeds]] are supported.",
+			text: `Add context to “${this.options.iconName}”. Markdown, [[wiki links]], and ![[embeds]] are supported.`,
+		});
+		const editorLabel = this.contentEl.createDiv({
+			cls: "custom-icon-annotation-editor-label",
+			text: "Annotation",
 		});
 
 		const editor = new TextAreaComponent(this.contentEl);
 		editor.inputEl.addClass("custom-icon-annotation-editor");
+		editor.inputEl.setAttribute("aria-label", editorLabel.textContent ?? "Annotation");
 		editor.inputEl.rows = 9;
 		editor.setPlaceholder("Add a comment or annotation…");
 		editor.setValue(this.options.markdown);
 
-		this.contentEl.createEl("div", {
+		const previewTitle = this.contentEl.createEl("div", {
 			cls: "custom-icon-annotation-preview-title",
-			text: "Preview",
 		});
+		previewTitle.createSpan({ text: "Preview" });
+		previewTitle.createEl("kbd", { text: "⌘↵ to save" });
 		const previewEl = this.contentEl.createDiv({ cls: "custom-icon-annotation-preview" });
 		const actionsEl = this.contentEl.createDiv({ cls: "custom-icon-annotation-actions" });
+		const destructiveActionsEl = actionsEl.createDiv({
+			cls: "custom-icon-annotation-destructive-actions",
+		});
 		const primaryActionsEl = actionsEl.createDiv({ cls: "custom-icon-annotation-primary-actions" });
 
 		new ButtonComponent(primaryActionsEl).setButtonText("Cancel").onClick(() => this.close());
@@ -83,7 +92,7 @@ export class InlineAnnotationModal extends Modal {
 		};
 
 		if (this.options.canRemove) {
-			removeButton = new ButtonComponent(actionsEl)
+			removeButton = new ButtonComponent(destructiveActionsEl)
 				.setButtonText("Remove annotation")
 				.setWarning()
 				.onClick(async () => {
