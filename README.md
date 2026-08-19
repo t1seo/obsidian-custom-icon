@@ -117,7 +117,7 @@ The explorer icons, inline icons, annotations, commands, and picker adapt to Obs
 
 ### Obsidian Community Plugins
 
-Icon Studio is not listed in the Community directory yet. Until the repository owner completes the account-based submission and Obsidian review, install it with BRAT or manually. After approval:
+Icon Studio is not listed in the Community directory yet. Until an eligible directory owner completes the account-based submission and Obsidian review, install it with BRAT or manually. After approval:
 
 1. Open **Settings → Community plugins → Browse**.
 2. Search for **Icon Studio**.

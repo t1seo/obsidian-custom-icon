@@ -46,9 +46,10 @@ Confirm that the release tag matches `manifest.json` and that all three assets c
 Initial submission happens through [community.obsidian.md](https://community.obsidian.md), not through a pull request to `obsidianmd/obsidian-releases`.
 
 1. Sign in with an Obsidian account.
-2. Connect the GitHub account that owns `t1seo/obsidian-icon-studio`.
-3. Open **Plugins**, select **New plugin**, and submit `https://github.com/t1seo/obsidian-icon-studio`.
-4. Run the preview scan or request review.
-5. Resolve any blocking scanner errors with a new incremented release.
+2. Connect the GitHub account that owns `t1seo/obsidian-icon-studio` so the directory can verify repository access.
+3. Open **Plugins**, select **New plugin**, and enter `https://github.com/t1seo/obsidian-icon-studio`.
+4. Select the Community directory **Owner**: either the signed-in submitter or an eligible organization they belong to.
+5. Review and accept the Developer policies, then confirm continued support or removal/transfer if support can no longer be provided.
+6. Submit the entry, run the preview scan or request review, and resolve any blocking scanner errors with a new incremented release.
 
-The first listing requires the owner's Obsidian account. Later versions are discovered automatically from GitHub releases.
+The first listing requires an Obsidian account connected to the repository owner's GitHub account. The directory entry itself can be owned by that submitter or an eligible Community organization. Later versions are discovered automatically from GitHub releases.
