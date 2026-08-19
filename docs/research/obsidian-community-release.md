@@ -4,7 +4,15 @@ Research date: 2026-08-19
 
 ## Decision
 
-Icon Studio will keep the existing `custom-icon` plugin ID, publish version `1.3.1` with the required release assets, and use the account-based Obsidian Community directory submission flow.
+Icon Studio keeps the existing `custom-icon` plugin ID, publishes version `1.3.1` with the required release assets, and uses the account-based Obsidian Community directory submission flow.
+
+## Submission outcome
+
+- The existing `custom-icon` directory entry was connected to the repository owner's GitHub account on 2026-08-19.
+- Checking for new releases queued version 1.3.1 at commit `e10239a016a2d9ff8c8c1bad7cce1b03efada03c` and updated the entry's display name to **Icon Studio**.
+- The 1.3.1 preview scan reported only the expected mismatch between the former **Custom Icon** name and the new **Icon Studio** manifest name.
+- A manual review request was submitted explaining the intentional rebrand, stable plugin ID, repository rename, fixed prior source-code finding, and attested release assets.
+- The request is currently open for administrator review. The [public listing](https://community.obsidian.md/plugins/custom-icon) shows Icon Studio 1.3.1, while **Add to Obsidian** remains disabled until approval.
 
 ## Findings
 
